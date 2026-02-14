@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>forme — Your Fonts, Real Type</title>
+<link rel="stylesheet" href="https://use.typekit.net/rgt4idh.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&display=swap');
+
+  @font-face {
+    font-family: 'Berkeley Mono';
+    src: local('Berkeley Mono'), local('BerkeleyMono-Regular');
+    font-weight: 400;
+  }
+  @font-face {
+    font-family: 'Berkeley Mono';
+    src: local('Berkeley Mono'), local('BerkeleyMono-Bold');
+    font-weight: 700;
+  }
+
+  :root {
+    --bg: #f2f0ec;
+    --bg2: #e6e4de;
+    --bg3: #ffffff;
+    --bg-dark: #131311;
+    --rule: #d4d0c8;
+    --rule-dk: #262624;
+    --fg4: #b0aba0;
+    --fg3: #8a8880;
+    --fg2: #6a6a64;
+    --fg: #3a3a36;
+    --fg0: #131311;
+
+    --mono: 'Berkeley Mono', 'DM Mono', monospace;
+    --akz: 'akzidenz-grotesk-next-pro', sans-serif;
+    --akz-c: 'akzidenz-grotesk-next-conden', sans-serif;
+    --din-r: 'din-2014-rounded-variable', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    color: #aaa;
+    font-family: var(--mono);
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Selector */
+  .sel {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: #0a0a0a;
+    border-bottom: 1px solid #222;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    height: 48px;
+    gap: 4px;
+    overflow-x: auto;
+  }
+
+  .sel-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #555;
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+
+  .sel button {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 6px 12px;
+    background: transparent;
+    border: 1px solid #222;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .sel button:hover { border-color: #444; color: #aaa; }
+  .sel button.on { border-color: #888; color: #eee; background: #1a1a1a; }
+
+  .panel { display: none; margin-top: 48px; }
+  .panel.vis { display: block; }
+
+  /* Zones */
+  .zl { background: var(--bg); color: var(--fg); padding: 80px 48px; }
+  .zd { background: var(--bg-dark); color: #c8c4b8; padding: 80px 48px; }
+  .zi { max-width: 1060px; margin: 0 auto; }
+  .zt { height: 2px; background: var(--fg0); }
+
+  /* Font card */
+  .fc {
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .zd .fc { border-color: var(--rule-dk); }
+  .fc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--fg4); margin-bottom: 6px; }
+  .zd .fc-label { color: #444; }
+  .fc-name { font-size: 12px; color: var(--fg2); margin-bottom: 6px; }
+  .zd .fc-name { color: #666; }
+  .fc-note { font-size: 11px; color: var(--fg4); line-height: 1.65; max-width: 560px; }
+  .zd .fc-note { color: #3a3a38; }
+
+  /* Specimen */
+  .spec {
+    margin: 24px 0 48px;
+    line-height: 0.88;
+    overflow: hidden;
+    color: var(--bg2);
+  }
+  .zd .spec { color: #1a1a18; }
+
+  /* Hero */
+  .hero {
+    margin-bottom: 64px;
+    padding-bottom: 48px;
+    border-bottom: 2px solid var(--fg0);
+  }
+  .zd .hero { border-color: #e8e4d8; }
+
+  .hero-lab {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--fg4);
+    margin-bottom: 24px;
+  }
+  .zd .hero-lab { color: #444; }
+
+  .hero-t {
+    font-size: 76px;
+    color: var(--fg0);
+    line-height: 0.92;
+    margin-bottom: 20px;
+  }
+  .zd .hero-t { color: #f0ece0; }
+
+  .hero-d {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--fg2);
+    line-height: 1.7;
+    max-width: 460px;
+  }
+  .zd .hero-d { color: #888; }
+
+  /* Chapter */
+  .ch {
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+    margin-bottom: 32px;
+  }
+
+  .ch-n {
+    font-size: 84px;
+    color: var(--bg2);
+    line-height: 0.82;
+    letter-spacing: -0.04em;
+    flex-shrink: 0;
+    min-width: 110px;
+  }
+  .zd .ch-n { color: #1e1e1c; }
+
+  .ch-tb { padding-top: 8px; }
+
+  .ch-lab {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--fg4);
+    margin-bottom: 4px;
+  }
+  .zd .ch-lab { color: #444; }
+
+  .ch-t {
+    font-size: 34px;
+    color: var(--fg0);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .zd .ch-t { color: #e8e4d8; }
+
+  /* Rationale */
+  .rat {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--fg3);
+    line-height: 1.75;
+    font-style: italic;
+    max-width: 540px;
+    margin: 20px 0 40px;
+    border-left: 2px solid var(--rule);
+    padding-left: 20px;
+  }
+  .zd .rat { color: #666; border-color: #333; }
+
+  /* Index */
+  .ir {
+    display: grid;
+    grid-template-columns: 48px 1fr 24px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 11px;
+    align-items: center;
+    cursor: default;
+    transition: color 0.1s;
+  }
+  .zd .ir { border-color: var(--rule-dk); }
+  .ir:hover { color: var(--fg0); }
+  .zd .ir:hover { color: #f0ece0; }
+  .ir-id { color: var(--fg4); font-size: 10px; }
+  .zd .ir-id { color: #444; }
+  .ir-n { text-transform: uppercase; letter-spacing: 0.04em; }
+  .ir-a { color: var(--fg4); transition: color 0.1s; }
+  .zd .ir-a { color: #444; }
+  .ir:hover .ir-a { color: var(--fg0); }
+  .zd .ir:hover .ir-a { color: #e8e4d8; }
+
+  /* Pattern */
+  .pat {
+    background: var(--bg3);
+    border: 1px solid var(--rule);
+    padding: 32px;
+    margin: 32px 0;
+  }
+  .zd .pat { background: #1a1a18; border-color: #2a2a28; }
+
+  .pat-h {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .zd .pat-h { border-color: #2a2a28; }
+
+  .pat-id { font-family: var(--mono); font-size: 10px; color: var(--fg4); }
+  .zd .pat-id { color: #444; }
+
+  .pat-n { font-size: 22px; color: var(--fg0); }
+  .zd .pat-n { color: #e8e4d8; }
+
+  .dots { display: flex; gap: 4px; margin-left: auto; align-items: center; }
+  .dt { width: 6px; height: 6px; border-radius: 50%; }
+  .dt.on { background: var(--fg0); }
+  .dt.off { border: 1px solid var(--fg4); }
+  .zd .dt.on { background: #e8e4d8; }
+  .zd .dt.off { border-color: #444; }
+
+  .prob { font-family: var(--mono); font-size: 12px; color: var(--fg2); font-style: italic; line-height: 1.7; margin-bottom: 10px; }
+  .zd .prob { color: #777; }
+
+  .sol { font-family: var(--mono); font-size: 12px; color: var(--fg); line-height: 1.7; margin-bottom: 16px; }
+  .zd .sol { color: #c8c4b8; }
+
+  .therefore { color: var(--fg0); font-weight: 500; }
+  .zd .therefore { color: #e8e4d8; }
+
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; font-family: var(--mono); }
+  .tag { font-size: 10px; padding: 4px 10px; border: 1px solid; }
+  .tag.up { border-color: var(--fg0); color: var(--fg0); }
+  .tag.dn { border-color: #c47d3c; color: #c47d3c; }
+  .tag.pr { border-color: var(--fg4); color: var(--fg2); }
+  .zd .tag.up { border-color: #e8e4d8; color: #e8e4d8; }
+  .zd .tag.dn { border-color: #c47d3c; color: #c47d3c; }
+  .zd .tag.pr { border-color: #555; color: #888; }
+
+  /* Code */
+  .code {
+    background: var(--bg-dark);
+    padding: 24px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.8;
+    margin: 32px 0;
+    overflow-x: auto;
+    color: #c8c4b8;
+  }
+  .zd .code { background: #0e0e0c; border: 1px solid var(--rule-dk); }
+  .code .kw { color: #9abf8a; }
+  .code .fn { color: #eeeee4; }
+  .code .str { color: #c4a06a; }
+  .code .cm { color: #555; }
+  .code .tp { color: #7a9aba; }
+
+  /* ================================================================
+     COMBINATION OVERRIDES
+     ================================================================ */
+
+  /* A: DIN Rounded display + Akzidenz section + Berkeley body
+     The friendly face up top, the serious face for structure */
+  .combo-a .hero-t { font-family: var(--din-r); font-variation-settings: 'wght' 300; letter-spacing: -0.03em; }
+  .combo-a .spec { font-family: var(--din-r); font-variation-settings: 'wght' 200; font-size: 180px; }
+  .combo-a .ch-n { font-family: var(--din-r); font-variation-settings: 'wght' 200; }
+  .combo-a .ch-t { font-family: var(--akz); font-weight: 700; letter-spacing: -0.01em; }
+  .combo-a .pat-n { font-family: var(--akz); font-weight: 700; }
+
+  /* B: Akzidenz Condensed display + DIN Rounded section + Berkeley body
+     Maximum vertical energy up top, softer for subsections */
+  .combo-b .hero-t { font-family: var(--akz-c); font-weight: 700; letter-spacing: -0.02em; font-size: 88px; text-transform: uppercase; }
+  .combo-b .spec { font-family: var(--akz-c); font-weight: 700; font-size: 200px; text-transform: uppercase; letter-spacing: -0.02em; }
+  .combo-b .ch-n { font-family: var(--akz-c); font-weight: 700; font-size: 96px; }
+  .combo-b .ch-t { font-family: var(--din-r); font-variation-settings: 'wght' 400; }
+  .combo-b .pat-n { font-family: var(--din-r); font-variation-settings: 'wght' 400; }
+
+  /* C: Akzidenz Bold display + Akzidenz section + Berkeley body
+     Pure Akzidenz. The Berthold purist. */
+  .combo-c .hero-t { font-family: var(--akz); font-weight: 700; letter-spacing: -0.025em; }
+  .combo-c .spec { font-family: var(--akz); font-weight: 700; font-size: 180px; letter-spacing: -0.03em; }
+  .combo-c .ch-n { font-family: var(--akz); font-weight: 700; }
+  .combo-c .ch-t { font-family: var(--akz); font-weight: 700; }
+  .combo-c .pat-n { font-family: var(--akz); font-weight: 700; }
+
+  /* D: DIN Rounded everything + Berkeley body
+     Fully committed to the rounded voice. Approachable and confident. */
+  .combo-d .hero-t { font-family: var(--din-r); font-variation-settings: 'wght' 300; letter-spacing: -0.03em; }
+  .combo-d .spec { font-family: var(--din-r); font-variation-settings: 'wght' 200; font-size: 180px; }
+  .combo-d .ch-n { font-family: var(--din-r); font-variation-settings: 'wght' 200; }
+  .combo-d .ch-t { font-family: var(--din-r); font-variation-settings: 'wght' 400; }
+  .combo-d .pat-n { font-family: var(--din-r); font-variation-settings: 'wght' 400; }
+
+  /* E: Akzidenz Condensed headings + DIN Rounded numbers + Berkeley body
+     Condensed for all text headings, rounded for pure numerals */
+  .combo-e .hero-t { font-family: var(--akz-c); font-weight: 700; letter-spacing: -0.01em; font-size: 84px; }
+  .combo-e .spec { font-family: var(--akz-c); font-weight: 700; font-size: 200px; letter-spacing: -0.02em; }
+  .combo-e .ch-n { font-family: var(--din-r); font-variation-settings: 'wght' 300; }
+  .combo-e .ch-t { font-family: var(--akz-c); font-weight: 700; }
+  .combo-e .pat-n { font-family: var(--akz-c); font-weight: 700; }
+
+  /* F: Mixed roles — DIN Rounded hero, Akzidenz Condensed chapters,
+     Akzidenz Bold for pattern names. Three voices, three jobs. */
+  .combo-f .hero-t { font-family: var(--din-r); font-variation-settings: 'wght' 300; letter-spacing: -0.03em; }
+  .combo-f .spec { font-family: var(--din-r); font-variation-settings: 'wght' 200; font-size: 180px; }
+  .combo-f .ch-n { font-family: var(--akz-c); font-weight: 700; font-size: 96px; letter-spacing: -0.02em; }
+  .combo-f .ch-t { font-family: var(--akz-c); font-weight: 700; letter-spacing: -0.01em; }
+  .combo-f .pat-n { font-family: var(--akz); font-weight: 700; }
+
+  /* G: DIN Rounded logotype only + Akzidenz Bold structure + Berkeley body
+     The brand has its own voice. DIN Rounded is reserved exclusively for
+     "forme" and chapter numerals. Nothing else touches it. Akzidenz does
+     all structural headings. Berkeley does all content. Three fonts,
+     three jobs, clear boundaries. */
+  .combo-g .hero-t { font-family: var(--din-r); font-variation-settings: 'wght' 300; letter-spacing: -0.03em; }
+  .combo-g .spec { font-family: var(--din-r); font-variation-settings: 'wght' 200; font-size: 180px; }
+  .combo-g .ch-n { font-family: var(--din-r); font-variation-settings: 'wght' 200; }
+  .combo-g .ch-t { font-family: var(--akz); font-weight: 700; letter-spacing: -0.01em; }
+  .combo-g .pat-n { font-family: var(--akz); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="sel">
+  <div class="sel-label">Combo</div>
+  <button class="on" onclick="sw('a',this)">A · DIN Round + Akzidenz</button>
+  <button onclick="sw('b',this)">B · Akzidenz Cond + DIN Round</button>
+  <button onclick="sw('c',this)">C · Pure Akzidenz</button>
+  <button onclick="sw('d',this)">D · Pure DIN Rounded</button>
+  <button onclick="sw('e',this)">E · Cond Heads + Round Nums</button>
+  <button onclick="sw('f',this)">F · Three Voices</button>
+  <button onclick="sw('g',this)">G · Brand Voice + Akzidenz</button>
+</div>
+
+<!-- COMBO A -->
+<div class="panel combo-a vis" id="p-a">
+  <div class="zl">
+    <div class="zi">
+      <div class="fc">
+        <div class="fc-label">Combination A</div>
+        <div class="fc-name">DIN 2014 Rounded (display) · Akzidenz-Grotesk Next Bold (sections) · Berkeley Mono (body)</div>
+        <div class="fc-note">The friendly face draws you in at hero scale. Akzidenz takes over for structural headings — the transition from rounded to sharp signals a shift from welcome to work. Berkeley carries everything else.</div>
+      </div>
+
+      <div class="spec">forme</div>
+
+      <div class="hero">
+        <div class="hero-lab">Go TUI Framework</div>
+        <div class="hero-t">forme</div>
+        <div class="hero-d">Compose interfaces from simple components. Bind state through pointers. Handle input with vim-style patterns.</div>
+      </div>
+
+      <div class="ch">
+        <div class="ch-n">01</div>
+        <div class="ch-tb">
+          <div class="ch-lab">Chapter</div>
+          <div class="ch-t">Pattern Lattice</div>
+        </div>
+      </div>
+
+      <div class="rat">Every component exists because of something above it and is implemented through something below it. The lattice makes those connections navigable.</div>
+
+      <div>
+        <div class="ir"><div class="ir-id">P01</div><div class="ir-n">Terminal as Canvas</div><div class="ir-a">↗</div></div>
+        <div class="ir"><div class="ir-id">P03</div><div class="ir-n">Pointer Semantics</div><div class="ir-a">↗</div></div>
+        <div class="ir"><div class="ir-id">S01</div><div class="ir-n">Layout Engine</div><div class="ir-a">↗</div></div>
+        <div class="ir"><div class="ir-id">C07</div><div class="ir-n">Jump Labels</div><div class="ir-a">↗</div></div>
+        <div class="ir"><div class="ir-id">D01</div><div class="ir-n">Cell Painting</div><div class="ir-a">↗</div></div>
+      </div>
+
+      <div class="pat">
+        <div class="pat-h">
+          <div class="pat-id">C07</div>
+          <div class="pat-n">Jump Labels</div>
+          <div class="dots"><div class="dt on"></div><div class="dt off"></div></div>
+        </div>
+        <div class="prob">Tab-order navigation is linear and slow. Mouse interaction breaks the keyboard-native contract.</div>
+        <div class="sol"><span class="therefore">Therefore:</span> overlay short character sequences on focusable elements, activated by a trigger key.</div>
+        <div class="tags">
+          <span class="tag up">↑ Event Propagation</span>
+          <span class="tag pr">↔ Input</span>
+          <span class="tag dn">↓ Cell Painting</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="zt"></div>
+
+  <div class="zd">
+    <div class="zi">
+      <div class="ch">
+        <div class="ch-n">02</div>
+        <div class="ch-tb">
+          <div class="ch-lab">Chapter</div>
+          <div class="ch-t">Usage</div>
+        </div>
+      </div>
+
+      <div class="rat">Code is the primary content. It should feel native — not a foreign embed.</div>
+
+      <div class="code">
+<span class="cm">// Jump labels — spatial O(1) navigation</span>
+<span class="kw">app</span>.<span class="fn">SetView</span>(<span class="fn">VBox</span>(
+    <span class="fn">Jump</span>(<span class="fn">Text</span>(<span class="str">"Dashboard"</span>), <span class="kw">func</span>() {
+        app.<span class="fn">Go</span>(<span class="str">"dashboard"</span>)
+    }),
+    <span class="fn">Jump</span>(<span class="fn">Text</span>(<span class="str">"Settings"</span>), <span class="kw">func</span>() {
+        app.<span class="fn">Go</span>(<span class="str">"settings"</span>)
+    }),
+))
+
+<span class="cm">// Activate with a trigger key</span>
+<span class="kw">app</span>.<span class="fn">Handle</span>(<span class="str">"f"</span>, <span class="kw">func</span>(_ riffkey.<span class="tp">Match</span>) {
+    app.<span class="fn">EnterJumpMode</span>()
+})
+      </div>
+
+      <div class="pat">
+        <div class="pat-h">
+          <div class="pat-id">P03</div>
+          <div class="pat-n">Pointer Semantics</div>
+          <div class="dots"><div class="dt on"></div><div class="dt on"></div></div>
+        </div>
+        <div class="prob">Reactive frameworks rebuild or diff virtual trees on every state change.</div>
+        <div class="sol"><span class="therefore">Therefore:</span> pass pointers to values. The template is built once. At render time, pointers are dereferenced.</div>
+        <div class="tags">
+          <span class="tag up">↑ Philosophy</span>
+          <span class="tag pr">↔ Composition</span>
+          <span class="tag dn">↓ State Binding</span>
+          <span class="tag dn">↓ Conditional Rendering</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Clone for other combos
+const comboInfo = {
+  b: {
+    label: 'Combination B',
+    name: 'Akzidenz-Grotesk Next Condensed Bold (display) · DIN 2014 Rounded (sections) · Berkeley Mono (body)',
+    note: 'Maximum vertical energy at hero scale — the condensed cut is unapologetically bold. DIN Rounded softens things for section headings. The contrast between sharp condensed and soft rounded creates visual rhythm.'
+  },
+  c: {
+    label: 'Combination C',
+    name: 'Akzidenz-Grotesk Next Bold (everything) · Berkeley Mono (body)',
+    note: 'The purist. One display face, one body face. The Berthold grotesque does all the heavy lifting. No mixing, no transitions. Confident in its simplicity.'
+  },
+  d: {
+    label: 'Combination D',
+    name: 'DIN 2014 Rounded Variable (everything) · Berkeley Mono (body)',
+    note: 'Fully committed to rounded. Light weights for chapter numbers, regular for headings. The variable axis gives range within a single voice. Approachable, engineered, consistent.'
+  },
+  e: {
+    label: 'Combination E',
+    name: 'Akzidenz-Grotesk Next Condensed Bold (headings) · DIN 2014 Rounded (numerals) · Berkeley Mono (body)',
+    note: 'Condensed for every text heading — tight, vertical, structural. But chapter numbers in DIN Rounded — the softness of numerals contrasts the sharpness of text. Typography as hierarchy signal.'
+  },
+  f: {
+    label: 'Combination F',
+    name: 'DIN 2014 Rounded (hero) · Akzidenz Condensed Bold (chapters) · Akzidenz Bold (patterns) · Berkeley Mono (body)',
+    note: 'Three voices, three jobs. DIN Rounded welcomes at hero scale. Akzidenz Condensed structures chapters — vertical, dense. Akzidenz Bold names patterns — the working level. Berkeley carries everything else. Four typefaces, four clear roles.'
+  },
+  g: {
+    label: 'Combination G',
+    name: 'DIN 2014 Rounded (brand mark + numerals only) · Akzidenz-Grotesk Next Bold (all headings) · Berkeley Mono (body)',
+    note: 'The brand has its own voice. DIN Rounded is reserved exclusively for "forme" and chapter numerals — nowhere else. Akzidenz Bold does every structural heading. Berkeley Mono does all content. The logotype exists outside the typographic system it sits in. Three fonts, three jobs, clear boundaries.'
+  }
+};
+
+const template = document.getElementById('p-a');
+
+Object.keys(comboInfo).forEach(k => {
+  const clone = template.cloneNode(true);
+  clone.id = 'p-' + k;
+  clone.className = 'panel combo-' + k;
+
+  const fc = clone.querySelector('.fc');
+  fc.querySelector('.fc-label').textContent = comboInfo[k].label;
+  fc.querySelector('.fc-name').textContent = comboInfo[k].name;
+  fc.querySelector('.fc-note').textContent = comboInfo[k].note;
+
+  document.body.appendChild(clone);
+});
+
+function sw(id, btn) {
+  document.querySelectorAll('.panel').forEach(b => b.classList.remove('vis'));
+  document.getElementById('p-' + id).classList.add('vis');
+  document.querySelectorAll('.sel button').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>

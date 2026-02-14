@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>forme — Go TUI Framework</title>
+<link rel="stylesheet" href="https://use.typekit.net/rgt4idh.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&display=swap');
+
+  @font-face {
+    font-family: 'Berkeley Mono';
+    src: local('Berkeley Mono'), local('BerkeleyMono-Regular');
+    font-weight: 400;
+  }
+  @font-face {
+    font-family: 'Berkeley Mono';
+    src: local('Berkeley Mono'), local('BerkeleyMono-Bold');
+    font-weight: 700;
+  }
+
+  /* ============================================================
+     TOKENS
+     ============================================================ */
+  :root {
+    /* backgrounds */
+    --bg:       #f2f0ec;
+    --bg2:      #e6e4de;
+    --bg3:      #ffffff;
+    --bg-dark:  #131311;
+    --bg-dark2: #1a1a18;
+    --bg-dark3: #0e0e0c;
+
+    /* foregrounds */
+    --fg0:  #131311;
+    --fg:   #3a3a36;
+    --fg2:  #6a6a64;
+    --fg3:  #8a8880;
+    --fg4:  #b0aba0;
+
+    /* rules */
+    --rule:    #d4d0c8;
+    --rule-dk: #262624;
+
+    /* accents */
+    --accent:  #c47d3c;
+
+    /* fonts */
+    --mono:  'Berkeley Mono', 'DM Mono', monospace;
+    --akz:   'akzidenz-grotesk-next-pro', sans-serif;
+    --akz-c: 'akzidenz-grotesk-next-conden', sans-serif;
+    --din-r: 'din-2014-rounded-variable', sans-serif;
+
+    /* spacing */
+    --s1: 8px;
+    --s2: 16px;
+    --s3: 24px;
+    --s4: 32px;
+    --s5: 48px;
+    --s6: 64px;
+    --s7: 80px;
+    --s8: 120px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { background: var(--fg0); color: var(--bg); }
+
+  /* ============================================================
+     NAV
+     ============================================================ */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--s5);
+    transition: background 0.3s, border-color 0.3s;
+    border-bottom: 1px solid transparent;
+  }
+
+  nav.scrolled {
+    background: rgba(242, 240, 236, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-color: var(--rule);
+  }
+
+  nav.in-dark {
+    background: rgba(19, 19, 17, 0.95);
+    border-color: var(--rule-dk);
+  }
+
+  .nav-brand {
+    font-family: var(--din-r);
+    font-variation-settings: 'wght' 400;
+    font-size: 18px;
+    color: var(--fg0);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+
+  nav.in-dark .nav-brand { color: #e8e4d8; }
+
+  .nav-links {
+    display: flex;
+    gap: var(--s3);
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--fg3);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .nav-links a:hover { color: var(--fg0); }
+  nav.in-dark .nav-links a { color: #555; }
+  nav.in-dark .nav-links a:hover { color: #e8e4d8; }
+
+  /* ============================================================
+     LAYOUT
+     ============================================================ */
+  .zone-light { background: var(--bg); color: var(--fg); }
+  .zone-dark  { background: var(--bg-dark); color: #c8c4b8; }
+  .zone-inner { max-width: 1060px; margin: 0 auto; padding: 0 var(--s5); }
+  .zone-rule  { height: 2px; background: var(--fg0); }
+
+  /* ============================================================
+     HERO
+     ============================================================ */
+  .hero {
+    padding: 180px 0 var(--s7);
+  }
+
+  .hero-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--fg4);
+    margin-bottom: var(--s3);
+  }
+
+  .hero-title {
+    font-family: var(--din-r);
+    font-variation-settings: 'wght' 300;
+    font-size: 96px;
+    color: var(--fg0);
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    margin-bottom: var(--s3);
+  }
+
+  .hero-desc {
+    font-size: 14px;
+    color: var(--fg2);
+    line-height: 1.7;
+    max-width: 480px;
+    margin-bottom: var(--s5);
+  }
+
+  .hero-install {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s2);
+    background: var(--bg-dark);
+    color: #c8c4b8;
+    padding: 12px 20px;
+    font-size: 13px;
+    letter-spacing: 0.01em;
+  }
+
+  .hero-install .prompt { color: #555; user-select: none; }
+
+  /* ============================================================
+     SECTION HEADERS
+     ============================================================ */
+  .section-head {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--s4);
+    padding: var(--s7) 0 var(--s4);
+  }
+
+  .section-num {
+    font-family: var(--din-r);
+    font-variation-settings: 'wght' 200;
+    font-size: 84px;
+    line-height: 0.82;
+    letter-spacing: -0.04em;
+    flex-shrink: 0;
+    min-width: 110px;
+  }
+
+  .zone-light .section-num { color: var(--bg2); }
+  .zone-dark .section-num  { color: #1e1e1c; }
+
+  .section-meta { padding-top: 8px; }
+
+  .section-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--fg4);
+    margin-bottom: 4px;
+  }
+
+  .zone-dark .section-label { color: #444; }
+
+  .section-title {
+    font-family: var(--akz);
+    font-weight: 700;
+    font-size: 34px;
+    color: var(--fg0);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .zone-dark .section-title { color: #e8e4d8; }
+
+  .section-desc {
+    font-size: 12px;
+    color: var(--fg3);
+    line-height: 1.75;
+    font-style: italic;
+    max-width: 540px;
+    margin: var(--s2) 0 var(--s5);
+    border-left: 2px solid var(--rule);
+    padding-left: 20px;
+  }
+
+  .zone-dark .section-desc { color: #666; border-color: #333; }
+
+  /* ============================================================
+     PATTERN LATTICE
+     ============================================================ */
+  .lattice {
+    padding-bottom: var(--s7);
+  }
+
+  .lattice-scales {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: var(--s5);
+  }
+
+  .lattice-scale {
+    display: flex;
+    align-items: stretch;
+    gap: 2px;
+  }
+
+  .scale-label {
+    width: 120px;
+    flex-shrink: 0;
+    padding: 12px 16px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--fg4);
+    background: var(--bg3);
+    display: flex;
+    align-items: center;
+  }
+
+  .scale-nodes {
+    display: flex;
+    gap: 2px;
+    flex: 1;
+    flex-wrap: wrap;
+  }
+
+  .node {
+    padding: 12px 16px;
+    background: var(--bg3);
+    font-size: 12px;
+    color: var(--fg2);
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+    flex: 1;
+    min-width: 140px;
+  }
+
+  .node:hover {
+    color: var(--fg0);
+    border-color: var(--rule);
+  }
+
+  .node.active {
+    color: var(--fg0);
+    border-color: var(--fg0);
+    background: var(--bg);
+  }
+
+  .node.connected {
+    border-color: var(--accent);
+    color: var(--fg0);
+  }
+
+  .node-id {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--fg4);
+    margin-bottom: 2px;
+  }
+
+  .node.active .node-id,
+  .node.connected .node-id { color: var(--fg2); }
+
+  /* pattern detail panel */
+  .lattice-detail {
+    background: var(--bg3);
+    border: 1px solid var(--rule);
+    padding: var(--s4);
+    margin-top: var(--s3);
+    display: none;
+  }
+
+  .lattice-detail.vis { display: block; }
+
+  .detail-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: var(--s2);
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .detail-id { font-size: 10px; color: var(--fg4); }
+
+  .detail-name {
+    font-family: var(--akz);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--fg0);
+  }
+
+  .detail-confidence {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+    align-items: center;
+  }
+
+  .conf-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .conf-dot.on  { background: var(--fg0); }
+  .conf-dot.off { border: 1px solid var(--fg4); }
+
+  .detail-problem {
+    font-size: 12px;
+    color: var(--fg2);
+    font-style: italic;
+    line-height: 1.7;
+    margin-bottom: 10px;
+  }
+
+  .detail-solution {
+    font-size: 12px;
+    color: var(--fg);
+    line-height: 1.7;
+    margin-bottom: var(--s2);
+  }
+
+  .therefore { color: var(--fg0); font-weight: 500; }
+
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .tag {
+    font-size: 10px;
+    padding: 4px 10px;
+    border: 1px solid;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .tag:hover { opacity: 0.7; }
+  .tag-up { border-color: var(--fg0); color: var(--fg0); }
+  .tag-dn { border-color: var(--accent); color: var(--accent); }
+  .tag-pr { border-color: var(--fg4); color: var(--fg2); }
+
+  /* ============================================================
+     CODE BLOCKS
+     ============================================================ */
+  .code {
+    background: var(--bg-dark);
+    padding: var(--s3);
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.8;
+    margin: var(--s3) 0;
+    overflow-x: auto;
+    color: #c8c4b8;
+  }
+
+  .zone-dark .code {
+    background: var(--bg-dark3);
+    border: 1px solid var(--rule-dk);
+  }
+
+  .code .kw  { color: #9abf8a; }
+  .code .fn  { color: #eeeee4; }
+  .code .str { color: #c4a06a; }
+  .code .cm  { color: #555; }
+  .code .tp  { color: #7a9aba; }
+
+  /* ============================================================
+     INDEX ROWS
+     ============================================================ */
+  .index-row {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 11px;
+    align-items: center;
+    cursor: pointer;
+    transition: color 0.1s;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .zone-dark .index-row { border-color: var(--rule-dk); }
+  .index-row:hover { color: var(--fg0); }
+  .zone-dark .index-row:hover { color: #f0ece0; }
+
+  .index-id {
+    color: var(--fg4);
+    font-size: 10px;
+  }
+
+  .zone-dark .index-id { color: #444; }
+
+  .index-name {
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .index-arrow {
+    color: var(--fg4);
+    transition: color 0.1s;
+    padding-left: var(--s2);
+  }
+
+  .index-row:hover .index-arrow { color: var(--fg0); }
+  .zone-dark .index-row:hover .index-arrow { color: #e8e4d8; }
+
+  /* ============================================================
+     API COMPONENT BLOCKS
+     ============================================================ */
+  .api-block {
+    margin-bottom: var(--s6);
+  }
+
+  .api-name {
+    font-family: var(--akz);
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+
+  .zone-dark .api-name { color: #e8e4d8; }
+
+  .api-desc {
+    font-size: 12px;
+    color: var(--fg3);
+    line-height: 1.7;
+    max-width: 560px;
+    margin-bottom: var(--s3);
+  }
+
+  .zone-dark .api-desc { color: #777; }
+
+  .api-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-bottom: var(--s3);
+  }
+
+  .api-table th {
+    text-align: left;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--fg4);
+    padding: 8px 0;
+    border-bottom: 2px solid var(--rule);
+    font-weight: 400;
+  }
+
+  .zone-dark .api-table th { border-color: var(--rule-dk); color: #444; }
+
+  .api-table td {
+    padding: 8px 16px 8px 0;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+
+  .zone-dark .api-table td { border-color: var(--rule-dk); }
+
+  .api-table code {
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  .zone-dark .api-table td { color: #999; }
+  .zone-dark .api-table code { color: #c8c4b8; }
+
+  /* ============================================================
+     FOOTER
+     ============================================================ */
+  footer {
+    padding: var(--s5) 0;
+    border-top: 1px solid var(--rule-dk);
+    font-size: 11px;
+    color: #444;
+  }
+
+  footer a {
+    color: #666;
+    text-decoration: none;
+  }
+
+  footer a:hover { color: #e8e4d8; }
+
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     NAV
+     ============================================================ -->
+<nav id="nav">
+  <a href="#" class="nav-brand">forme</a>
+  <ul class="nav-links">
+    <li><a href="#lattice">Patterns</a></li>
+    <li><a href="#start">Start</a></li>
+    <li><a href="#api">API</a></li>
+    <li><a href="https://github.com/petegriffiths/forme">GitHub</a></li>
+  </ul>
+</nav>
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<div class="zone-light">
+  <div class="zone-inner">
+    <div class="hero">
+      <div class="hero-label">Go TUI Framework</div>
+      <div class="hero-title">forme</div>
+      <div class="hero-desc">
+        Compose terminal interfaces from simple components.
+        Bind state through pointers. Handle input with vim-style patterns.
+        No virtual DOM, no diffing — just functions and values.
+      </div>
+      <div class="hero-install">
+        <span class="prompt">$</span>
+        go get github.com/petegriffiths/forme@latest
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PATTERN LATTICE
+     ============================================================ -->
+<div class="zone-light" id="lattice">
+  <div class="zone-inner">
+    <div class="lattice">
+      <div class="section-head">
+        <div class="section-num">01</div>
+        <div class="section-meta">
+          <div class="section-label">Patterns</div>
+          <div class="section-title">Pattern Lattice</div>
+        </div>
+      </div>
+
+      <div class="section-desc">
+        Every component exists because of something above it and is
+        implemented through something below it. Click a node to see
+        its connections.
+      </div>
+
+      <div class="lattice-scales" id="lattice-grid">
+        <!-- generated by JS -->
+      </div>
+
+      <div class="lattice-detail" id="lattice-detail">
+        <div class="detail-head">
+          <div class="detail-id" id="d-id"></div>
+          <div class="detail-name" id="d-name"></div>
+          <div class="detail-confidence" id="d-conf"></div>
+        </div>
+        <div class="detail-problem" id="d-problem"></div>
+        <div class="detail-solution" id="d-solution"></div>
+        <div class="tags" id="d-tags"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="zone-rule"></div>
+
+<!-- ============================================================
+     GETTING STARTED
+     ============================================================ -->
+<div class="zone-dark" id="start">
+  <div class="zone-inner">
+    <div class="section-head">
+      <div class="section-num">02</div>
+      <div class="section-meta">
+        <div class="section-label">Getting Started</div>
+        <div class="section-title">First App</div>
+      </div>
+    </div>
+
+    <div class="section-desc">
+      A minimal forme application. Create an app, set a view, run.
+    </div>
+
+    <div class="code"><span class="kw">package</span> main
+
+<span class="kw">import</span> <span class="str">"github.com/petegriffiths/forme"</span>
+
+<span class="kw">func</span> <span class="fn">main</span>() {
+    app, _ := forme.<span class="fn">NewApp</span>()
+
+    app.<span class="fn">SetView</span>(
+        forme.<span class="fn">VBox</span>(
+            forme.<span class="fn">Text</span>(<span class="str">"Hello, forme"</span>),
+            forme.<span class="fn">Text</span>(<span class="str">"Press q to quit"</span>),
+        ),
+    )
+
+    app.<span class="fn">Handle</span>(<span class="str">"q"</span>, <span class="kw">func</span>() {
+        app.<span class="fn">Quit</span>()
+    })
+
+    app.<span class="fn">Run</span>()
+}</div>
+
+    <div class="section-head">
+      <div class="section-num">03</div>
+      <div class="section-meta">
+        <div class="section-label">Concepts</div>
+        <div class="section-title">Pointer Semantics</div>
+      </div>
+    </div>
+
+    <div class="section-desc">
+      Pass pointers to values. The view tree is built once.
+      At render time, pointers are dereferenced to get current state.
+      No rebuilds, no diffing.
+    </div>
+
+    <div class="code">count := 0
+
+app.<span class="fn">SetView</span>(
+    forme.<span class="fn">VBox</span>(
+        forme.<span class="fn">Text</span>(&count),  <span class="cm">// reads current value at render time</span>
+        forme.<span class="fn">Text</span>(<span class="str">"Press + to increment"</span>),
+    ),
+)
+
+app.<span class="fn">Handle</span>(<span class="str">"+"</span>, <span class="kw">func</span>() {
+    count++
+    app.<span class="fn">RequestRender</span>()
+})</div>
+  </div>
+</div>
+
+<!-- ============================================================
+     API REFERENCE
+     ============================================================ -->
+<div class="zone-dark" id="api">
+  <div class="zone-inner">
+    <div class="section-head">
+      <div class="section-num">04</div>
+      <div class="section-meta">
+        <div class="section-label">Reference</div>
+        <div class="section-title">API</div>
+      </div>
+    </div>
+
+    <div class="section-desc">
+      Components, layout, input handling, and state management.
+    </div>
+
+    <!-- App -->
+    <div class="api-block">
+      <div class="api-name">App</div>
+      <div class="api-desc">The root container. Creates the terminal session, manages views, routes input.</div>
+      <div class="code">app, err := forme.<span class="fn">NewApp</span>()</div>
+      <table class="api-table">
+        <thead><tr><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>SetView(view)</code></td><td>Set the root view for single-view apps</td></tr>
+          <tr><td><code>View(name, view)</code></td><td>Register a named view for multi-view routing</td></tr>
+          <tr><td><code>Handle(pattern, fn)</code></td><td>Register a key handler</td></tr>
+          <tr><td><code>Go(name)</code></td><td>Navigate to a named view</td></tr>
+          <tr><td><code>Run()</code></td><td>Start the application</td></tr>
+          <tr><td><code>Quit()</code></td><td>Exit cleanly</td></tr>
+          <tr><td><code>RequestRender()</code></td><td>Schedule a re-render on next frame</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Layout -->
+    <div class="api-block">
+      <div class="api-name">Layout</div>
+      <div class="api-desc">Compose views spatially. Flex-like model — grow, shrink, fixed, percentage.</div>
+      <table class="api-table">
+        <thead><tr><th>Function</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>VBox(children...)</code></td><td>Vertical stack</td></tr>
+          <tr><td><code>HBox(children...)</code></td><td>Horizontal stack</td></tr>
+          <tr><td><code>Grow(child)</code></td><td>Fill remaining space</td></tr>
+          <tr><td><code>WidthPct(n, child)</code></td><td>Percentage width</td></tr>
+          <tr><td><code>Gap(n)</code></td><td>Fixed spacing</td></tr>
+          <tr><td><code>Arrange(children...)</code></td><td>Manual positioning</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Components index -->
+    <div class="api-block">
+      <div class="api-name">Components</div>
+      <div class="api-desc">The building blocks. Each is a function that returns a node.</div>
+      <div style="margin-top: var(--s2);">
+        <div class="index-row"><div class="index-id">text</div><div class="index-name">Text</div><div class="index-arrow">↗</div></div>
+        <div class="index-row"><div class="index-id">input</div><div class="index-name">Input</div><div class="index-arrow">↗</div></div>
+        <div class="index-row"><div class="index-id">list</div><div class="index-name">List / FilterList</div><div class="index-arrow">↗</div></div>
+        <div class="index-row"><div class="index-id">tabs</div><div class="index-name">Tabs</div><div class="index-arrow">↗</div></div>
+        <div class="index-row"><div class="index-id">jump</div><div class="index-name">Jump</div><div class="index-arrow">↗</div></div>
+        <div class="index-row"><div class="index-id">layer</div><div class="index-name">Layer / LayerView</div><div class="index-arrow">↗</div></div>
+        <div class="index-row"><div class="index-id">overlay</div><div class="index-name">Overlay</div><div class="index-arrow">↗</div></div>
+        <div class="index-row"><div class="index-id">progress</div><div class="index-name">Progress / Spinner</div><div class="index-arrow">↗</div></div>
+        <div class="index-row"><div class="index-id">spark</div><div class="index-name">Sparkline</div><div class="index-arrow">↗</div></div>
+        <div class="index-row"><div class="index-id">widget</div><div class="index-name">Widget (Custom)</div><div class="index-arrow">↗</div></div>
+      </div>
+    </div>
+
+    <!-- Conditionals -->
+    <div class="api-block">
+      <div class="api-name">Conditionals</div>
+      <div class="api-desc">Show and hide nodes based on pointer values. Evaluated at render time.</div>
+      <table class="api-table">
+        <thead><tr><th>Function</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>If(&bool).Then(node)</code></td><td>Conditional render</td></tr>
+          <tr><td><code>If(&bool).Then(a).Else(b)</code></td><td>Conditional with fallback</td></tr>
+          <tr><td><code>Switch(&val).Case(v, node)</code></td><td>Multi-value conditional</td></tr>
+          <tr><td><code>ForEach(&slice, fn)</code></td><td>Dynamic list from pointer to slice</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Style -->
+    <div class="api-block">
+      <div class="api-name">Style</div>
+      <div class="api-desc">Visual properties. Applied directly or cascaded from parent.</div>
+      <div class="code">s := forme.<span class="fn">Style</span>{
+    <span class="tp">Bold</span>:       <span class="kw">true</span>,
+    <span class="tp">FG</span>:         forme.<span class="fn">RGB</span>(200, 180, 160),
+    <span class="tp">Border</span>:     forme.<span class="fn">BorderRounded</span>,
+    <span class="tp">PaddingX</span>:   2,
+    <span class="tp">PaddingY</span>:   1,
+}
+
+forme.<span class="fn">CascadeStyle</span>(&s, child)</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<div class="zone-dark">
+  <div class="zone-inner">
+    <footer>
+      <div class="footer-inner">
+        <span>forme — built by <a href="#">Pete Griffiths</a></span>
+        <span><a href="https://github.com/petegriffiths/forme">source</a></span>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+// pattern data
+const patterns = [
+  { id: 'P01', name: 'Terminal as Canvas', scale: 'philosophy', conf: 2,
+    problem: 'The terminal is treated as a line printer. Output scrolls. Layout is an afterthought.',
+    solution: 'Treat the terminal as a fixed-size canvas. Every cell is addressable. The screen is a frame, not a stream.',
+    up: [], down: ['S01', 'S03'], peer: ['P02', 'P03'] },
+
+  { id: 'P02', name: 'Composition', scale: 'philosophy', conf: 2,
+    problem: 'Inheritance hierarchies couple components to their parents. Change cascades unpredictably.',
+    solution: 'Build interfaces by composing small functions. No inheritance, no base classes. VBox, HBox, and nesting.',
+    up: [], down: ['S01', 'S02'], peer: ['P01', 'P03'] },
+
+  { id: 'P03', name: 'Pointer Semantics', scale: 'philosophy', conf: 2,
+    problem: 'Reactive frameworks rebuild or diff virtual trees on every state change.',
+    solution: 'Pass pointers to values. The template is built once. At render time, pointers are dereferenced.',
+    up: [], down: ['S04', 'C05'], peer: ['P02'] },
+
+  { id: 'S01', name: 'Layout Engine', scale: 'systems', conf: 2,
+    problem: 'Terminal UIs need spatial arrangement but have no CSS, no browser layout engine.',
+    solution: 'A flex-like layout pass. VBox and HBox divide space. Grow fills remainder. Percentage widths.',
+    up: ['P01', 'P02'], down: ['C01', 'C02', 'C06'], peer: ['S02', 'S03'] },
+
+  { id: 'S02', name: 'Event Propagation', scale: 'systems', conf: 1,
+    problem: 'Key events need to reach the right handler without global state or event buses.',
+    solution: 'Events propagate through the view tree. Handlers are registered at any level. Most specific wins.',
+    up: ['P02'], down: ['C03', 'C07'], peer: ['S01', 'S04'] },
+
+  { id: 'S03', name: 'Render Pipeline', scale: 'systems', conf: 2,
+    problem: 'Naively redrawing every cell on every frame causes flicker and wastes bandwidth.',
+    solution: 'Double-buffer. Diff current frame against previous. Only write changed cells to the terminal.',
+    up: ['P01'], down: ['D01', 'D03'], peer: ['S01'] },
+
+  { id: 'S04', name: 'State Binding', scale: 'systems', conf: 1,
+    problem: 'Components need access to application state without dependency injection or context objects.',
+    solution: 'Components receive pointers at build time. No binding framework — just dereferencing.',
+    up: ['P03'], down: ['C04', 'C05'], peer: ['S02'] },
+
+  { id: 'C01', name: 'Text', scale: 'components', conf: 2,
+    problem: 'Need to render static and dynamic string content with style support.',
+    solution: 'Text() accepts strings, pointers, or format functions. Styled via CascadeStyle.',
+    up: ['S01'], down: ['D01'], peer: ['C02'] },
+
+  { id: 'C02', name: 'List', scale: 'components', conf: 2,
+    problem: 'Scrollable, selectable collections with keyboard navigation.',
+    solution: 'List with BindNav for arrow keys, BindDelete for removal. FilterList adds fuzzy search.',
+    up: ['S01', 'S02'], down: ['D01'], peer: ['C03', 'C01'] },
+
+  { id: 'C03', name: 'Input', scale: 'components', conf: 1,
+    problem: 'Text input that coexists with application key handlers.',
+    solution: 'Input captures when focused. Blur returns control to parent handlers.',
+    up: ['S02'], down: ['D01'], peer: ['C07', 'C02'] },
+
+  { id: 'C04', name: 'Tabs', scale: 'components', conf: 1,
+    problem: 'Switching between content panels with keyboard shortcuts.',
+    solution: 'Tabs component with header labels and indexed content. BindNav for switching.',
+    up: ['S04', 'S01'], down: ['D01'], peer: ['C06'] },
+
+  { id: 'C05', name: 'Conditionals', scale: 'components', conf: 2,
+    problem: 'Parts of the view tree should appear or disappear based on state.',
+    solution: 'If(&bool).Then(node). Switch(&val).Case(). ForEach(&slice). All pointer-based.',
+    up: ['P03', 'S04'], down: [], peer: ['C01'] },
+
+  { id: 'C06', name: 'Layer', scale: 'components', conf: 1,
+    problem: 'Content larger than the viewport needs scrolling without page-level scroll.',
+    solution: 'Layer wraps content in a virtual buffer. LayerView renders a viewport window into it.',
+    up: ['S01'], down: ['D01', 'D02'], peer: ['C04'] },
+
+  { id: 'C07', name: 'Jump Labels', scale: 'components', conf: 1,
+    problem: 'Tab-order navigation is linear and slow. Mouse breaks the keyboard contract.',
+    solution: 'Overlay short character sequences on focusable elements. Type the label to jump.',
+    up: ['S02', 'S01'], down: ['D01', 'D04'], peer: ['C03'] },
+
+  { id: 'D01', name: 'Cell Painting', scale: 'details', conf: 2,
+    problem: 'Every visual element must ultimately become character cells with attributes.',
+    solution: 'Buffer.Set(x, y, Cell). Cell carries rune, foreground, background, attributes.',
+    up: ['C01', 'C02', 'C03', 'C06', 'C07', 'S03'], down: [], peer: ['D02', 'D03'] },
+
+  { id: 'D02', name: 'Borders', scale: 'details', conf: 2,
+    problem: 'Box drawing requires consistent character sets and corner handling.',
+    solution: 'BorderSingle, BorderRounded, BorderDouble, BorderHeavy. Applied via Style.',
+    up: ['C06'], down: [], peer: ['D01', 'D03'] },
+
+  { id: 'D03', name: 'Color System', scale: 'details', conf: 2,
+    problem: 'Terminal color support varies — 16 colors, 256, true color.',
+    solution: 'Named(), Palette(), RGB(). Automatic downgrade based on terminal capability.',
+    up: ['S03'], down: [], peer: ['D01', 'D04'] },
+
+  { id: 'D04', name: 'Text Attributes', scale: 'details', conf: 1,
+    problem: 'Bold, dim, underline, italic — need composable attribute application.',
+    solution: 'Attributes set on Style. Cascade means children inherit parent attributes.',
+    up: ['C07'], down: [], peer: ['D03', 'D01'] },
+];
+
+const scaleOrder = ['philosophy', 'systems', 'components', 'details'];
+const scaleLabels = { philosophy: 'Philosophy', systems: 'Systems', components: 'Components', details: 'Details' };
+
+// build lattice grid
+const grid = document.getElementById('lattice-grid');
+
+scaleOrder.forEach(scale => {
+  const row = document.createElement('div');
+  row.className = 'lattice-scale';
+
+  const label = document.createElement('div');
+  label.className = 'scale-label';
+  label.textContent = scaleLabels[scale];
+  row.appendChild(label);
+
+  const nodes = document.createElement('div');
+  nodes.className = 'scale-nodes';
+
+  patterns.filter(p => p.scale === scale).forEach(p => {
+    const node = document.createElement('div');
+    node.className = 'node';
+    node.dataset.id = p.id;
+    node.innerHTML = `<div class="node-id">${p.id}</div>${p.name}`;
+    node.addEventListener('click', () => selectPattern(p.id));
+    nodes.appendChild(node);
+  });
+
+  row.appendChild(nodes);
+  grid.appendChild(row);
+});
+
+function selectPattern(id) {
+  const p = patterns.find(x => x.id === id);
+  if (!p) return;
+
+  // clear all states
+  document.querySelectorAll('.node').forEach(n => {
+    n.classList.remove('active', 'connected');
+  });
+
+  // highlight active
+  const active = document.querySelector(`.node[data-id="${id}"]`);
+  if (active) active.classList.add('active');
+
+  // highlight connected
+  const allConnected = [...p.up, ...p.down, ...p.peer];
+  allConnected.forEach(cid => {
+    const el = document.querySelector(`.node[data-id="${cid}"]`);
+    if (el) el.classList.add('connected');
+  });
+
+  // fill detail
+  document.getElementById('d-id').textContent = p.id;
+  document.getElementById('d-name').textContent = p.name;
+
+  const conf = document.getElementById('d-conf');
+  conf.innerHTML = '';
+  for (let i = 0; i < 2; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'conf-dot ' + (i < p.conf ? 'on' : 'off');
+    conf.appendChild(dot);
+  }
+
+  document.getElementById('d-problem').textContent = p.problem;
+  document.getElementById('d-solution').innerHTML = `<span class="therefore">Therefore:</span> ${p.solution}`;
+
+  const tags = document.getElementById('d-tags');
+  tags.innerHTML = '';
+
+  p.up.forEach(cid => {
+    const t = document.createElement('span');
+    t.className = 'tag tag-up';
+    const cp = patterns.find(x => x.id === cid);
+    t.textContent = `↑ ${cp ? cp.name : cid}`;
+    t.addEventListener('click', (e) => { e.stopPropagation(); selectPattern(cid); });
+    tags.appendChild(t);
+  });
+
+  p.peer.forEach(cid => {
+    const t = document.createElement('span');
+    t.className = 'tag tag-pr';
+    const cp = patterns.find(x => x.id === cid);
+    t.textContent = `↔ ${cp ? cp.name : cid}`;
+    t.addEventListener('click', (e) => { e.stopPropagation(); selectPattern(cid); });
+    tags.appendChild(t);
+  });
+
+  p.down.forEach(cid => {
+    const t = document.createElement('span');
+    t.className = 'tag tag-dn';
+    const cp = patterns.find(x => x.id === cid);
+    t.textContent = `↓ ${cp ? cp.name : cid}`;
+    t.addEventListener('click', (e) => { e.stopPropagation(); selectPattern(cid); });
+    tags.appendChild(t);
+  });
+
+  document.getElementById('lattice-detail').classList.add('vis');
+}
+
+// nav scroll behavior
+const navEl = document.getElementById('nav');
+const darkZone = document.getElementById('start');
+
+function updateNav() {
+  const scrollY = window.scrollY;
+  const darkTop = darkZone.offsetTop - 48;
+
+  if (scrollY > 20) {
+    navEl.classList.add('scrolled');
+  } else {
+    navEl.classList.remove('scrolled');
+  }
+
+  if (scrollY >= darkTop) {
+    navEl.classList.add('in-dark');
+  } else {
+    navEl.classList.remove('in-dark');
+  }
+}
+
+window.addEventListener('scroll', updateNav, { passive: true });
+updateNav();
+</script>
+</body>
+</html>
