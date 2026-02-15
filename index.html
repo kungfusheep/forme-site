@@ -828,95 +828,90 @@ const patterns = [
   { id: 'P01', name: 'Compile Once, Render Forever', scale: 'philosophy', conf: 2,
     problem: 'Rebuilding the UI tree every frame causes allocation pressure, reflection overhead, and unpredictable latency in terminal rendering.',
     solution: 'Build() compiles the declarative view tree into a flat Op array once at SetView() time. All reflection happens at compile time. Execute() is pure pointer arithmetic with zero allocation in steady state.',
-    up: [], down: ['S01', 'S02', 'S03', 'S05', 'S06'], peer: ['P02'] },
+    up: [], down: ['S01', 'S02', 'S06'], peer: ['P02'] },
 
   { id: 'P02', name: 'Pointer Semantics', scale: 'philosophy', conf: 2,
     problem: 'Reactive UI frameworks require subscription systems, diffing algorithms, or signals to detect state changes — adding complexity and indirection.',
     solution: 'State is updated by mutating values behind pointers (*string, *int, *bool, *[]T). The compiled template dereferences these pointers every frame. No subscriptions, no diffing of state — just pointer reads.',
-    up: [], down: ['S02', 'S03', 'S04'], peer: ['P01'] },
+    up: [], down: ['S02'], peer: ['P01'] },
 
   { id: 'P03', name: 'Declarative Composition', scale: 'philosophy', conf: 2,
     problem: 'Imperative UI code tangles layout, styling, event handling, and state management into unreadable spaghetti.',
     solution: 'Views are declared as composable trees using function-type-with-methods constructors (VBox.Fill(Red).Gap(2)(children...)). Components declare their key bindings as data via the bindable interface, wired automatically at compile time.',
-    up: [], down: ['S01', 'S04', 'S06', 'C01', 'C02', 'C03', 'C04', 'C05', 'C06', 'C07'], peer: [] },
-
-  { id: 'P04', name: 'Zero-Cost Terminal Abstraction', scale: 'philosophy', conf: 2,
-    problem: 'Terminal programs waste bandwidth and cause flicker by rewriting unchanged content, and pay syscall overhead on every escape sequence.',
-    solution: 'Double-buffered diff rendering compares back buffer against front buffer cell-by-cell, emitting only changes. All output is batched into a single write() syscall per frame.',
-    up: [], down: ['S05'], peer: [] },
+    up: [], down: ['S01', 'S04'], peer: [] },
 
   // systems
   { id: 'S01', name: 'Template Compiler', scale: 'systems', conf: 2,
     problem: 'A declarative view tree made of Go structs and interfaces cannot be executed efficiently without transformation — runtime type switches on every frame would be prohibitive.',
-    solution: 'The compile() method performs a ~40-type switch once, producing a flat []Op array with a parallel []Geom array. Control flow (If/ForEach/Switch) compiles branches as sub-Templates. ForEach uses unsafe pointer offsets computed from a prototype element at compile time.',
-    up: ['P01', 'P03'], down: ['C01', 'C02', 'C03', 'C04', 'C05', 'C06', 'C07'], peer: ['S02', 'S03', 'S04', 'S05', 'S06'] },
+    solution: 'The compile() method performs a ~50-type switch once, producing a flat []Op array with a parallel []Geom array. Control flow (If/ForEach/Switch) compiles branches as sub-Templates. ForEach uses unsafe pointer offsets computed from a prototype element at compile time.',
+    up: ['P01', 'P03'], down: ['S03'], peer: ['S02'] },
 
   { id: 'S02', name: 'Three-Way Value Resolution', scale: 'systems', conf: 2,
     problem: 'Values in a compiled template need to support static content, dynamic pointers, AND per-element rebinding inside ForEach — three distinct resolution strategies from one data structure.',
     solution: 'Every value-carrying Op exists in three variants: Static (OpText), Ptr (OpTextPtr — *string dereferenced each frame), and Off (OpTextOff — uintptr offset added to ForEach element base via unsafe.Add). Conditions use evaluateWithBase() for the same offset trick.',
-    up: ['P01', 'P02'], down: [], peer: ['S01', 'S03'] },
+    up: ['P01', 'P02'], down: [], peer: ['S01'] },
 
   { id: 'S03', name: 'Layout Engine', scale: 'systems', conf: 2,
     problem: 'Terminal UIs need CSS-like flex layout but cannot afford the complexity or allocation cost of a full layout engine.',
-    solution: 'A four-phase pipeline: top-down width distribution with two-pass HBox flex, bottom-up height computation, top-down flex grow distribution, top-down render. All phases share scratch buffers for zero allocation.',
-    up: ['P01', 'P02'], down: ['C01', 'D03'], peer: ['S01', 'S02', 'S05'] },
+    solution: 'A four-phase pipeline: top-down width distribution, bottom-up height computation, top-down flex grow distribution, top-down render. All phases operate on the compiled Op/Geom arrays with shared scratch buffers for zero allocation.',
+    up: ['S01'], down: [], peer: ['S05'] },
 
   { id: 'S04', name: 'Event System', scale: 'systems', conf: 2,
     problem: 'Terminal UIs need modal key handling, vim-style multi-key sequences, text input routing, and focus management — wiring this manually per component is error-prone.',
     solution: 'riffkey provides a Router stack with push/pop for modal input. Components declare bindings as data (bindable interface), auto-wired at compile time. FocusManager coordinates Tab/Shift-Tab cycling and routes unmatched keys to the focused component.',
-    up: ['P02', 'P03'], down: ['C02', 'C05', 'C06', 'D05'], peer: ['S01', 'S06'] },
+    up: ['P03'], down: ['D05'], peer: ['S06'] },
 
   { id: 'S05', name: 'Render Pipeline', scale: 'systems', conf: 2,
     problem: 'Getting cells from a compiled template to the terminal requires careful orchestration of buffering, diffing, cursor management, and output batching.',
     solution: 'App.render() orchestrates: Execute() into BufferPool → CopyFrom() to Screen back buffer → Flush() diffs against front buffer → FlushBuffer() writes everything in one syscall → BufferPool.Swap() clears via partial ClearDirty().',
-    up: ['P01', 'P04'], down: ['D01', 'D02', 'D04'], peer: ['S01', 'S03'] },
+    up: [], down: ['D01', 'D02'], peer: ['S03'] },
 
   { id: 'S06', name: 'View Routing', scale: 'systems', conf: 1,
     problem: 'Applications with multiple screens need view switching, view-specific key bindings, and modal overlays without recompiling templates.',
     solution: 'Named views each get their own compiled Template and riffkey Router. Go() swaps the active template and router. PushView()/PopView() manage a view stack for modal overlays.',
-    up: ['P01', 'P03'], down: [], peer: ['S01', 'S04'] },
+    up: ['P01'], down: [], peer: ['S04'] },
 
   // components
   { id: 'C01', name: 'Containers & Layout Primitives', scale: 'components', conf: 2,
     problem: 'Building complex layouts requires composable containers with flex, borders, margins, gaps, style cascade, and content sizing — plus an escape hatch for custom layouts.',
     solution: 'VBox/HBox with the function-type-with-methods pattern, supporting Fill, CascadeStyle, Gap, Border, Margin, Grow, FitContent, WidthPct. Arrange() provides custom LayoutFunc. Overlay for floating content.',
-    up: ['P03', 'S01', 'S03'], down: ['D03', 'D04'], peer: ['C02', 'C04'] },
+    up: [], down: ['D03', 'D04'], peer: ['C04'] },
 
   { id: 'C02', name: 'Lists & Selection', scale: 'components', conf: 2,
     problem: 'Navigable lists with selection, scrolling, custom rendering, and type-safe item access are a core building block that every TUI needs.',
     solution: 'Generic ListC[T] backed by *[]T with windowed scrolling, custom Render func, selection marker, and declarative BindNav/BindVimNav. CheckListC[T] extends with per-item checkboxes and struct tag inference.',
-    up: ['P03', 'S01', 'S04'], down: [], peer: ['C01', 'C05', 'C06'] },
+    up: [], down: ['C05'], peer: ['C06'] },
 
   { id: 'C03', name: 'Data Display', scale: 'components', conf: 2,
     problem: 'Displaying structured data (tables, sparklines, progress bars, leaders, trees) requires specialised rendering with alignment, formatting, and dynamic binding.',
     solution: 'AutoTable reflects struct fields into columns with functional ColumnOption presets (Number, Currency, Percent, Bytes, StyleThreshold). Sparkline, Progress with sub-character precision, Leader, and TreeView round out the toolkit.',
-    up: ['P03', 'S01'], down: ['D03', 'D04'], peer: ['C04'] },
+    up: [], down: [], peer: ['C04'] },
 
   { id: 'C04', name: 'Text & Rich Text', scale: 'components', conf: 2,
     problem: 'Terminal text needs per-character styling, text transforms, multi-span inline styling, and alignment — all within the pointer-binding reactive model.',
     solution: 'TextC with value-receiver chaining (.Bold().FG(Red)), Span-based RichTextNode for mixed inline styles, and helper functions (Rich, Bold, Dim, FG, BG). Style inheritance cascades through CascadeStyle on containers.',
-    up: ['P03', 'S01'], down: ['D04', 'D05'], peer: ['C01', 'C03'] },
+    up: [], down: [], peer: ['C01', 'C03'] },
 
   { id: 'C05', name: 'Filtering & Search', scale: 'components', conf: 2,
     problem: 'Interactive lists and logs need real-time fzf-style filtering that maintains index mapping back to the source data for correct item selection.',
     solution: 'Filter[T] provides generic fzf filtering with scored ranking and index mapping. FilterListC[T] composes Input + Filter + List into a single node. FilterLogC extends LogC with per-line filtering. Full fzf query syntax: fuzzy, exact, prefix, suffix, negation, AND/OR.',
-    up: ['P03', 'S01', 'S04'], down: [], peer: ['C02', 'C06', 'C07'] },
+    up: ['C02'], down: [], peer: ['C07'] },
 
   { id: 'C06', name: 'Forms & Input', scale: 'components', conf: 2,
     problem: 'Text input, checkboxes, radio buttons, and multi-field forms need focus management, keystroke routing, and state binding — composing many subsystems correctly.',
     solution: 'InputC wraps InputState with placeholder, mask, and FocusManager integration. Checkbox/Radio with pointer-bound state and declarative BindToggle/BindNav. FocusManager coordinates Tab/Shift-Tab cycling across focusable components.',
-    up: ['P03', 'S01', 'S04'], down: [], peer: ['C02', 'C05'] },
+    up: [], down: [], peer: ['C02'] },
 
   { id: 'C07', name: 'Layers & Scrolling', scale: 'components', conf: 1,
     problem: 'Content taller than the viewport needs pre-rendered off-screen buffers with scroll management, lazy re-rendering, and cursor coordinate translation.',
     solution: 'Layer provides a pre-rendered Buffer with scroll API, lazy Render callback on viewport width changes, and ScreenCursor() for coordinate translation. LogC extends Layer with io.Reader background ingestion and auto-scroll following.',
-    up: ['P03', 'S01'], down: ['D01'], peer: ['C05'] },
+    up: [], down: [], peer: ['C05'] },
 
   // details
   { id: 'D01', name: 'Double Buffer & Cell Grid', scale: 'details', conf: 2,
     problem: 'Rendering needs a drawable surface with dirty tracking, fast clearing, and double buffering to avoid tearing or redundant redraws.',
     solution: 'Buffer is a flat []Cell array with per-row dirty flags and dirtyMaxY partial-clear optimization. BufferPool alternates two buffers via atomic swap. Region provides zero-copy sub-buffer views.',
-    up: ['S05', 'C07'], down: [], peer: ['D02'] },
+    up: ['S05'], down: [], peer: ['D02'] },
 
   { id: 'D02', name: 'Terminal Protocol', scale: 'details', conf: 2,
     problem: 'Communicating with the terminal requires raw mode, ANSI escape sequences, signal handling, cursor management, and platform-specific ioctls.',
@@ -926,17 +921,17 @@ const patterns = [
   { id: 'D03', name: 'Borders & Box Drawing', scale: 'details', conf: 2,
     problem: 'Nested containers with borders produce junction characters that must merge correctly without explicit coordination between components.',
     solution: 'Automatic border merging via bitmask OR of edge flags. borderEdgesArray maps box-drawing runes to 4-bit edge flags, edgesToBorderArray maps merged flags back to junction characters. Three built-in styles: Single, Rounded, Double.',
-    up: ['S03', 'C01', 'C03'], down: [], peer: ['D04'] },
+    up: ['C01'], down: [], peer: [] },
 
   { id: 'D04', name: 'Style & Colour System', scale: 'details', conf: 2,
     problem: 'Terminal styling requires managing colours across four modes, text attributes as composable bitmasks, text transforms, alignment, and style inheritance.',
     solution: 'Style struct combines FG/BG/Fill Color, Attribute bitmask, TextTransform, and Align. Color supports Default/16/256/RGB. CascadeStyle *Style on containers enables dynamic theme switching via pointer. effectiveStyle() merges inherited attributes and colours.',
-    up: ['S05', 'C01', 'C03', 'C04'], down: [], peer: ['D03', 'D05'] },
+    up: ['C01'], down: [], peer: [] },
 
   { id: 'D05', name: 'Jump Labels', scale: 'details', conf: 2,
     problem: 'Keyboard-driven UIs need a way to target arbitrary screen locations without sequential navigation — the terminal equivalent of clicking.',
     solution: 'JumpMode collects targets during a render pass, assigns home-row-first labels, pushes a temporary riffkey Router handling multi-char input accumulation with partial matching. Jump wraps any component as a target.',
-    up: ['C04', 'S04'], down: [], peer: ['D04'] },
+    up: ['S04'], down: [], peer: [] },
 ];
 
 const scaleOrder = ['philosophy', 'systems', 'components', 'details'];
