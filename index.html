@@ -828,7 +828,7 @@ const patterns = [
   { id: 'P01', name: 'Compile Once, Render Forever', scale: 'philosophy', conf: 2,
     problem: 'Rebuilding the UI tree every frame causes allocation pressure, reflection overhead, and unpredictable latency in terminal rendering.',
     solution: 'Build() compiles the declarative view tree into a flat Op array once at SetView() time. All reflection happens at compile time. Execute() is pure pointer arithmetic with near-zero allocation in steady state.',
-    up: [], down: ['S01', 'S02', 'S06'], peer: ['P02'] },
+    up: [], down: ['S01', 'S02', 'S05', 'S06'], peer: ['P02'] },
 
   { id: 'P02', name: 'Pointer Semantics', scale: 'philosophy', conf: 2,
     problem: 'Reactive UI frameworks require subscription systems, diffing algorithms, or signals to detect state changes — adding complexity and indirection.',
@@ -854,7 +854,7 @@ const patterns = [
   { id: 'S03', name: 'Layout Engine', scale: 'systems', conf: 2,
     problem: 'Terminal UIs need CSS-like flex layout but cannot afford the complexity or allocation cost of a full layout engine.',
     solution: 'A four-phase pipeline: top-down width distribution, bottom-up height computation, top-down flex grow distribution, top-down render. All phases operate on the compiled Op/Geom arrays with shared scratch buffers for near-zero allocation.',
-    up: ['S01'], down: [], peer: ['S05'] },
+    up: ['S01'], down: ['C01'], peer: ['S05'] },
 
   { id: 'S04', name: 'Event System', scale: 'systems', conf: 2,
     problem: 'Terminal UIs need modal key handling, vim-style multi-key sequences, text input routing, and focus management — wiring this manually per component is error-prone.',
@@ -864,7 +864,7 @@ const patterns = [
   { id: 'S05', name: 'Render Pipeline', scale: 'systems', conf: 2,
     problem: 'Getting cells from a compiled template to the terminal requires careful orchestration of buffering, diffing, cursor management, and output batching.',
     solution: 'App.render() orchestrates: Execute() into BufferPool → CopyFrom() to Screen back buffer → Flush() diffs against front buffer → FlushBuffer() writes everything in one syscall → BufferPool.Swap() clears via partial ClearDirty().',
-    up: [], down: ['D01', 'D02'], peer: ['S03'] },
+    up: ['P01'], down: ['D01', 'D02'], peer: ['S03'] },
 
   { id: 'S06', name: 'View Routing', scale: 'systems', conf: 1,
     problem: 'Applications with multiple screens need view switching, view-specific key bindings, and modal overlays without recompiling templates.',
@@ -875,7 +875,7 @@ const patterns = [
   { id: 'C01', name: 'Containers & Layout Primitives', scale: 'components', conf: 2,
     problem: 'Building complex layouts requires composable containers with flex, borders, margins, gaps, style cascade, and content sizing — plus an escape hatch for custom layouts.',
     solution: 'VBox/HBox with the function-type-with-methods pattern, supporting Fill, CascadeStyle, Gap, Border, Margin, Grow, FitContent, WidthPct. Arrange() provides custom LayoutFunc. Overlay for floating content.',
-    up: [], down: ['D03', 'D04'], peer: ['C04'] },
+    up: ['S03'], down: ['D03', 'D04'], peer: ['C04'] },
 
   { id: 'C02', name: 'Lists & Selection', scale: 'components', conf: 2,
     problem: 'Navigable lists with selection, scrolling, custom rendering, and type-safe item access are a core building block that every TUI needs.',
