@@ -827,7 +827,7 @@ const patterns = [
   // philosophy
   { id: 'P01', name: 'Compile Once, Render Forever', scale: 'philosophy', conf: 2,
     problem: 'Rebuilding the UI tree every frame causes allocation pressure, reflection overhead, and unpredictable latency in terminal rendering.',
-    solution: 'Build() compiles the declarative view tree into a flat Op array once at SetView() time. All reflection happens at compile time. Execute() is pure pointer arithmetic with zero allocation in steady state.',
+    solution: 'Build() compiles the declarative view tree into a flat Op array once at SetView() time. All reflection happens at compile time. Execute() is pure pointer arithmetic with near-zero allocation in steady state.',
     up: [], down: ['S01', 'S02', 'S06'], peer: ['P02'] },
 
   { id: 'P02', name: 'Pointer Semantics', scale: 'philosophy', conf: 2,
@@ -848,18 +848,18 @@ const patterns = [
 
   { id: 'S02', name: 'Three-Way Value Resolution', scale: 'systems', conf: 2,
     problem: 'Values in a compiled template need to support static content, dynamic pointers, AND per-element rebinding inside ForEach — three distinct resolution strategies from one data structure.',
-    solution: 'Every value-carrying Op exists in three variants: Static (OpText), Ptr (OpTextPtr — *string dereferenced each frame), and Off (OpTextOff — uintptr offset added to ForEach element base via unsafe.Add). Conditions use evaluateWithBase() for the same offset trick.',
+    solution: 'Every value-carrying Op exists in three variants: Static (OpText), Ptr (OpTextPtr — *string dereferenced each frame), and Off (OpTextOff — uintptr offset added to ForEach element base via unsafe.Pointer arithmetic). Conditions use evaluateWithBase() with unsafe.Add for the same trick.',
     up: ['P01', 'P02'], down: [], peer: ['S01'] },
 
   { id: 'S03', name: 'Layout Engine', scale: 'systems', conf: 2,
     problem: 'Terminal UIs need CSS-like flex layout but cannot afford the complexity or allocation cost of a full layout engine.',
-    solution: 'A four-phase pipeline: top-down width distribution, bottom-up height computation, top-down flex grow distribution, top-down render. All phases operate on the compiled Op/Geom arrays with shared scratch buffers for zero allocation.',
+    solution: 'A four-phase pipeline: top-down width distribution, bottom-up height computation, top-down flex grow distribution, top-down render. All phases operate on the compiled Op/Geom arrays with shared scratch buffers for near-zero allocation.',
     up: ['S01'], down: [], peer: ['S05'] },
 
   { id: 'S04', name: 'Event System', scale: 'systems', conf: 2,
     problem: 'Terminal UIs need modal key handling, vim-style multi-key sequences, text input routing, and focus management — wiring this manually per component is error-prone.',
     solution: 'riffkey provides a Router stack with push/pop for modal input. Components declare bindings as data (bindable interface), auto-wired at compile time. FocusManager coordinates Tab/Shift-Tab cycling and routes unmatched keys to the focused component.',
-    up: ['P03'], down: ['D05'], peer: ['S06'] },
+    up: ['P03'], down: ['C06', 'D05'], peer: ['S06'] },
 
   { id: 'S05', name: 'Render Pipeline', scale: 'systems', conf: 2,
     problem: 'Getting cells from a compiled template to the terminal requires careful orchestration of buffering, diffing, cursor management, and output batching.',
@@ -900,7 +900,7 @@ const patterns = [
   { id: 'C06', name: 'Forms & Input', scale: 'components', conf: 2,
     problem: 'Text input, checkboxes, radio buttons, and multi-field forms need focus management, keystroke routing, and state binding — composing many subsystems correctly.',
     solution: 'InputC wraps InputState with placeholder, mask, and FocusManager integration. Checkbox/Radio with pointer-bound state and declarative BindToggle/BindNav. FocusManager coordinates Tab/Shift-Tab cycling across focusable components.',
-    up: [], down: [], peer: ['C02'] },
+    up: ['S04'], down: [], peer: ['C02'] },
 
   { id: 'C07', name: 'Layers & Scrolling', scale: 'components', conf: 1,
     problem: 'Content taller than the viewport needs pre-rendered off-screen buffers with scroll management, lazy re-rendering, and cursor coordinate translation.',
