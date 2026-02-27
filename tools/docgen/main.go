@@ -202,7 +202,7 @@ func exampleDoc(fset *token.FileSet, e *doc.Example) ExampleDoc {
 	var buf bytes.Buffer
 	if e.Code != nil {
 		if err := format.Node(&buf, fset, e.Code); err == nil {
-			// format.Node on a BlockStmt gives "{\n...\n}" — strip the braces
+			// format.Node on a BlockStmt gives "{\n...\n}", strip the braces
 			code := buf.String()
 			code = strings.TrimPrefix(code, "{\n")
 			code = strings.TrimSuffix(code, "\n}")

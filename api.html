@@ -165,13 +165,25 @@
     z-index: 90;
     max-width: 1060px;
     margin: 0 auto;
-    padding: 12px var(--s5) 0;
-    background: var(--bg-dark);
+    padding: 12px var(--s5) 12px;
   }
 
   .search-inner {
+    --aura: 0;
     position: relative;
     isolation: isolate;
+    box-shadow:
+      0 0 calc(12px * var(--aura)) calc(4px * var(--aura)) var(--bg-dark),
+      0 calc(2px * var(--aura)) calc(16px * var(--aura)) calc(3px * var(--aura)) rgba(0,0,0,calc(0.5 * var(--aura))),
+      calc(-2px * var(--aura)) calc(-1px * var(--aura)) calc(10px * var(--aura)) calc(2px * var(--aura)) var(--bg-dark);
+    border-radius: 6px;
+    transition: box-shadow 0.4s ease;
+  }
+  .search-inner.active {
+    box-shadow:
+      0 0 30px 16px var(--bg-dark),
+      0 4px 45px 12px rgba(0,0,0,0.4),
+      -5px -2px 25px 8px var(--bg-dark);
   }
   .search-inner::before {
     content: '';
@@ -2173,6 +2185,16 @@ function copyInstall(el) {
   });
 
   const searchInner = document.querySelector('.search-inner');
+
+  // roll in the dark aura as user scrolls past first 100px
+  let lastAura = 0;
+  window.addEventListener('scroll', () => {
+    const t = Math.min(1, window.scrollY / 100);
+    if (t !== lastAura) {
+      lastAura = t;
+      searchInner.style.setProperty('--aura', t.toFixed(2));
+    }
+  }, { passive: true });
 
   searchInput.addEventListener('focus', () => {
     searchHint.classList.add('hidden');
