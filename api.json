@@ -410,7 +410,7 @@
       "constructors": [
         {
           "name": "AutoTable",
-          "doc": "AutoTable creates a table from a slice of structs.\nPass a slice like []MyStruct or []*MyStruct.\n",
+          "doc": "AutoTable creates a table directly from a slice of structs.\nPass a plain slice for a static snapshot, or a pointer (\u0026items) for reactive updates.\nColumns are derived from exported struct fields; use .Columns() to select and order them.\n",
           "signature": "func AutoTable(data any) AutoTableC",
           "examples": [
             {
@@ -532,7 +532,7 @@
     },
     {
       "name": "BlendMode",
-      "doc": "",
+      "doc": "BlendMode controls how two colours are combined during post-processing.\nUse with WithBlend to wrap any PostProcess effect.\n",
       "decl": "type BlendMode int",
       "consts": [
         {
@@ -553,7 +553,7 @@
     },
     {
       "name": "BoolValidator",
-      "doc": "BoolValidator validates a boolean value.\n",
+      "doc": "BoolValidator validates a boolean value. Pass to Checkbox().Validate().\nReturn nil for valid, non-nil error for the message to display.\n",
       "decl": "type BoolValidator func(bool) error"
     },
     {
@@ -925,7 +925,7 @@
       "constructors": [
         {
           "name": "CheckList",
-          "doc": "CheckList creates a list where each item has a checkbox.\n",
+          "doc": "CheckList creates a navigable checklist from a bound slice.\nItems should have struct tags `glyph:\"checked\"` and `glyph:\"render\"`,\nor use .Checked(func(*T) *bool) and .Render(func(*T) any) to configure manually.\n",
           "signature": "func CheckList[T any](items *[]T) *CheckListC[T]",
           "examples": [
             {
@@ -974,7 +974,7 @@
         },
         {
           "name": "Checked",
-          "doc": "Checked sets the function to get the checked state for each item.\n",
+          "doc": "Checked provides the bool pointer that controls each item's checkbox.\nfn: func(item *T) *bool — return a pointer to the item's checked field.\n",
           "signature": "func (c *CheckListC[T]) Checked(fn func(*T) *bool) *CheckListC[T]",
           "recv": "*CheckListC[T]"
         },
@@ -1004,7 +1004,7 @@
         },
         {
           "name": "Handle",
-          "doc": "Handle registers a key binding that passes the currently selected item\nto the callback. If nothing is selected, the callback is not called.\n",
+          "doc": "Handle registers a key binding that acts on the currently selected item.\nfn: func(item *T) — receives a pointer to the selected item (skipped if empty).\n",
           "signature": "func (c *CheckListC[T]) Handle(key string, fn func(*T)) *CheckListC[T]",
           "recv": "*CheckListC[T]"
         },
@@ -1076,7 +1076,7 @@
         },
         {
           "name": "Render",
-          "doc": "Render sets a custom render function for item content (after the checkbox).\n",
+          "doc": "Render customises how each item appears after its checkbox.\nfn: func(item *T) any — return a component tree for the item content.\n",
           "signature": "func (c *CheckListC[T]) Render(fn func(*T) any) *CheckListC[T]",
           "recv": "*CheckListC[T]"
         },
@@ -1395,12 +1395,12 @@
     },
     {
       "name": "Condition",
-      "doc": "Condition builder for type-safe conditionals.\nThe generic *T parameter enforces pointer-passing at compile time.\n",
+      "doc": "Condition provides type-safe conditional rendering.\nT must be comparable; use IfOrd for ordered comparisons (Gt, Lt, etc).\n",
       "decl": "type Condition[T comparable] struct {\n\t// contains filtered or unexported fields\n}",
       "constructors": [
         {
           "name": "If",
-          "doc": "If starts a conditional chain. Compile-time enforces pointer:\n\n\tIf(\u0026state.Count).Eq(0)    // works\n\tIf(state.Count).Eq(0)     // compile error: int is not *int\n",
+          "doc": "If conditionally renders content based on a pointer value.\nRequires a pointer — compile-time enforced via generics.\n\n\tIf(\u0026visible).Then(content)              // show when true\n\tIf(\u0026mode).Eq(\"edit\").Then(editor)       // show when equal\n\tIf(\u0026count).Ne(0).Then(badge).Else(Text(\"empty\"))\n",
           "signature": "func If[T comparable](ptr *T) *Condition[T]",
           "examples": [
             {
@@ -1445,7 +1445,7 @@
     },
     {
       "name": "ConditionEval",
-      "doc": "ConditionEval holds a comparable condition ready for Then/Else\n",
+      "doc": "ConditionEval holds a prepared condition awaiting Then/Else branches.\n",
       "decl": "type ConditionEval[T comparable] struct {\n\t// contains filtered or unexported fields\n}",
       "methods": [
         {
@@ -1582,12 +1582,12 @@
     },
     {
       "name": "FilterListC",
-      "doc": "FilterListC is a drop-in filterable list. it composes an input, a\nfilter and a list into a single template node.\n\nusage:\n\n\tFilterList(\u0026items, func(p *Profile) string { return p.Name }).\n\t    Placeholder(\"filter...\").\n\t    Render(func(p *Profile) any { return Text(p.Name) }).\n\t    MaxVisible(20).\n\t    Handle(\"\u003cEnter\u003e\", func(p *Profile) { ... })\n",
+      "doc": "",
       "decl": "type FilterListC[T any] struct {\n\t// contains filtered or unexported fields\n}",
       "constructors": [
         {
           "name": "FilterList",
-          "doc": "FilterList creates a filterable list.\nextract returns the searchable text for each item.\n",
+          "doc": "FilterList creates a filterable list that composes an input, a filter and a list.\nextract: func(*T) string — returns the searchable text for each item.\n\n\tFilterList(\u0026items, func(p *Profile) string { return p.Name }).\n\t    Placeholder(\"filter...\").\n\t    Render(func(p *Profile) any { return Text(p.Name) }).\n\t    MaxVisible(20).\n\t    Handle(\"\u003cEnter\u003e\", func(p *Profile) { ... })\n",
           "signature": "func FilterList[T any](source *[]T, extract func(*T) string) *FilterListC[T]",
           "examples": [
             {
@@ -1630,7 +1630,7 @@
         },
         {
           "name": "Handle",
-          "doc": "Handle registers a key binding that passes the currently selected\noriginal source item to the callback.\n",
+          "doc": "Handle registers a key binding that acts on the currently selected item.\nfn: func(item *T) — receives a pointer to the selected source item (skipped if empty).\n",
           "signature": "func (fl *FilterListC[T]) Handle(key string, fn func(*T)) *FilterListC[T]",
           "recv": "*FilterListC[T]"
         },
@@ -1684,7 +1684,7 @@
         },
         {
           "name": "Render",
-          "doc": "Render sets the render function for each list item.\n",
+          "doc": "Render customises how each item appears in the list.\nfn: func(item *T) any — return a component tree for the item row.\n",
           "signature": "func (fl *FilterListC[T]) Render(fn func(*T) any) *FilterListC[T]",
           "recv": "*FilterListC[T]"
         },
@@ -1722,12 +1722,12 @@
     },
     {
       "name": "FilterLogC",
-      "doc": "FilterLogC is a filterable log viewer. It composes an input and a log\ninto a single component with fzf-style filtering.\n\nusage:\n\n\tFilterLog(reader).\n\t    Placeholder(\"filter...\").\n\t    MaxLines(10000).\n\t    BindVimNav()\n",
+      "doc": "",
       "decl": "type FilterLogC struct {\n\t// contains filtered or unexported fields\n}",
       "constructors": [
         {
           "name": "FilterLog",
-          "doc": "FilterLog creates a filterable log viewer.\n",
+          "doc": "FilterLog creates a filterable log viewer that composes an input and a log\nwith fzf-style filtering. Type to filter log lines in real-time.\n\n\tFilterLog(reader).\n\t    Placeholder(\"filter...\").\n\t    MaxLines(10000).\n\t    BindVimNav()\n",
           "signature": "func FilterLog(r io.Reader) *FilterLogC"
         }
       ],
@@ -1963,7 +1963,7 @@
       "constructors": [
         {
           "name": "ForEach",
-          "doc": "ForEach renders a template for each item in a slice.\n",
+          "doc": "ForEach renders a template for each item in a slice.\ntemplate: func(item *T) any — return a component tree for each item.\nPointer fields inside *T are reactive; mutate and re-render to update.\n\n\tForEach(\u0026todos, func(t *Todo) any {\n\t    return HBox(Text(\u0026t.Name), Text(\u0026t.Status))\n\t})\n",
           "signature": "func ForEach[T any](items *[]T, template func(item *T) any) ForEachC[T]",
           "examples": [
             {
@@ -1981,7 +1981,7 @@
     },
     {
       "name": "FormC",
-      "doc": "FormC is a higher-order form component that arranges labeled fields\nin a vertical layout with aligned labels and automatic focus management.\n\nusage:\n\n\tForm.LabelBold().OnSubmit(register)(\n\t    Field(\"Name\", Input().Placeholder(\"Enter your name\")),\n\t    Field(\"Email\", Input().Placeholder(\"you@example.com\")),\n\t    Field(\"Password\", Input().Placeholder(\"password\").Mask('*')),\n\t)\n",
+      "doc": "",
       "decl": "type FormC struct {\n\t// contains filtered or unexported fields\n}",
       "methods": [
         {
@@ -2012,7 +2012,7 @@
     },
     {
       "name": "FormFn",
-      "doc": "FormFn is a configurable constructor for forms.\nConfigure with methods, then call with fields — same pattern as VBox/HBox.\n",
+      "doc": "",
       "decl": "type FormFn func(fields ...FormField) *FormC",
       "methods": [
         {
@@ -2090,7 +2090,7 @@
       ],
       "vars": [
         {
-          "doc": "Form creates a form from labeled fields.\nAutomatically creates a FocusManager and wires any focusable controls.\n",
+          "doc": "Form creates a form from labeled fields with aligned labels\nand automatic focus management. Configure with methods, then call with fields.\n\n\tForm.LabelBold().OnSubmit(register)(\n\t    Field(\"Name\", Input().Placeholder(\"Enter your name\")),\n\t    Field(\"Email\", Input().Placeholder(\"you@example.com\")),\n\t    Field(\"Password\", Input().Placeholder(\"password\").Mask('*')),\n\t)\n",
           "names": [
             "Form"
           ],
@@ -2254,7 +2254,7 @@
       ],
       "vars": [
         {
-          "doc": "HBox is the horizontal container constructor\n",
+          "doc": "HBox arranges children in a horizontal row.\nUse method chaining to configure before calling with children:\n\n\tHBox.Gap(2)(Text(\"left\"), Space(), Text(\"right\"))\n",
           "names": [
             "HBox"
           ],
@@ -2565,7 +2565,7 @@
       "constructors": [
         {
           "name": "Jump",
-          "doc": "Jump wraps a child component as a jump target.\n",
+          "doc": "Jump wraps a child component as a jump target.\nWhen jump mode is active, a label appears at this position; typing it calls onSelect.\n",
           "signature": "func Jump(child any, onSelect func()) JumpC"
         }
       ],
@@ -2866,7 +2866,7 @@
       "constructors": [
         {
           "name": "LayerView",
-          "doc": "LayerView displays a pre-rendered layer with scrolling support.\n",
+          "doc": "LayerView displays a scrollable, pre-rendered layer within the view tree.\nUse for large content that should scroll independently of the main layout.\n",
           "signature": "func LayerView(layer *Layer) LayerViewC"
         }
       ],
@@ -2940,7 +2940,7 @@
       "constructors": [
         {
           "name": "Leader",
-          "doc": "Leader creates a label.....value display with fill characters.\n",
+          "doc": "Leader creates a label.....value display with fill characters.\nAccepts string or *string for reactive updates.\n",
           "signature": "func Leader(label, value any) LeaderC",
           "examples": [
             {
@@ -3019,7 +3019,7 @@
       "constructors": [
         {
           "name": "List",
-          "doc": "List creates a selectable list with internal selection management.\nUse .Render() to provide custom item rendering.\n",
+          "doc": "List creates a navigable list from a bound slice.\nUse .Render(func(*T) any) to customize how items appear,\n.Handle(key, func(*T)) for per-item key actions,\nand .BindNav(\"j\",\"k\") or .BindVimNav() for keyboard navigation.\n",
           "signature": "func List[T any](items *[]T) *ListC[T]",
           "examples": [
             {
@@ -3086,7 +3086,7 @@
         },
         {
           "name": "Handle",
-          "doc": "Handle registers a key binding that passes the currently selected item\nto the callback. If nothing is selected, the callback is not called.\n",
+          "doc": "Handle registers a key binding that acts on the currently selected item.\nfn: func(item *T) — receives a pointer to the selected item (skipped if empty).\n",
           "signature": "func (l *ListC[T]) Handle(key string, fn func(*T)) *ListC[T]",
           "recv": "*ListC[T]"
         },
@@ -3140,7 +3140,7 @@
         },
         {
           "name": "OnSelect",
-          "doc": "OnSelect registers a callback that fires when the selection changes.\n",
+          "doc": "OnSelect fires when the user moves to a different item.\nfn: func(item *T) — receives a pointer to the newly selected item.\n",
           "signature": "func (l *ListC[T]) OnSelect(fn func(*T)) *ListC[T]",
           "recv": "*ListC[T]"
         },
@@ -3164,7 +3164,7 @@
         },
         {
           "name": "Render",
-          "doc": "Render sets a custom render function for each item.\n",
+          "doc": "Render customises how each item appears in the list.\nfn: func(item *T) any — return a component tree for the item.\n",
           "signature": "func (l *ListC[T]) Render(fn func(*T) any) *ListC[T]",
           "recv": "*ListC[T]"
         },
@@ -3208,12 +3208,12 @@
     },
     {
       "name": "LogC",
-      "doc": "LogC displays a scrollable log that reads from an io.Reader.\nLines are buffered internally with optional max line limit (ring buffer).\nScrolling is handled automatically via the underlying Layer.\n",
+      "doc": "",
       "decl": "type LogC struct {\n\t// contains filtered or unexported fields\n}",
       "constructors": [
         {
           "name": "Log",
-          "doc": "Log creates a log that reads lines from the given reader.\nThe reader is consumed in a background goroutine that exits on EOF/error.\n",
+          "doc": "Log creates a scrollable log viewer that reads lines from an io.Reader.\nThe reader is consumed in a background goroutine that exits on EOF/error.\nLines are buffered with a configurable max (ring buffer); scrolling follows\nnew content automatically until the user scrolls away.\n",
           "signature": "func Log(r io.Reader) *LogC"
         }
       ],
@@ -3317,12 +3317,12 @@
     },
     {
       "name": "Op",
-      "doc": "Op represents a single instruction.\n",
+      "doc": "Op represents a single compiled template instruction.\nThe template compiler produces a flat array of these; Execute walks them to render.\n",
       "decl": "type Op struct {\n\tKind   OpKind\n\tDepth  int8  // tree depth (root children = 0)\n\tParent int16 // parent op index, -1 for root children\n\n\t// Value access - one used based on Kind\n\tStaticStr string\n\tStrPtr    *string\n\tStrOff    uintptr // offset from element base (for ForEach)\n\tTextStyle Style   // style for text rendering\n\n\tStaticInt int\n\tIntPtr    *int\n\tIntOff    uintptr\n\n\t// Layout hints\n\tWidth        int16   // explicit width\n\tHeight       int16   // explicit height\n\tPercentWidth float32 // 0.0-1.0\n\tFlexGrow     float32 // share of remaining space\n\tGap          int8    // gap between children\n\tContentSized bool    // has fixed-width children (don't implicit flex)\n\tFitContent   bool    // size to content instead of filling available space\n\n\t// Container\n\tIsRow        bool        // true=HBox, false=VBox\n\tBorder       BorderStyle // border style\n\tBorderFG     *Color      // border foreground color\n\tBorderBG     *Color      // border background color\n\tTitle        string      // border title\n\tChildStart   int16       // first child op index\n\tChildEnd     int16       // last child op index (exclusive)\n\tCascadeStyle *Style      // style inherited by children (pointer for dynamic themes)\n\tFill         Color       // container fill color (fills entire area)\n\tMargin       [4]int16    // outer margin: top, right, bottom, left\n\n\t// Control flow\n\tCondPtr  *bool         // for If (simple bool pointer)\n\tCondNode conditionNode // for If (builder-style conditions)\n\tThenTmpl *Template     // for If\n\tElseTmpl *Template     // for If/Else\n\tIterTmpl *Template     // for ForEach\n\tSlicePtr unsafe.Pointer\n\tElemSize uintptr\n\n\t// Switch\n\tSwitchNode  switchNodeInterface\n\tSwitchCases []*Template\n\tSwitchDef   *Template\n\n\t// Custom renderer\n\tCustomRenderer Renderer\n\n\t// Custom layout\n\tCustomLayout LayoutFunc\n\n\t// Layer\n\tLayerPtr    *Layer // pointer to Layer\n\tLayerWidth  int16  // viewport width (0 = fill available)\n\tLayerHeight int16  // viewport height (0 = fill available)\n\n\t// RichText\n\tStaticSpans []Span    // for static spans\n\tSpansPtr    *[]Span   // for pointer to spans\n\tSpansOff    uintptr   // for ForEach offset\n\tSpanStrOffs []uintptr // per-span *string offsets for Textf (^0 = static)\n\n\t// SelectionList\n\tSelectionListPtr *SelectionList // pointer to the list for len/offset updates\n\tSelectedPtr      *int           // pointer to selected index\n\tMarker           string         // selection marker (e.g., \"\u003e \")\n\tMarkerWidth      int16          // cached rune count of marker\n\tMarkerSpaces     string         // pre-computed spaces matching marker width\n\n\t// Leader\n\tLeaderLabel    string   // static label\n\tLeaderValue    string   // static value (OpLeader)\n\tLeaderValuePtr *string  // pointer value (OpLeaderPtr)\n\tLeaderIntPtr   *int     // pointer to int (OpLeaderIntPtr)\n\tLeaderFloatPtr *float64 // pointer to float64 (OpLeaderFloatPtr)\n\tLeaderFill     rune     // fill character (default '.')\n\tLeaderStyle    Style    // styling\n\n\t// Table\n\tTableColumns     []TableColumn // column definitions\n\tTableRowsPtr     *[][]string   // pointer to row data\n\tTableShowHeader  bool          // show header row\n\tTableHeaderStyle Style         // style for header\n\tTableRowStyle    Style         // style for rows\n\tTableAltStyle    Style         // alternating row style\n\n\t// AutoTable (reactive pointer-backed)\n\tAutoTableSlicePtr any                 // *[]T -- pointer to slice of structs\n\tAutoTableFields   []int               // field indices into the struct\n\tAutoTableHeaders  []string            // header labels\n\tAutoTableHdrStyle Style               // header style\n\tAutoTableRowStyle Style               // row style\n\tAutoTableAltStyle *Style              // alternating row style\n\tAutoTableGap      int8                // gap between columns\n\tAutoTableFill     Color               // row fill for alt rows\n\tAutoTableColCfgs  []*ColumnConfig     // per-column config (parallel to Fields, nil = no config)\n\tAutoTableSort     *autoTableSortState // nil unless sorting enabled\n\tAutoTableScroll   *autoTableScroll    // nil unless scrolling enabled\n\n\t// Sparkline\n\tSparkValues    []float64  // static values\n\tSparkValuesPtr *[]float64 // pointer values\n\tSparkMin       float64    // min value (0 = auto)\n\tSparkMax       float64    // max value (0 = auto)\n\tSparkStyle     Style      // styling\n\n\t// HRule/VRule\n\tRuleChar  rune  // line character\n\tRuleStyle Style // styling\n\n\t// Spinner\n\tSpinnerFramePtr *int     // pointer to frame index\n\tSpinnerFrames   []string // animation frames\n\tSpinnerStyle    Style    // styling\n\n\t// Scrollbar\n\tScrollContentSize int   // total content size\n\tScrollViewSize    int   // visible viewport size\n\tScrollPosPtr      *int  // pointer to scroll position\n\tScrollHorizontal  bool  // true for horizontal scrollbar\n\tScrollTrackChar   rune  // track character\n\tScrollThumbChar   rune  // thumb character\n\tScrollTrackStyle  Style // track styling\n\tScrollThumbStyle  Style // thumb styling\n\n\t// Tabs\n\tTabsLabels        []string  // tab labels\n\tTabsSelectedPtr   *int      // pointer to selected tab index\n\tTabsStyleType     TabsStyle // visual style\n\tTabsGap           int       // gap between tabs\n\tTabsActiveStyle   Style     // style for active tab\n\tTabsInactiveStyle Style     // style for inactive tabs\n\n\t// TreeView\n\tTreeRoot          *TreeNode // root node\n\tTreeShowRoot      bool      // whether to display root\n\tTreeIndent        int       // indentation per level\n\tTreeShowLines     bool      // show connecting lines\n\tTreeExpandedChar  rune      // expanded indicator\n\tTreeCollapsedChar rune      // collapsed indicator\n\tTreeLeafChar      rune      // leaf indicator\n\tTreeStyle         Style     // styling\n\n\t// Jump (jump target wrapper) - just marks a position, child is inline\n\tJumpOnSelect func() // callback when target is selected\n\tJumpStyle    Style  // label style override (zero = use app default)\n\n\t// TextInput\n\tTextInputFieldPtr       *InputState // Field-based API (bundles Value+Cursor)\n\tTextInputFocusGroupPtr  *FocusGroup // shared focus tracker\n\tTextInputFocusIndex     int         // this field's index in focus group\n\tTextInputValuePtr       *string     // bound text value (legacy)\n\tTextInputCursorPtr      *int        // bound cursor position (legacy)\n\tTextInputFocusedPtr     *bool       // show cursor only when true (legacy)\n\tTextInputPlaceholder    string      // placeholder text\n\tTextInputMask           rune        // password mask (0 = none)\n\tTextInputStyle          Style       // text style\n\tTextInputPlaceholderSty Style       // placeholder style\n\tTextInputCursorStyle    Style       // cursor style\n\n\t// Overlay\n\tOverlayCentered    bool      // center on screen\n\tOverlayX, OverlayY int16     // explicit position\n\tOverlayBackdrop    bool      // draw backdrop\n\tOverlayBackdropFG  Color     // backdrop color\n\tOverlayBG          Color     // background fill for overlay content area\n\tOverlayChildTmpl   *Template // compiled child content\n\n\t// ScreenEffect\n\tScreenEffectFn PostProcess // full-screen post-process function\n\t// contains filtered or unexported fields\n}"
     },
     {
       "name": "OpKind",
-      "doc": "",
+      "doc": "OpKind identifies the type of a compiled template instruction.\n",
       "decl": "type OpKind uint8",
       "consts": [
         {
@@ -3371,12 +3371,12 @@
     },
     {
       "name": "OrdCondition",
-      "doc": "OrdCondition extends Condition for ordered types (int, float, string).\n",
+      "doc": "OrdCondition extends Condition with ordering comparisons (Gt, Lt, Gte, Lte).\nUse IfOrd instead of If when you need numeric/string range checks.\n",
       "decl": "type OrdCondition[T cmp.Ordered] struct {\n\t// contains filtered or unexported fields\n}",
       "constructors": [
         {
           "name": "IfOrd",
-          "doc": "IfOrd starts a conditional chain for ordered types (supports Gt, Lt, etc).\n",
+          "doc": "IfOrd conditionally renders content with ordering comparisons (Gt, Lt, Gte, Lte).\nT must satisfy cmp.Ordered (int, float64, string, etc).\n\n\tIfOrd(\u0026cpu).Gt(90.0).Then(Text(\"HOT\").FG(Red))\n",
           "signature": "func IfOrd[T cmp.Ordered](ptr *T) *OrdCondition[T]"
         }
       ],
@@ -3427,7 +3427,7 @@
     },
     {
       "name": "OrdConditionEval",
-      "doc": "OrdConditionEval holds an ordered condition ready for Then/Else\n",
+      "doc": "OrdConditionEval holds a prepared ordered condition awaiting Then/Else branches.\n",
       "decl": "type OrdConditionEval[T cmp.Ordered] struct {\n\t// contains filtered or unexported fields\n}",
       "methods": [
         {
@@ -3493,7 +3493,7 @@
       ],
       "vars": [
         {
-          "doc": "",
+          "doc": "Overlay displays content floating above the main view.\nUse for modals, dialogs, and floating windows.\nControl visibility with If: If(\u0026showModal).Then(Overlay.Backdrop()(content))\n",
           "names": [
             "Overlay"
           ],
@@ -4328,7 +4328,7 @@
       "constructors": [
         {
           "name": "Sparkline",
-          "doc": "Sparkline creates a mini chart from a slice of values.\n",
+          "doc": "Sparkline creates a mini bar chart using Unicode block characters (▁▂▃▄▅▆▇█).\nPass []float64 or *[]float64 for reactive updates.\n",
           "signature": "func Sparkline(values any) SparklineC",
           "examples": [
             {
@@ -4407,7 +4407,7 @@
       "constructors": [
         {
           "name": "Spinner",
-          "doc": "Spinner creates an animated spinner bound to a frame counter.\n",
+          "doc": "Spinner creates an animated spinner bound to a frame counter.\nIncrement *frame and re-render to advance the animation.\n",
           "signature": "func Spinner(frame *int) SpinnerC",
           "examples": [
             {
@@ -4475,7 +4475,7 @@
     },
     {
       "name": "StringValidator",
-      "doc": "StringValidator validates a string value.\n",
+      "doc": "StringValidator validates a string value. Pass to Input().Validate().\nReturn nil for valid, non-nil error for the message to display.\n",
       "decl": "type StringValidator func(string) error",
       "constructors": [
         {
@@ -4624,7 +4624,7 @@
     },
     {
       "name": "SwitchBuilder",
-      "doc": "SwitchBuilder for type-safe multi-way branching.\n",
+      "doc": "SwitchBuilder constructs a type-safe multi-way branch.\nUse Switch(\u0026ptr) to start, .Case() for branches, .Default() or .End() to finalise.\n",
       "decl": "type SwitchBuilder[T comparable] struct {\n\t// contains filtered or unexported fields\n}",
       "constructors": [
         {
@@ -4662,7 +4662,7 @@
     },
     {
       "name": "SwitchNode",
-      "doc": "SwitchNode is the final compiled switch statement\n",
+      "doc": "SwitchNode is the compiled form of a Switch, ready for template evaluation.\n",
       "decl": "type SwitchNode[T comparable] struct {\n\t// contains filtered or unexported fields\n}"
     },
     {
@@ -4682,7 +4682,7 @@
       "constructors": [
         {
           "name": "Tabs",
-          "doc": "Tabs creates a tab header bar.\n",
+          "doc": "Tabs creates a row of selectable tab headers.\nPair with Switch(\u0026selected) to show the corresponding tab content.\n",
           "signature": "func Tabs(labels []string, selected *int) TabsC",
           "examples": [
             {
@@ -4776,7 +4776,7 @@
       "constructors": [
         {
           "name": "Build",
-          "doc": "Build compiles a declarative UI into a Template.\n",
+          "doc": "Build compiles a declarative UI tree into a Template ready for Execute.\nAll reflection happens here at compile time; Execute is pure pointer reads.\n",
           "signature": "func Build(ui any) *Template",
           "examples": [
             {
@@ -4962,12 +4962,12 @@
     },
     {
       "name": "TextViewC",
-      "doc": "TextViewC displays multi-line text with word wrapping in a layer-backed viewport.\nContent is re-wrapped only when the text or viewport width changes.\n",
+      "doc": "",
       "decl": "type TextViewC struct {\n\t// contains filtered or unexported fields\n}",
       "constructors": [
         {
           "name": "TextView",
-          "doc": "TextView creates a multi-line text display that wraps to its container width.\n",
+          "doc": "TextView creates a scrollable multi-line text display with word wrapping.\nContent is re-wrapped automatically when the text or viewport width changes.\n",
           "signature": "func TextView(content *string) *TextViewC"
         }
       ],
@@ -4986,7 +4986,7 @@
         },
         {
           "name": "Grow",
-          "doc": "",
+          "doc": "Grow sets the flex grow factor so the view expands to fill available space.\n",
           "signature": "func (tv *TextViewC) Grow(g float32) *TextViewC",
           "recv": "*TextViewC"
         },
@@ -4998,19 +4998,19 @@
         },
         {
           "name": "Margin",
-          "doc": "",
+          "doc": "Margin sets uniform margin on all sides.\n",
           "signature": "func (tv *TextViewC) Margin(all int16) *TextViewC",
           "recv": "*TextViewC"
         },
         {
           "name": "MarginTRBL",
-          "doc": "",
+          "doc": "MarginTRBL sets individual margins for top, right, bottom, left.\n",
           "signature": "func (tv *TextViewC) MarginTRBL(t, r, b, l int16) *TextViewC",
           "recv": "*TextViewC"
         },
         {
           "name": "MarginVH",
-          "doc": "",
+          "doc": "MarginVH sets vertical and horizontal margin.\n",
           "signature": "func (tv *TextViewC) MarginVH(v, h int16) *TextViewC",
           "recv": "*TextViewC"
         }
@@ -5164,7 +5164,7 @@
       ],
       "vars": [
         {
-          "doc": "VBox is the vertical container constructor\n",
+          "doc": "VBox arranges children in a vertical stack.\nUse method chaining to configure before calling with children:\n\n\tVBox.Gap(1).Border(BorderRounded)(\"Title\")(child1, child2)\n",
           "names": [
             "VBox"
           ],

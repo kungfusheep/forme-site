@@ -1172,7 +1172,7 @@
   <a href="#build" class="sidenav-link">Build & Execute</a>
   <a href="#render" class="sidenav-link">Render Cycle</a>
   <a href="#layout" class="sidenav-link">Layout Properties</a>
-  <a href="#pointers" class="sidenav-link">Pointer Semantics</a>
+  <a href="#state" class="sidenav-link">Live State</a>
   <a href="#dynamic" class="sidenav-link">Dynamic Children</a>
   <a href="#input" class="sidenav-link">Input Handling</a>
   <a href="#jump" class="sidenav-link">Jump Labels</a>
@@ -1184,7 +1184,7 @@
   <a href="#build" class="topnav-link">Build</a>
   <a href="#render" class="topnav-link">Render</a>
   <a href="#layout" class="topnav-link">Layout</a>
-  <a href="#pointers" class="topnav-link">Pointers</a>
+  <a href="#state" class="topnav-link">State</a>
   <a href="#dynamic" class="topnav-link">Dynamic</a>
   <a href="#input" class="topnav-link">Input</a>
   <a href="#jump" class="topnav-link">Jump</a>
@@ -1208,9 +1208,9 @@
 
   <div class="concept-prose">
     Every glyph view goes through two distinct phases. <strong>Build</strong> happens once
-    when you call <code>SetView()</code> — the declarative tree is compiled into a flat array
-    of operations via reflection and type switches. <strong>Execute</strong> happens every frame —
-    it walks the compiled ops and dereferences pointers to read current state. No tree rebuilds,
+    when you call <code>SetView()</code>. The declarative tree is compiled into a flat array
+    of operations via reflection and type switches. <strong>Execute</strong> happens every frame,
+    walking the compiled ops and dereferences pointers to read current state. No tree rebuilds,
     no diffing, no allocation in steady state.
   </div>
 
@@ -1247,9 +1247,9 @@
   </div>
 
   <div class="concept-prose">
-    The composable API surface — <code>VBox.Gap(2).Border(BorderRounded)</code> — is purely
+    The composable API surface, <code>VBox.Gap(2).Border(BorderRounded)</code>, is purely
     a build-time convenience. At runtime, the template is just a flat array walk with pointer reads.
-    Values exist in three variants: <strong>static</strong> (embedded literal),
+    Values exist in three variants. <strong>Static</strong> (embedded literal),
     <strong>pointer</strong> (dereferenced each frame), and <strong>offset</strong>
     (ForEach element base + unsafe.Pointer arithmetic).
   </div>
@@ -1277,7 +1277,7 @@
   <div class="concept-prose">
     Rendering is a four-phase pipeline that runs on every frame, designed for terminal
     workloads. Each phase operates directly on flat <strong>Op</strong> and <strong>Geom</strong>
-    arrays — no tree rebuilds, no node allocation. Components outside the viewport are culled
+    arrays. No tree rebuilds, no node allocation. Components outside the viewport are culled
     before rendering, and the final flush diffs against the previous frame to emit only the
     cells that actually changed.
   </div>
@@ -1313,7 +1313,7 @@
       </div>
       <div class="cascade-body">
         Children with <code>Grow()</code> expand along the parent's main axis to fill remaining
-        space — vertically in a VBox, horizontally in an HBox. Siblings are repositioned to
+        space, vertically in a VBox and horizontally in an HBox. Siblings are repositioned to
         account for the new sizes.
       </div>
     </div>
@@ -1325,7 +1325,7 @@
       </div>
       <div class="cascade-body">
         Walk the ops from root, write cells to the buffer at computed absolute positions.
-        Borders, text, fills — one pass with final x/y/w/h coordinates.
+        Borders, text, fills. One pass with final x/y/w/h coordinates.
       </div>
     </div>
   </div>
@@ -1375,7 +1375,7 @@
 
   <!-- Box model: Margin → Border → Content -->
   <div class="concept-prose">
-    <strong>Margin</strong> is outside the border — the space between this component and its siblings.
+    <strong>Margin</strong> is outside the border, the space between this component and its siblings.
     <strong>Border</strong> wraps the content area. <strong>Gap</strong> is the spacing a container
     inserts between its children.
   </div>
@@ -1415,7 +1415,7 @@
   </div>
 
   <div class="concept-prose">
-    <strong>One child with Grow(1)</strong> — it gets all the remaining space:
+    <strong>One child with Grow(1)</strong> gets all the remaining space:
   </div>
 
   <div class="grow-diagram">
@@ -1440,7 +1440,7 @@
 )</div>
 
   <div class="concept-prose">
-    <strong>Two children with equal Grow(1)</strong> — they split the remaining space 50/50:
+    <strong>Two children with equal Grow(1)</strong> split the remaining space 50/50:
   </div>
 
   <div class="grow-diagram">
@@ -1465,7 +1465,7 @@
 )</div>
 
   <div class="concept-prose">
-    <strong>Unequal ratios — Grow(1) vs Grow(2)</strong> — the space is split proportionally.
+    <strong>Unequal ratios, Grow(1) vs Grow(2)</strong>. The space is split proportionally.
     Grow(2) gets twice as much of the remaining space as Grow(1):
   </div>
 
@@ -1495,13 +1495,13 @@
 )</div>
 
   <div class="concept-prose">
-    The number doesn't mean anything on its own — <code>Grow(1)</code> and <code>Grow(1)</code>
+    The number doesn't mean anything on its own. <code>Grow(1)</code> and <code>Grow(1)</code>
     is the same split as <code>Grow(100)</code> and <code>Grow(100)</code>. It's the ratio between
     siblings that matters. Think of it as "parts of the remaining pie."
   </div>
 
   <div class="concept-prose">
-    <code>FitContent()</code> is the inverse — it tells a container to shrink to its
+    <code>FitContent()</code> is the inverse. It tells a container to shrink to its
     children's measured size instead of filling available space.
     <code>WidthPct(0.5)</code> sets width as a fraction of the parent.
     <code>Size(w, h)</code> sets both dimensions explicitly.
@@ -1511,12 +1511,12 @@
 <!-- ============================================================
      4. POINTER SEMANTICS
      ============================================================ -->
-<div class="concept" id="pointers">
+<div class="concept" id="state">
   <div class="section-head">
     <div class="section-num">04</div>
     <div class="section-meta">
       <div class="concept-label">Core</div>
-      <div class="concept-title">Pointer Semantics</div>
+      <div class="concept-title">Live State</div>
     </div>
   </div>
 
@@ -1535,7 +1535,7 @@ title = "World"               // next render shows "World"</div>
   <div class="concept-prose">
     Pass a <code>*string</code> and the text updates when the string changes. Pass a <code>string</code>
     literal and it's static forever. Same pattern for <code>*int</code>, <code>*bool</code>,
-    <code>*[]T</code> — anything behind a pointer is live, anything without one is baked in at compile time.
+    <code>*[]T</code>. Anything behind a pointer is live, anything without one is baked in at compile time.
   </div>
 
   <div class="concept-prose">
@@ -1566,7 +1566,7 @@ title = "World"               // next render shows "World"</div>
 
   <div class="concept-prose">
     ForEach, If, and Switch each compile to <strong>exactly one Op</strong> in the parent's flat array.
-    Their content lives in separate sub-templates — self-contained <code>*Template</code> instances
+    Their content lives in separate sub-templates, self-contained <code>*Template</code> instances
     with their own <code>ops</code>, <code>geom</code>, and <code>byDepth</code> arrays.
     From the parent's perspective, they're opaque single-slot ops.
   </div>
@@ -1588,7 +1588,7 @@ title = "World"               // next render shows "World"</div>
   <div class="concept-prose">
     <strong>ForEach</strong> is the most interesting. The render function is called once at compile time
     against a <strong>dummy element</strong>. Any pointers into that dummy get converted to offset-based
-    ops via <code>unsafe.Pointer</code> arithmetic — the offset from the element base address to the
+    ops via <code>unsafe.Pointer</code> arithmetic. The offset from the element base address to the
     field pointer is stored instead of the pointer itself.
   </div>
 
@@ -1614,7 +1614,7 @@ title = "World"               // next render shows "World"</div>
         Read live slice header (<code>Data</code>, <code>Len</code>) via <code>unsafe.Pointer</code>.
         For each item: swap <code>elemBase</code> to the real element, run
         <code>distributeWidths</code> + <code>layout</code> on the sub-template.
-        Store position in <code>iterGeoms[i]</code> — the sub-template's geom is scratch.
+        Store position in <code>iterGeoms[i]</code>. The sub-template's geom is scratch.
       </div>
     </div>
     <div class="cascade-arrow">↓</div>
@@ -1634,7 +1634,7 @@ title = "World"               // next render shows "World"</div>
   <div class="concept-prose">
     <strong>If</strong> compiles both branches into separate sub-templates at build time. At runtime
     the condition is evaluated and only the active branch is laid out and rendered. The inactive branch
-    costs nothing — it's not even visited.
+    costs nothing. It's not even visited.
   </div>
 
   <div class="concept-prose">
@@ -1647,7 +1647,7 @@ title = "World"               // next render shows "World"</div>
     None of these participate in the parent's <code>byDepth</code> layout pass directly.
     They're measured inline by their parent container when it encounters them during the child scan
     in <code>layoutContainer</code>. The sub-templates run their own complete layout pipeline
-    internally — <code>distributeWidths</code> + <code>layout</code> — but this is scoped
+    internally (<code>distributeWidths</code> + <code>layout</code>) but this is scoped
     to the sub-template's own ops array, not the parent's.
   </div>
 
@@ -1674,7 +1674,7 @@ title = "World"               // next render shows "World"</div>
   <div class="concept-prose">
     Input is managed by <strong>riffkey</strong>, a router stack that supports vim-style multi-key
     sequences, modal layers, and count prefixes. Components declare their bindings as data via
-    <code>BindNav()</code>, <code>BindToggle()</code>, etc. — these are wired at compile time,
+    <code>BindNav()</code>, <code>BindToggle()</code>, etc. These are wired at compile time,
     not at runtime.
   </div>
 
@@ -1696,7 +1696,7 @@ title = "World"               // next render shows "World"</div>
 
   <div class="concept-prose">
     The router stack enables <strong>modal input</strong>. Push a new router for a dialog;
-    it captures all keys. Pop it when done — the previous context resumes exactly where it was.
+    it captures all keys. Pop it when done. The previous context resumes exactly where it was.
     Each named view gets its own router, swapped atomically by <code>Go()</code>.
   </div>
 
@@ -1800,7 +1800,7 @@ app.SetView(
 
   <div class="concept-prose">
     Applications with multiple screens use <strong>named views</strong>. Each view has its own
-    compiled template and its own riffkey router — switching views swaps both atomically.
+    compiled template and its own riffkey router. Switching views swaps both atomically.
     The compiled template and key handlers swap atomically.
   </div>
 
@@ -1826,7 +1826,7 @@ app.SetView(
 
   <div class="concept-prose">
     For overlays and dialogs, <code>PushView()</code> layers a modal on top of the current view.
-    The modal's handlers take precedence. <code>PopView()</code> peels it off — the previous
+    The modal's handlers take precedence. <code>PopView()</code> peels it off. The previous
     view and its input context resume immediately.
   </div>
 
@@ -1913,7 +1913,7 @@ app.RunFrom("list")</div>
   <div class="concept-prose">
     <strong>LogC</strong> extends Layer by reading lines from an <code>io.Reader</code> in the
     background. Auto-scroll follows new content by default. <strong>FilterLogC</strong> adds
-    live fzf-style filtering on top. Both re-render lazily — only when content changes or
+    live fzf-style filtering on top. Both re-render lazily, only when content changes or
     the viewport width changes.
   </div>
 

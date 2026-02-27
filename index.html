@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>glyph — Go TUI Framework</title>
-<meta name="description" content="Batteries-included terminal UI framework for Go. Declarative composition with a compile-once rendering model. Keyboard-first. Fast.">
+<meta name="description" content="Batteries-included terminal UI framework for Go. Declarative composition. Your data, rendered directly. Keyboard-first. Fast.">
 <meta name="keywords" content="go,golang,tui,terminal,ui,framework,cli,declarative,keyboard">
 <meta name="author" content="Pete Griffiths">
 <meta name="robots" content="index, follow">
@@ -15,7 +15,7 @@
 <!-- open graph -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="glyph — Go TUI Framework">
-<meta property="og:description" content="Batteries-included terminal UI framework for Go. Declarative composition with a compile-once rendering model. Keyboard-first. Fast.">
+<meta property="og:description" content="Batteries-included terminal UI framework for Go. Declarative composition. Your data, rendered directly. Keyboard-first. Fast.">
 <meta property="og:url" content="https://useglyph.sh/">
 <meta property="og:site_name" content="glyph">
 <meta property="og:locale" content="en_GB">
@@ -25,7 +25,7 @@
 <meta name="twitter:site" content="@kungfusheep">
 <meta name="twitter:creator" content="@kungfusheep">
 <meta name="twitter:title" content="glyph — Go TUI Framework">
-<meta name="twitter:description" content="Batteries-included terminal UI framework for Go. Declarative composition with a compile-once rendering model. Keyboard-first. Fast.">
+<meta name="twitter:description" content="Batteries-included terminal UI framework for Go. Declarative composition. Your data, rendered directly. Keyboard-first. Fast.">
 
 <!-- structured data -->
 <script type="application/ld+json">
@@ -33,7 +33,7 @@
   "@context": "https://schema.org",
   "@type": "SoftwareSourceCode",
   "name": "glyph",
-  "description": "Batteries-included terminal UI framework for Go. Declarative composition with a compile-once rendering model.",
+  "description": "Batteries-included terminal UI framework for Go. Declarative composition. Your data, rendered directly. Keyboard-first. Fast.",
   "url": "https://useglyph.sh/",
   "codeRepository": "https://github.com/kungfusheep/glyph",
   "programmingLanguage": "Go",
@@ -814,7 +814,7 @@
       <div class="hero-title">glyph</div>
       <div class="hero-headline">Batteries-included terminal UI framework for Go.</div>
       <div class="hero-desc">
-        Declarative composition with a compile-once rendering model. Keyboard-first. Fast.</div>
+        Declarative composition. Your data, rendered directly. Keyboard-first. Fast.</div>
       <div class="hero-install" onclick="copyInstall(this)">
         <span class="prompt">$</span>
         go get github.com/kungfusheep/glyph@latest
@@ -880,8 +880,8 @@ func main() {
           <div class="callout-body">
             When you call <code>SetView()</code>, the declarative tree is compiled into
             a flat array of operations. All reflection, type switches, and allocation
-            happen here. The composable API surface &mdash;
-            <code>VBox.Gap(2).Border(...)</code> &mdash; is purely a build-time convenience.
+            happen here. The composable API surface,
+            <code>VBox.Gap(2).Border(...)</code>, is purely a build-time convenience.
           </div>
         </div>
         <div class="callout-phase">
