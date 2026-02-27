@@ -835,6 +835,13 @@
   .global-nav-links a:hover { color: #e8e4d8; }
   .global-nav-links a.active { color: #e8e4d8; }
 
+  .nav-search {
+    background: none; border: none; cursor: pointer;
+    color: #555; padding: 4px; line-height: 0;
+    transition: color 0.15s;
+  }
+  .nav-search:hover { color: #e8e4d8; }
+
   .sidenav {
     position: fixed;
     top: 48px;
@@ -1164,6 +1171,7 @@
       <li><a href="api.html">API</a></li>
 
       <li><a href="https://github.com/kungfusheep/glyph">GitHub</a></li>
+      <li><button class="nav-search" onclick="window.openOmni?.()" aria-label="Search API"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button></li>
     </ul>
   </div>
 </nav>
@@ -2193,6 +2201,8 @@ function copyInstall(el) {
 })();
 </script>
 
+<script src="fzf.js"></script>
+<script src="omni.js" defer></script>
 <script type="speculationrules">
 {
 	"prerender": [{
