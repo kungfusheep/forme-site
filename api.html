@@ -2168,8 +2168,9 @@ function copyInstall(el) {
       }
     });
 
-    // suppress observer and force-select the top result
+    // suppress observer, scroll to top, force-select the top result
     searchLock = true;
+    window.scrollTo({ top: 0, behavior: 'instant' });
     if (firstId) setActiveItem(firstId);
 
     syncSidebarWithSearch(raw.toLowerCase());
