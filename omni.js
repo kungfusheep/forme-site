@@ -127,6 +127,8 @@
     .omni-backdrop {
       position: fixed; inset: 0; z-index: 9998;
       background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
       opacity: 0; transition: opacity 0.2s;
       pointer-events: none;
     }
