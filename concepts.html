@@ -1156,11 +1156,11 @@
 
 <nav class="nav">
   <div class="nav-inner">
-    <a href="index.html" class="nav-brand">glyph</a>
+    <a href="/" class="nav-brand">glyph</a>
     <ul class="nav-links">
-      <li><a href="start.html">Get Started</a></li>
-      <li><a href="concepts.html" class="active">Concepts</a></li>
-      <li><a href="api.html">API</a></li>
+      <li><a href="/start.html">Get Started</a></li>
+      <li><a href="/concepts.html" class="active">Concepts</a></li>
+      <li><a href="/api.html">API</a></li>
       <li><a href="https://github.com/kungfusheep/glyph" style="display:flex;align-items:center" aria-label="GitHub"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a></li>
       <li><button class="nav-search" onclick="window.openOmni?.()" aria-label="Search API"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button></li>
     </ul>
@@ -1274,8 +1274,7 @@
   </div>
 
   <div class="concept-prose">
-    Rendering is a four-phase pipeline that runs on every frame, designed for terminal
-    workloads. Each phase operates directly on flat <strong>Op</strong> and <strong>Geom</strong>
+    Rendering is a four-phase pipeline that runs on every update. Each phase operates directly on flat <strong>Op</strong> and <strong>Geom</strong>
     arrays. Components outside the viewport are culled
     before rendering, and the final flush diffs against the previous frame to emit only the
     cells that actually changed.
@@ -1544,7 +1543,7 @@ title = "World"               // next render shows "World"</div>
 
   <div class="concept-prose">
     Nothing stops you building reactive patterns on top. An observer that calls <code>RequestRender()</code> when a channel
-    fires is often just a few lines of code, if that's what the application needs.
+    fires is often just a few lines of code.
   </div>
 </div>
 
@@ -1795,8 +1794,7 @@ app.SetView(
 
   <div class="concept-prose">
     Applications with multiple screens use <strong>named views</strong>. Each view has its own
-    compiled template and its own riffkey router. Switching views swaps both atomically.
-    The compiled template and key handlers swap atomically.
+    compiled template and its own riffkey router, swapped atomically when you call <code>Go()</code>.
   </div>
 
   <div class="flow">
@@ -1963,9 +1961,9 @@ app.SetView(VBox(LayerView(layer).Grow(1)))</div>
     </div>
 
     <div class="start-links">
-      <a href="start.html">Get Started &rarr;</a>
-      <a href="index.html">Home &rarr;</a>
-      <a href="api.html">Browse the API &rarr;</a>
+      <a href="/start.html">Get Started &rarr;</a>
+      <a href="/">Home &rarr;</a>
+      <a href="/api.html">Browse the API &rarr;</a>
     </div>
   </div>
 </div>
@@ -1973,10 +1971,10 @@ app.SetView(VBox(LayerView(layer).Grow(1)))</div>
 <footer>
   <div class="footer-brand">glyph</div>
   <div class="footer-links">
-    <a href="index.html">Home</a>
-    <a href="start.html">Get Started</a>
-    <a href="api.html">API</a>
-    <a href="concepts.html">Concepts</a>
+    <a href="/">Home</a>
+    <a href="/start.html">Get Started</a>
+    <a href="/api.html">API</a>
+    <a href="/concepts.html">Concepts</a>
     <a href="https://github.com/kungfusheep/glyph">Source</a>
   </div>
 </footer>

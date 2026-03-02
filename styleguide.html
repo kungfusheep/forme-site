@@ -691,7 +691,7 @@
 
 <nav class="nav">
   <div class="nav-inner">
-    <a href="index.html" class="nav-brand">glyph</a>
+    <a href="/" class="nav-brand">glyph</a>
     <span class="sg-nav-label">Style Guide</span>
   </div>
 </nav>
@@ -1265,6 +1265,7 @@ api.html       dark documentation — API reference with interactive search</div
       </ul>
     </div>
     <div class="sg-note">Always dark. Height 48px. backdrop-filter blur(8px). Max-width 1060px inner.</div>
+    <div class="sg-note">New pages follow this pattern — fixed, always dark, with sidenav for section navigation. The adaptive index.html nav is unique to the landing page; its transparency and scroll-triggered behaviour only make sense over a hero zone.</div>
   </div>
 
   <div class="sg-subsection">
@@ -1384,6 +1385,7 @@ stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
       </div>
     </div>
     <div class="sg-note">section-num uses --bg2 (ghosted). section-label uses --fg4. section-title uses --fg0.</div>
+    <div class="sg-note">Dark zone for documentation pages. Light zone for marketing sections on index.html. Never mix — the dark section-num colour (--dk-border) is too faint on light backgrounds.</div>
   </div>
 </div>
 
@@ -1470,6 +1472,7 @@ stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
       </div>
     </div>
     <div class="sg-note">Gradient top-border via background shorthand. Hover gets accent glow via ::after. On light zone: solid white bg, no gradient border.</div>
+    <div class="sg-note">Use only in dark landing zones (index.html). Not suited to documentation pages — battery cards imply discrete component groupings, not sequential learning content.</div>
   </div>
 
   <div class="sg-subsection">
@@ -1551,6 +1554,7 @@ stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
       <a href="#" style="font-family:var(--mono);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:#555;text-decoration:none">API Reference &rarr;</a>
     </div>
     <div class="sg-note">Different from start-links: no border-bottom, uppercase, weight 700. Hover: #c8c4b8.</div>
+    <div class="sg-note">Use start-links for initial CTAs and cross-page links mid-content. Use next-links at the end of a section to signal progression — their uppercase weight reads as "what's next" rather than "explore freely".</div>
   </div>
 
   <div class="sg-subsection">
