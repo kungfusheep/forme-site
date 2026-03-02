@@ -855,7 +855,7 @@ func main() {
 }</div>
         <div class="show-text">
           <div class="show-aside">
-            A glyph app is a tree of plain functions. VBox stacks its children, Text renders a value. Pass a pointer and the display stays in sync. Keyboard handlers take plain function callbacks. Run starts the event loop and blocks until the app exits.
+            A glyph app is a tree of plain functions. VBox stacks its children, Text renders a value. Pass a pointer; glyph reads the current value every update. Keyboard handlers take plain function callbacks. Run starts the event loop and blocks until the app exits.
           </div>
           <a href="/start.html" style="font-family: var(--mono); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #c44040; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#e85050'" onmouseout="this.style.color='#c44040'">Follow the full guide &rarr;</a>
         </div>
@@ -877,8 +877,8 @@ func main() {
           <div class="callout-title">Execute</div>
           <div class="callout-body">
             Rendering walks the compiled ops and dereferences pointers to read current
-            state. No tree rebuilds, no virtual-DOM diffing, no allocation. Just pointer reads into
-            a cell buffer, then a diff-based flush to the terminal.
+            state. Pointer reads into a cell buffer, then a diff-based flush to the terminal.
+            The execute path is often zero-alloc. <a href="https://github.com/kungfusheep/glyph" style="color:inherit;text-decoration:underline;text-underline-offset:2px;opacity:0.7;">Benchmarks in the repo.</a>
           </div>
         </div>
       </div>
@@ -978,7 +978,7 @@ func main() {
             <div class="feature-title">Live dashboard</div>
             <div class="feature-desc">
               Two sparkline panels side by side with a scrolling
-              event log below. Update the slices, the view follows.
+              event log below. Update the slices; glyph reads the new values on the next update.
             </div>
           </div>
           <div class="code code-raw">VBox(
