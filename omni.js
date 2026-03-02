@@ -136,7 +136,7 @@
 
     .omni-panel {
       position: fixed;
-      top: 15vh; left: 50%;
+      top: 22vh; left: 50%;
       transform: translateX(-50%) scale(0.96);
       z-index: 9999;
       width: min(520px, calc(100vw - 32px));
@@ -271,6 +271,7 @@
       padding: 1px 5px;
       font-size: 10px;
     }
+
   `;
   document.head.appendChild(style);
 
@@ -318,7 +319,7 @@
       results.innerHTML = '';
       selectedIdx = 0;
       visibleEntries = [];
-      input.focus();
+      input.focus({ preventScroll: true });
     });
   }
 

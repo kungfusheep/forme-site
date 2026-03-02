@@ -53,6 +53,7 @@
 <link rel="preload" href="BerkeleyMonoVariable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="prefetch" href="api.json" as="fetch" crossorigin>
 <link rel="stylesheet" href="https://use.typekit.net/rgt4idh.css">
+<link rel="stylesheet" href="tokens.css">
 <style>
   @view-transition { navigation: auto; }
   ::view-transition-old(root),
@@ -63,39 +64,6 @@
     src: url('BerkeleyMonoVariable.woff2') format('woff2');
     font-weight: 100 900;
     font-display: swap;
-  }
-
-  /* ============================================================
-     TOKENS
-     ============================================================ */
-  :root {
-    --bg:       #f2f0ec;
-    --bg2:      #e6e4de;
-    --bg3:      #ffffff;
-    --bg-dark:  #131311;
-    --bg-dark2: #1a1a18;
-    --bg-dark3: #0e0e0c;
-    --fg0:  #131311;
-    --fg:   #3a3a36;
-    --fg2:  #6a6a64;
-    --fg3:  #8a8880;
-    --fg4:  #b0aba0;
-    --rule:    #d4d0c8;
-    --rule-dk: #262624;
-    --accent:  #c44040;
-    --grad:    linear-gradient(135deg, #c44040 0%, #983848 50%, #682850 100%);
-    --mono:  'Berkeley Mono', monospace;
-    --akz:   'akzidenz-grotesk-next-pro', sans-serif;
-    --akz-c: 'akzidenz-grotesk-next-conden', sans-serif;
-    --din-r: 'din-2014-rounded-variable', sans-serif;
-    --s1: 8px;
-    --s2: 16px;
-    --s3: 24px;
-    --s4: 32px;
-    --s5: 48px;
-    --s6: 64px;
-    --s7: 80px;
-    --s8: 120px;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -200,10 +168,10 @@
     pointer-events: auto;
   }
 
-  nav.in-dark .nav-brand { color: #e8e4d8; }
+  nav.in-dark .nav-brand { color: var(--dk-hi); }
 
   .nav-section {
-    font-family: var(--berk);
+    font-family: var(--mono);
     font-size: 11px;
     color: var(--fg3);
     opacity: 0;
@@ -211,7 +179,7 @@
     margin-left: 10px;
   }
   nav.brand-visible .nav-section { opacity: 1; }
-  nav.in-dark .nav-section { color: #555; }
+  nav.in-dark .nav-section { color: var(--dk-5); }
 
   .nav-links {
     display: flex;
@@ -231,24 +199,24 @@
 
   .nav-links a:hover { color: var(--fg0); }
   .nav-links a.active { color: var(--fg0); }
-  nav.in-dark .nav-links a { color: #555; }
-  nav.in-dark .nav-links a:hover { color: #e8e4d8; }
-  nav.in-dark .nav-links a.active { color: #e8e4d8; }
+  nav.in-dark .nav-links a { color: var(--dk-5); }
+  nav.in-dark .nav-links a:hover { color: var(--dk-hi); }
+  nav.in-dark .nav-links a.active { color: var(--dk-hi); }
 
   .nav-search {
     background: none; border: none; cursor: pointer;
-    color: #888; padding: 2px 0; display: flex; align-items: center; position: relative; top: 1px;
+    color: var(--dk-3); padding: 2px 0; display: flex; align-items: center; position: relative; top: 1px;
     transition: color 0.15s;
   }
-  .nav-search:hover { color: #c8c4b8; }
-  nav.in-dark .nav-search { color: #555; }
-  nav.in-dark .nav-search:hover { color: #e8e4d8; }
+  .nav-search:hover { color: var(--dk); }
+  nav.in-dark .nav-search { color: var(--dk-5); }
+  nav.in-dark .nav-search:hover { color: var(--dk-hi); }
 
   /* ============================================================
      LAYOUT
      ============================================================ */
   .zone-light { background: var(--bg); color: var(--fg); }
-  .zone-dark  { background: var(--bg-dark); color: #c8c4b8; isolation: isolate; }
+  .zone-dark  { background: var(--bg-dark); color: var(--dk); isolation: isolate; }
   .zone-inner { max-width: 1060px; margin: 0 auto; padding: 0 var(--s5); }
 
   .section-rule {
@@ -310,7 +278,7 @@
     align-items: center;
     gap: var(--s2);
     background: var(--bg-dark);
-    color: #c8c4b8;
+    color: var(--dk);
     padding: 12px 20px;
     font-size: 13px;
     letter-spacing: 0.01em;
@@ -367,11 +335,11 @@
     opacity: 0.25;
   }
 
-  .hero-install .prompt { color: #555; user-select: none; }
+  .hero-install .prompt { color: var(--dk-5); user-select: none; }
 
   .hero-install .copied {
     font-size: 11px;
-    color: #e8e4d8;
+    color: var(--dk-hi);
     margin-left: var(--s2);
     opacity: 0;
     transition: opacity 0.15s;
@@ -420,7 +388,7 @@
   }
 
   .zone-light .section-num { color: var(--bg2); }
-  .zone-dark .section-num  { color: #1e1e1c; }
+  .zone-dark .section-num  { color: var(--dk-border); }
 
   .section-meta { padding-top: 8px; }
 
@@ -432,7 +400,7 @@
     margin-bottom: 4px;
   }
 
-  .zone-dark .section-label { color: #444; }
+  .zone-dark .section-label { color: var(--dk-6); }
 
   .section-title {
     font-family: var(--akz);
@@ -443,7 +411,7 @@
     line-height: 1.1;
   }
 
-  .zone-dark .section-title { color: #e8e4d8; }
+  .zone-dark .section-title { color: var(--dk-hi); }
 
   .section-desc {
     font-size: 12px;
@@ -456,7 +424,7 @@
     padding-left: 20px;
   }
 
-  .zone-dark .section-desc { color: #666; border-color: var(--rule-dk); }
+  .zone-dark .section-desc { color: var(--dk-4); border-color: var(--rule-dk); }
 
   /* ============================================================
      CODE BLOCKS
@@ -469,7 +437,7 @@
     line-height: 1.8;
     margin: var(--s3) 0;
     overflow-x: auto;
-    color: #c8c4b8;
+    color: var(--dk);
     white-space: pre;
     tab-size: 4;
     border-radius: 8px;
@@ -483,7 +451,7 @@
   .code .kw  { color: #d47080; }
   .code .fn  { color: #eeeee4; }
   .code .str { color: #d4887a; }
-  .code .cm  { color: #555; }
+  .code .cm  { color: var(--dk-6); }
   .code .tp  { color: #a088b8; }
   .code .nr  { color: #c488a8; }
 
@@ -503,7 +471,7 @@
   .feature-card {
     display: grid;
     grid-template-columns: minmax(180px, 35%) 1fr;
-    border: 1px solid #1e1e1c;
+    border: 1px solid var(--dk-border);
     border-radius: 8px;
     overflow: hidden;
   }
@@ -520,7 +488,7 @@
     font-family: var(--akz);
     font-weight: 700;
     font-size: 13px;
-    color: #c8c4b8;
+    color: var(--dk);
     line-height: 1.3;
     margin-bottom: 6px;
   }
@@ -528,7 +496,7 @@
   .feature-desc {
     font-family: var(--mono);
     font-size: 11px;
-    color: #555;
+    color: var(--dk-5);
     line-height: 1.5;
   }
 
@@ -559,14 +527,14 @@
 
   .show-text p {
     font-size: 13px;
-    color: #888;
+    color: var(--dk-3);
     line-height: 1.7;
     margin-bottom: var(--s2);
   }
 
   .show-aside {
     font-size: 12px;
-    color: #666;
+    color: var(--dk-4);
     line-height: 1.7;
     margin-top: var(--s3);
   }
@@ -591,7 +559,7 @@
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: #555;
+    color: var(--dk-5);
     margin-bottom: 4px;
   }
 
@@ -599,19 +567,19 @@
     font-family: var(--akz);
     font-weight: 700;
     font-size: 18px;
-    color: #e8e4d8;
+    color: var(--dk-hi);
     margin-bottom: var(--s1);
   }
 
   .callout-body {
     font-size: 12px;
-    color: #777;
+    color: var(--dk-3);
     line-height: 1.7;
   }
 
   .callout-body code {
     font-family: var(--mono);
-    color: #999;
+    color: var(--dk-2);
   }
 
   /* ============================================================
@@ -670,7 +638,7 @@
     margin-bottom: 8px;
   }
 
-  .zone-dark .battery-label { color: #c8c4b8; }
+  .zone-dark .battery-label { color: var(--dk); }
 
   .battery-items {
     display: flex;
@@ -682,7 +650,7 @@
     line-height: 1.6;
   }
 
-  .zone-dark .battery-items { color: #999; }
+  .zone-dark .battery-items { color: var(--dk-2); }
 
   .battery-items a {
     color: var(--fg2);
@@ -694,8 +662,8 @@
   }
   .battery-items a:hover { color: var(--fg0); background: rgba(255, 255, 255, 0.06); }
 
-  .zone-dark .battery-items a { color: #777; }
-  .zone-dark .battery-items a:hover { color: #c8c4b8; background: rgba(255, 255, 255, 0.05); }
+  .zone-dark .battery-items a { color: var(--dk-3); }
+  .zone-dark .battery-items a:hover { color: var(--dk); background: rgba(255, 255, 255, 0.05); }
 
   /* ============================================================
      START LINKS
@@ -708,14 +676,14 @@
 
   .start-links a {
     font-size: 12px;
-    color: #c8c4b8;
+    color: var(--dk);
     text-decoration: none;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid var(--dk-6);
     padding-bottom: 2px;
     transition: border-color 0.15s;
   }
 
-  .start-links a:hover { border-color: #c8c4b8; }
+  .start-links a:hover { border-color: var(--dk); }
 
   .zone-light .start-links { padding-bottom: 0; }
   .zone-light .start-links a { color: var(--fg2); border-color: var(--rule); }
@@ -734,7 +702,7 @@
     font-family: var(--din-r);
     font-variation-settings: 'wght' 400;
     font-size: 18px;
-    color: #c8c4b8;
+    color: var(--dk);
     letter-spacing: -0.02em;
     margin-bottom: var(--s2);
   }
@@ -751,12 +719,12 @@
   }
 
   .footer-links a {
-    color: #444;
+    color: var(--dk-6);
     text-decoration: none;
     transition: color 0.2s;
   }
 
-  .footer-links a:hover { color: #c8c4b8; }
+  .footer-links a:hover { color: var(--dk); }
 
   @media (max-width: 1024px) {
     .code { font-stretch: 87%; }
@@ -885,9 +853,9 @@ func main() {
 }</div>
         <div class="show-text">
           <div class="show-aside">
-            A glyph app is a tree of plain functions. VBox stacks its children, Text renders a value. Pass a pointer and the display stays in sync. Wire up key handlers, call Run, done.
+            A glyph app is a tree of plain functions. VBox stacks its children, Text renders a value. Pass a pointer and the display stays in sync. Key handlers take plain function callbacks. Run starts the event loop and blocks until the app exits.
           </div>
-          <a href="start.html" style="font-family: var(--mono); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #555; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#c8c4b8'" onmouseout="this.style.color='#555'">Follow the full guide &rarr;</a>
+          <a href="start.html" style="font-family: var(--mono); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #c44040; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#e85050'" onmouseout="this.style.color='#c44040'">Follow the full guide &rarr;</a>
         </div>
       </div>
 

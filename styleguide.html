@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>glyph — Style Guide</title>
+<link rel="preload" href="BerkeleyMonoVariable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="https://use.typekit.net/rgt4idh.css">
+<link rel="stylesheet" href="tokens.css">
+<style>
+  @font-face {
+    font-family: 'Berkeley Mono';
+    src: url('BerkeleyMonoVariable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: swap;
+  }
+
+  /* ============================================================
+     RESET + BASE
+     ============================================================ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-dark);
+    color: #c8c4b8;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { background: #c8c4b8; color: var(--bg-dark); }
+
+  /* ============================================================
+     CHROME
+     ============================================================ */
+  .sg-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 200;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    background: rgba(19, 19, 17, 0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--rule-dk);
+  }
+
+  .sg-nav-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--s3);
+    width: 100%;
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 0 var(--s5);
+  }
+
+  .sg-nav-brand {
+    font-family: var(--din-r);
+    font-variation-settings: 'wght' 400;
+    font-size: 18px;
+    color: #e8e4d8;
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+
+  .sg-nav-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #444;
+  }
+
+  .sg-sidenav {
+    position: fixed;
+    top: 48px;
+    left: max(0px, calc(50vw - 746px));
+    width: 200px;
+    height: calc(100vh - 48px);
+    padding: var(--s5) var(--s3) var(--s3);
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .sg-sidenav::-webkit-scrollbar { display: none; }
+
+  .sg-sidenav-link {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #333;
+    text-decoration: none;
+    padding: 7px 0 7px 14px;
+    border-left: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .sg-sidenav-link:hover { color: #666; }
+  .sg-sidenav-link.active { color: #c8c4b8; border-left-color: var(--accent); }
+
+  .sg-page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 80px var(--s5) var(--s8);
+  }
+
+  @media (min-width: 960px) {
+    .sg-page { margin-left: 216px; }
+    .sg-nav-inner { margin-left: 216px; }
+  }
+  @media (min-width: 1492px) {
+    .sg-page { margin-left: auto; }
+    .sg-nav-inner { margin-left: auto; }
+  }
+  @media (max-width: 959px) {
+    .sg-sidenav { display: none; }
+  }
+
+  /* ============================================================
+     STYLEGUIDE LAYOUT PRIMITIVES
+     ============================================================ */
+  .sg-section {
+    padding: var(--s7) 0;
+    border-bottom: 1px solid var(--rule-dk);
+  }
+  .sg-section:last-child { border-bottom: none; }
+
+  .sg-section-head {
+    margin-bottom: var(--s4);
+  }
+
+  .sg-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #444;
+    margin-bottom: 4px;
+  }
+
+  .sg-title {
+    font-family: var(--akz);
+    font-weight: 700;
+    font-size: 28px;
+    color: #e8e4d8;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: var(--s2);
+  }
+
+  .sg-desc {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.75;
+    max-width: 580px;
+  }
+
+  .sg-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s2);
+    margin-bottom: var(--s3);
+  }
+
+  .sg-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s2);
+  }
+
+  .sg-subsection {
+    margin-top: var(--s5);
+  }
+
+  .sg-sublabel {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #333;
+    margin-bottom: var(--s2);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--rule-dk);
+  }
+
+  /* flag inconsistencies */
+  .sg-flag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #c44040;
+    background: rgba(196, 64, 64, 0.08);
+    border: 1px solid rgba(196, 64, 64, 0.2);
+    border-radius: 4px;
+    padding: 3px 10px;
+    margin-bottom: var(--s2);
+  }
+
+  .sg-flag::before { content: '⚠'; font-size: 10px; }
+
+  .sg-note {
+    font-size: 11px;
+    color: #555;
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  /* ============================================================
+     COLOR SWATCHES
+     ============================================================ */
+  .swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: var(--s2);
+  }
+
+  .swatch {
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .swatch-color {
+    height: 56px;
+  }
+
+  .swatch-info {
+    padding: 8px 10px;
+    background: #111;
+  }
+
+  .swatch-name {
+    font-size: 10px;
+    font-weight: 700;
+    color: #c8c4b8;
+    margin-bottom: 2px;
+  }
+
+  .swatch-value {
+    font-size: 9px;
+    color: #555;
+    letter-spacing: 0.04em;
+  }
+
+  /* ============================================================
+     TYPOGRAPHY SPECIMENS
+     ============================================================ */
+  .type-specimen {
+    padding: var(--s3) 0;
+    border-bottom: 1px solid #1a1a18;
+  }
+  .type-specimen:last-child { border-bottom: none; }
+
+  .type-meta {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #333;
+    margin-bottom: 8px;
+  }
+
+  /* ============================================================
+     SPACING RULER
+     ============================================================ */
+  .spacing-row {
+    display: flex;
+    align-items: center;
+    gap: var(--s3);
+    padding: 6px 0;
+    border-bottom: 1px solid #111;
+  }
+
+  .spacing-token {
+    font-size: 10px;
+    color: #444;
+    min-width: 36px;
+  }
+
+  .spacing-bar-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .spacing-bar {
+    height: 20px;
+    background: rgba(196, 64, 64, 0.25);
+    border-right: 2px solid var(--accent);
+    border-radius: 2px 0 0 2px;
+  }
+
+  .spacing-px {
+    font-size: 11px;
+    color: #666;
+    white-space: nowrap;
+  }
+
+  /* ============================================================
+     ANIMATIONS
+     ============================================================ */
+  @property --angle { syntax: '<angle>'; initial-value: 135deg; inherits: false; }
+  @keyframes spin { from { --angle: 135deg; } to { --angle: 495deg; } }
+
+  /* ============================================================
+     LIVE COMPONENT PREVIEWS — exact copies from source pages
+     ============================================================ */
+
+  /* hero-install */
+  .hero-install {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s2);
+    background: var(--bg-dark3);
+    color: #c8c4b8;
+    padding: 12px 20px;
+    font-size: 13px;
+    font-family: var(--mono);
+    letter-spacing: 0.01em;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+    position: relative;
+  }
+  .hero-install:hover { background: #111; }
+  .hero-install::before {
+    content: '';
+    position: absolute;
+    inset: -1px; border-radius: 7px; padding: 1px;
+    background: conic-gradient(from var(--angle), #da5050, #f86868, #a04050, #6c3058, #f86868, #da5050);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    animation: spin 3s linear infinite;
+    pointer-events: none;
+  }
+  .hero-install::after {
+    content: '';
+    position: absolute;
+    inset: -8px; border-radius: 14px;
+    background: conic-gradient(from var(--angle), #c44040, #e85050, #983848, #682850, #e85050, #c44040);
+    filter: blur(20px);
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+    z-index: -1;
+  }
+  .hero-install:hover::after { animation: spin 3s linear infinite; opacity: 0.25; }
+  .hero-install .prompt { color: #555; user-select: none; }
+
+  /* battery card */
+  .battery {
+    background: linear-gradient(
+      to right, transparent 0%, #c44040 15%, #e85050 35%, #983848 65%, #682850 85%, transparent 100()
+    ) top / 100% 1px no-repeat, #1a1a18;
+    padding: var(--s3);
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: border-color 0.15s;
+    position: relative;
+  }
+  .battery-label {
+    font-family: var(--akz);
+    font-weight: 700;
+    font-size: 13px;
+    color: #c8c4b8;
+    margin-bottom: 8px;
+  }
+  .battery-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 11px;
+    color: #999;
+  }
+  .battery-items span {
+    padding: 2px 8px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.03);
+  }
+
+  /* code block */
+  .code {
+    background: var(--bg-dark3);
+    border: 1px solid var(--rule-dk);
+    padding: var(--s3);
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.8;
+    overflow-x: auto;
+    color: #999;
+    white-space: pre;
+    tab-size: 4;
+    border-radius: 8px;
+  }
+  .code .kw  { color: #d47080; }
+  .code .fn  { color: #eeeee4; }
+  .code .str { color: #d4887a; }
+  .code .cm  { color: #444; }
+  .code .tp  { color: #a088b8; }
+  .code .nr  { color: #c488a8; }
+
+  /* sidenav preview */
+  .sg-sidenav-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 180px;
+    background: var(--bg-dark);
+    border: 1px solid var(--rule-dk);
+    border-radius: 6px;
+    padding: var(--s2) 0;
+  }
+  .sg-sidenav-preview .sidenav-link {
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #333;
+    text-decoration: none;
+    padding: 8px 0 8px 14px;
+    border-left: 2px solid transparent;
+  }
+  .sg-sidenav-preview .sidenav-link.active {
+    color: #c8c4b8;
+    border-left-color: var(--accent);
+  }
+
+  /* callout */
+  .callout-preview {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--s5);
+    padding: var(--s3) 0;
+  }
+  .callout-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #555;
+    margin-bottom: 4px;
+    background: var(--grad);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .callout-title {
+    font-family: var(--akz);
+    font-weight: 700;
+    font-size: 18px;
+    color: #e8e4d8;
+    margin-bottom: var(--s1);
+  }
+  .callout-body {
+    font-size: 12px;
+    color: #777;
+    line-height: 1.7;
+  }
+
+  /* footer preview */
+  .sg-footer-preview {
+    border-top: 1px solid var(--rule-dk);
+    padding: var(--s5) 0 var(--s4);
+    text-align: center;
+    background: var(--bg-dark);
+    border-radius: 0 0 8px 8px;
+  }
+  .footer-brand {
+    font-family: var(--din-r);
+    font-variation-settings: 'wght' 400;
+    font-size: 18px;
+    color: #c8c4b8;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--s2);
+  }
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: var(--s3);
+    font-weight: 700;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .footer-links a { color: #444; text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: #c8c4b8; }
+
+  /* light zone preview */
+  .sg-light-preview {
+    background: var(--bg);
+    color: var(--fg);
+    border-radius: 8px;
+    padding: var(--s3);
+    border: 1px solid var(--rule);
+  }
+
+  /* start-links */
+  .start-links-preview {
+    display: flex;
+    gap: var(--s5);
+  }
+  .start-links-preview a {
+    font-size: 12px;
+    color: var(--fg2);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 2px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .start-links-preview a:hover { color: var(--fg0); border-color: var(--fg0); }
+
+  /* section header preview */
+  .section-head-preview {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--s4);
+    padding: var(--s4) 0;
+  }
+  .section-num {
+    font-family: var(--din-r);
+    font-variation-settings: 'wght' 200;
+    font-size: 84px;
+    line-height: 0.82;
+    letter-spacing: -0.04em;
+    color: #1e1e1c;
+    flex-shrink: 0;
+    min-width: 110px;
+  }
+  .section-meta { padding-top: 8px; }
+  .section-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #444;
+    margin-bottom: 4px;
+  }
+  .section-title {
+    font-family: var(--akz);
+    font-weight: 700;
+    font-size: 34px;
+    color: #e8e4d8;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .section-desc {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.75;
+    font-style: italic;
+    max-width: 540px;
+    margin: var(--s2) 0;
+    border-left: 1px solid var(--rule-dk);
+    padding-left: 20px;
+  }
+
+  /* feature card */
+  .feature-card {
+    display: grid;
+    grid-template-columns: minmax(180px, 35%) 1fr;
+    border: 1px solid #1e1e1c;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .feature-info {
+    padding: var(--s3);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: rgba(255,255,255,0.025);
+  }
+  .feature-title {
+    font-family: var(--akz);
+    font-weight: 700;
+    font-size: 13px;
+    color: #c8c4b8;
+    margin-bottom: 6px;
+  }
+  .feature-desc { font-size: 11px; color: #555; line-height: 1.5; }
+  .feature-card .code { margin: 0; border-radius: 0; border: none; background: rgba(0,0,0,0.2); }
+
+  /* nav preview */
+  .sg-globalnavpreview {
+    background: rgba(19,19,17,0.95);
+    border: 1px solid var(--rule-dk);
+    border-radius: 8px;
+    padding: 0 var(--s5);
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .sg-navbrand {
+    font-family: var(--din-r);
+    font-variation-settings: 'wght' 400;
+    font-size: 18px;
+    color: #e8e4d8;
+    letter-spacing: -0.02em;
+  }
+  .sg-navlinks {
+    display: flex;
+    align-items: center;
+    gap: var(--s3);
+    list-style: none;
+  }
+  .sg-navlinks a {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #555;
+    text-decoration: none;
+  }
+  .sg-navlinks a.active { color: #e8e4d8; }
+
+  /* inconsistency audit */
+  .audit-item {
+    padding: var(--s3);
+    background: rgba(196, 64, 64, 0.05);
+    border: 1px solid rgba(196, 64, 64, 0.15);
+    border-radius: 6px;
+    margin-bottom: var(--s2);
+  }
+  .audit-title {
+    font-weight: 700;
+    font-size: 12px;
+    color: #d47080;
+    margin-bottom: 6px;
+  }
+  .audit-body { font-size: 12px; color: #777; line-height: 1.7; }
+  .audit-body code { font-family: var(--mono); color: #999; font-size: 11px; }
+  .audit-ok {
+    padding: var(--s3);
+    background: rgba(64, 196, 64, 0.04);
+    border: 1px solid rgba(64, 196, 64, 0.1);
+    border-radius: 6px;
+    margin-bottom: var(--s2);
+    font-size: 12px;
+    color: #666;
+  }
+  .audit-ok::before { content: '✓ '; color: #4a8a4a; }
+
+  /* gradient bar for accent demo */
+  .grad-bar {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--grad);
+    margin-bottom: var(--s2);
+  }
+</style>
+</head>
+<body>
+
+<nav class="sg-nav">
+  <div class="sg-nav-inner">
+    <a href="index.html" class="sg-nav-brand">glyph</a>
+    <span class="sg-nav-label">Style Guide</span>
+  </div>
+</nav>
+
+<nav class="sg-sidenav" id="sg-sidenav">
+  <a href="#tokens" class="sg-sidenav-link">Tokens</a>
+  <a href="#color" class="sg-sidenav-link">Color</a>
+  <a href="#typography" class="sg-sidenav-link">Typography</a>
+  <a href="#spacing" class="sg-sidenav-link">Spacing</a>
+  <a href="#animation" class="sg-sidenav-link">Animation</a>
+  <a href="#zones" class="sg-sidenav-link">Zones</a>
+  <a href="#nav" class="sg-sidenav-link">Navigation</a>
+  <a href="#sections" class="sg-sidenav-link">Sections</a>
+  <a href="#code" class="sg-sidenav-link">Code Blocks</a>
+  <a href="#components" class="sg-sidenav-link">Components</a>
+  <a href="#interactive" class="sg-sidenav-link">Interactive</a>
+  <a href="#audit" class="sg-sidenav-link">Audit</a>
+</nav>
+
+<div class="sg-page">
+
+<!-- ============================================================
+     TOKENS
+     ============================================================ -->
+<div class="sg-section" id="tokens">
+  <div class="sg-section-head">
+    <div class="sg-label">Reference</div>
+    <div class="sg-title">Design Tokens</div>
+    <div class="sg-desc">
+      CSS custom properties defined in <code style="font-family:var(--mono);color:#999;font-size:11px">:root</code>.
+      Only <code style="font-family:var(--mono);color:#999;font-size:11px">index.html</code> declares the full set.
+      <code style="font-family:var(--mono);color:#999;font-size:11px">start.html</code> and <code style="font-family:var(--mono);color:#999;font-size:11px">concepts.html</code>
+      declare a dark-only subset (no <code style="font-family:var(--mono);color:#999;font-size:11px">--bg</code>,
+      <code style="font-family:var(--mono);color:#999;font-size:11px">--fg0</code>&ndash;<code style="font-family:var(--mono);color:#999;font-size:11px">--fg4</code>,
+      <code style="font-family:var(--mono);color:#999;font-size:11px">--rule</code>, <code style="font-family:var(--mono);color:#999;font-size:11px">--akz-c</code>).
+    </div>
+  </div>
+
+  <div class="code">/* backgrounds — light */
+--bg:        #f2f0ec   warm off-white page bg
+--bg2:       #e6e4de   secondary / cards on light
+--bg3:       #ffffff   pure white (unused in current pages)
+
+/* backgrounds — dark */
+--bg-dark:   #131311   primary dark bg, body on dark pages
+--bg-dark2:  #1a1a18   elevated dark (nav, hover states)
+--bg-dark3:  #0e0e0c   deeply recessed (code blocks, omni input)
+
+/* foreground scale (light context) */
+--fg0:       #131311   maximum contrast
+--fg:        #3a3a36   body text
+--fg2:       #6a6a64   secondary text
+--fg3:       #8a8880   muted / nav links default
+--fg4:       #b0aba0   very muted / labels
+
+/* rules */
+--rule:      #d4d0c8   light dividers
+--rule-dk:   #262624   dark dividers
+
+/* accent */
+--accent:    #c44040   primary red
+--grad:      linear-gradient(135deg, #c44040, #983848, #682850)
+
+/* typefaces */
+--mono:      'Berkeley Mono', monospace     body, code, nav links
+--akz:       akzidenz-grotesk-next-pro      section titles, feature titles
+--akz-c:     akzidenz-grotesk-next-conden   (defined, not yet used)
+--din-r:     din-2014-rounded-variable      brand wordmark, section numbers
+
+/* spacing */
+--s1: 8px   --s2: 16px   --s3: 24px   --s4: 32px
+--s5: 48px  --s6: 64px   --s7: 80px   --s8: 120px</div>
+</div>
+
+<!-- ============================================================
+     COLOR
+     ============================================================ -->
+<div class="sg-section" id="color">
+  <div class="sg-section-head">
+    <div class="sg-label">Palette</div>
+    <div class="sg-title">Color</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Dark Backgrounds</div>
+    <div class="swatch-grid">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#0e0e0c"></div>
+        <div class="swatch-info"><div class="swatch-name">--bg-dark3</div><div class="swatch-value">#0e0e0c</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#131311"></div>
+        <div class="swatch-info"><div class="swatch-name">--bg-dark</div><div class="swatch-value">#131311</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#1a1a18"></div>
+        <div class="swatch-info"><div class="swatch-name">--bg-dark2</div><div class="swatch-value">#1a1a18</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#1e1e1c"></div>
+        <div class="swatch-info"><div class="swatch-name">(hardcoded)</div><div class="swatch-value">#1e1e1c — section-num, borders</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#262624"></div>
+        <div class="swatch-info"><div class="swatch-name">--rule-dk</div><div class="swatch-value">#262624</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Light Backgrounds</div>
+    <div class="swatch-grid">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#f2f0ec;border:1px solid #ddd"></div>
+        <div class="swatch-info"><div class="swatch-name">--bg</div><div class="swatch-value">#f2f0ec</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#e6e4de;border:1px solid #ddd"></div>
+        <div class="swatch-info"><div class="swatch-name">--bg2</div><div class="swatch-value">#e6e4de</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#ffffff;border:1px solid #ddd"></div>
+        <div class="swatch-info"><div class="swatch-name">--bg3</div><div class="swatch-value">#ffffff</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#d4d0c8"></div>
+        <div class="swatch-info"><div class="swatch-name">--rule</div><div class="swatch-value">#d4d0c8</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Foreground Scale (light context)</div>
+    <div class="swatch-grid">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#131311"></div>
+        <div class="swatch-info"><div class="swatch-name">--fg0</div><div class="swatch-value">#131311 — max contrast</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#3a3a36"></div>
+        <div class="swatch-info"><div class="swatch-name">--fg</div><div class="swatch-value">#3a3a36 — body</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#6a6a64"></div>
+        <div class="swatch-info"><div class="swatch-name">--fg2</div><div class="swatch-value">#6a6a64 — secondary</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#8a8880"></div>
+        <div class="swatch-info"><div class="swatch-name">--fg3</div><div class="swatch-value">#8a8880 — muted</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#b0aba0"></div>
+        <div class="swatch-info"><div class="swatch-name">--fg4</div><div class="swatch-value">#b0aba0 — very muted</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Dark Page Text (hardcoded)</div>
+    <div class="swatch-grid">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#c8c4b8"></div>
+        <div class="swatch-info"><div class="swatch-name">#c8c4b8</div><div class="swatch-value">primary dark-bg text</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#e8e4d8"></div>
+        <div class="swatch-info"><div class="swatch-name">#e8e4d8</div><div class="swatch-value">high contrast / hover</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#999"></div>
+        <div class="swatch-info"><div class="swatch-name">#999</div><div class="swatch-value">code body text</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#888"></div>
+        <div class="swatch-info"><div class="swatch-name">#888</div><div class="swatch-value">concept-prose text</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#666"></div>
+        <div class="swatch-info"><div class="swatch-name">#666</div><div class="swatch-value">show-text / aside</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#555"></div>
+        <div class="swatch-info"><div class="swatch-name">#555</div><div class="swatch-value">nav links, prompts</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#444"></div>
+        <div class="swatch-info"><div class="swatch-name">#444</div><div class="swatch-value">sidenav, labels</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#333"></div>
+        <div class="swatch-info"><div class="swatch-name">#333</div><div class="swatch-value">inactive sidenav</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Accent</div>
+    <div class="swatch-grid">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#c44040"></div>
+        <div class="swatch-info"><div class="swatch-name">--accent</div><div class="swatch-value">#c44040</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#da5050"></div>
+        <div class="swatch-info"><div class="swatch-name">(gradient start)</div><div class="swatch-value">#da5050</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#f86868"></div>
+        <div class="swatch-info"><div class="swatch-name">(gradient peak)</div><div class="swatch-value">#f86868</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#983848"></div>
+        <div class="swatch-info"><div class="swatch-name">(gradient mid)</div><div class="swatch-value">#983848</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#682850"></div>
+        <div class="swatch-info"><div class="swatch-name">(gradient end)</div><div class="swatch-value">#682850</div></div>
+      </div>
+    </div>
+    <div class="grad-bar" style="margin-top:var(--s2)"></div>
+    <div class="sg-note">Gradient: linear-gradient(135deg, #c44040 → #983848 → #682850)</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Syntax Highlighting</div>
+    <div class="swatch-grid">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#d47080"></div>
+        <div class="swatch-info"><div class="swatch-name">.kw</div><div class="swatch-value">#d47080 — keywords</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#eeeee4"></div>
+        <div class="swatch-info"><div class="swatch-name">.fn</div><div class="swatch-value">#eeeee4 — functions</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#d4887a"></div>
+        <div class="swatch-info"><div class="swatch-name">.str</div><div class="swatch-value">#d4887a — strings</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#444"></div>
+        <div class="swatch-info"><div class="swatch-name">.cm</div><div class="swatch-value">#444 — comments</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#a088b8"></div>
+        <div class="swatch-info"><div class="swatch-name">.tp</div><div class="swatch-value">#a088b8 — types</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#c488a8"></div>
+        <div class="swatch-info"><div class="swatch-name">.nr</div><div class="swatch-value">#c488a8 — numbers</div></div>
+      </div>
+    </div>
+    <div class="sg-note">Note: index.html uses <code style="font-family:var(--mono);font-size:11px">.cm { color: #555 }</code> vs start.html/concepts.html use <code style="font-family:var(--mono);font-size:11px">#444</code>.</div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TYPOGRAPHY
+     ============================================================ -->
+<div class="sg-section" id="typography">
+  <div class="sg-section-head">
+    <div class="sg-label">Type System</div>
+    <div class="sg-title">Typography</div>
+    <div class="sg-desc">Three typefaces. Monospace as default body. Akzidenz for headings. DIN Rounded for brand.</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Berkeley Mono — var(--mono) — body, code, nav</div>
+
+    <div class="type-specimen">
+      <div class="type-meta">13px / line-height 1.7 — body default</div>
+      <div style="font-family:var(--mono);font-size:13px;line-height:1.7;color:#c8c4b8">
+        The quick brown fox jumps over the lazy dog. 0123456789.
+      </div>
+    </div>
+    <div class="type-specimen">
+      <div class="type-meta">12px — code blocks, section-desc, feature-desc</div>
+      <div style="font-family:var(--mono);font-size:12px;color:#999">
+        func main() { app.Run() } — 0123456789
+      </div>
+    </div>
+    <div class="type-specimen">
+      <div class="type-meta">11px — nav links, battery items, next-links</div>
+      <div style="font-family:var(--mono);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#555">
+        Get Started &nbsp; Concepts &nbsp; API Reference
+      </div>
+    </div>
+    <div class="type-specimen">
+      <div class="type-meta">10px — labels, uppercase tags</div>
+      <div style="font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:#444">
+        Go TUI Framework &nbsp;&nbsp; Section &nbsp;&nbsp; Appearance
+      </div>
+    </div>
+    <div class="type-specimen">
+      <div class="type-meta">9px — footer links</div>
+      <div style="font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#444">
+        Home &nbsp; Get Started &nbsp; API &nbsp; Concepts &nbsp; Source
+      </div>
+    </div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Akzidenz Grotesk Next Pro — var(--akz) — headings</div>
+
+    <div class="type-specimen">
+      <div class="type-meta">34px / weight 700 / tracking -0.02em — section-title</div>
+      <div style="font-family:var(--akz);font-weight:700;font-size:34px;letter-spacing:-0.02em;line-height:1.1;color:#e8e4d8">
+        Declarative Layout
+      </div>
+    </div>
+    <div class="type-specimen">
+      <div class="type-meta">18px / weight 700 — callout-title</div>
+      <div style="font-family:var(--akz);font-weight:700;font-size:18px;color:#e8e4d8">
+        Build Phase &nbsp;&nbsp; Execute Phase
+      </div>
+    </div>
+    <div class="type-specimen">
+      <div class="type-meta">16px — hero-headline (uses --mono)</div>
+      <div style="font-family:var(--mono);font-size:16px;color:#131311;line-height:1.7">
+        Batteries-included terminal UI framework for Go.
+      </div>
+    </div>
+    <div class="type-specimen">
+      <div class="type-meta">13px / weight 700 — feature-title, battery-label</div>
+      <div style="font-family:var(--akz);font-weight:700;font-size:13px;color:#c8c4b8">
+        Declarative Composition &nbsp;&nbsp; Layout &nbsp;&nbsp; Keyboard
+      </div>
+    </div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">DIN 2014 Rounded Variable — var(--din-r) — brand</div>
+
+    <div class="type-specimen">
+      <div class="type-meta">96px / wght 300 / tracking -0.03em — hero-title</div>
+      <div style="font-family:var(--din-r);font-variation-settings:'wght' 300;font-size:96px;letter-spacing:-0.03em;line-height:0.9;color:#131311">
+        glyph
+      </div>
+    </div>
+    <div class="type-specimen">
+      <div class="type-meta">84px / wght 200 / tracking -0.04em — section-num</div>
+      <div style="font-family:var(--din-r);font-variation-settings:'wght' 200;font-size:84px;letter-spacing:-0.04em;line-height:0.82;color:#1e1e1c">
+        01
+      </div>
+    </div>
+    <div class="type-specimen">
+      <div class="type-meta">18px / wght 400 / tracking -0.02em — nav brand, footer brand</div>
+      <div style="font-family:var(--din-r);font-variation-settings:'wght' 400;font-size:18px;letter-spacing:-0.02em;color:#e8e4d8">
+        glyph
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SPACING
+     ============================================================ -->
+<div class="sg-section" id="spacing">
+  <div class="sg-section-head">
+    <div class="sg-label">Scale</div>
+    <div class="sg-title">Spacing</div>
+    <div class="sg-desc">8px base unit. All tokens are multiples of 8.</div>
+  </div>
+
+  <div class="spacing-row"><div class="spacing-token">--s1</div><div class="spacing-bar-wrap"><div class="spacing-bar" style="width:8px"></div><div class="spacing-px">8px</div></div></div>
+  <div class="spacing-row"><div class="spacing-token">--s2</div><div class="spacing-bar-wrap"><div class="spacing-bar" style="width:16px"></div><div class="spacing-px">16px</div></div></div>
+  <div class="spacing-row"><div class="spacing-token">--s3</div><div class="spacing-bar-wrap"><div class="spacing-bar" style="width:24px"></div><div class="spacing-px">24px</div></div></div>
+  <div class="spacing-row"><div class="spacing-token">--s4</div><div class="spacing-bar-wrap"><div class="spacing-bar" style="width:32px"></div><div class="spacing-px">32px</div></div></div>
+  <div class="spacing-row"><div class="spacing-token">--s5</div><div class="spacing-bar-wrap"><div class="spacing-bar" style="width:48px"></div><div class="spacing-px">48px — nav height, page padding</div></div></div>
+  <div class="spacing-row"><div class="spacing-token">--s6</div><div class="spacing-bar-wrap"><div class="spacing-bar" style="width:64px"></div><div class="spacing-px">64px</div></div></div>
+  <div class="spacing-row"><div class="spacing-token">--s7</div><div class="spacing-bar-wrap"><div class="spacing-bar" style="width:80px"></div><div class="spacing-px">80px — section padding, footer</div></div></div>
+  <div class="spacing-row"><div class="spacing-token">--s8</div><div class="spacing-bar-wrap"><div class="spacing-bar" style="width:120px"></div><div class="spacing-px">120px</div></div></div>
+
+  <div class="sg-note" style="margin-top:var(--s3)">
+    Max content width: 1060px on all pages. Zone inner padding: var(--s5) = 48px.<br>
+    Sidenav breakpoint: 960px. Mobile nav inner padding drops to var(--s2) at 640px.
+  </div>
+</div>
+
+<!-- ============================================================
+     ANIMATION
+     ============================================================ -->
+<div class="sg-section" id="animation">
+  <div class="sg-section-head">
+    <div class="sg-label">Motion</div>
+    <div class="sg-title">Animation &amp; Effects</div>
+    <div class="sg-desc">All animated effects use the same spinning conic gradient. Duration is 3s linear infinite.</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Spinning Accent Border — hero-install, omni panel</div>
+    <div class="sg-row" style="align-items:center">
+      <div class="hero-install">
+        <span class="prompt">$</span>
+        go get github.com/kungfusheep/glyph@latest
+      </div>
+    </div>
+    <div class="sg-note">
+      Uses <code style="font-family:var(--mono);font-size:11px">conic-gradient(from var(--angle), #da5050, #f86868, #a04050, #6c3058, …)</code>
+      clipped via mask to border only. Outer glow uses same gradient with <code style="font-family:var(--mono);font-size:11px">filter: blur(20px)</code>, opacity 0 → 0.7 (light) / 0.25 (dark) on hover.
+    </div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Transition Durations in use</div>
+    <div class="code">0.1s — row hover backgrounds (omni-row)
+0.15s — nav link color, install bg, battery border, link color
+0.2s  — nav background, footer links, sidenav link, omni open/close
+0.3s  — nav transition (background, border-color), nav-brand opacity
+0.4s  — glow opacity, border inset (install hover)</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Gradient Text — callout labels (dark zone only)</div>
+    <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.1em;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">
+      Build Phase &nbsp;&nbsp;&nbsp; Execute Phase
+    </div>
+    <div class="sg-note">Only applied to <code style="font-family:var(--mono);font-size:11px">.zone-dark .callout-label</code>.</div>
+  </div>
+</div>
+
+<!-- ============================================================
+     ZONES
+     ============================================================ -->
+<div class="sg-section" id="zones">
+  <div class="sg-section-head">
+    <div class="sg-label">Layout</div>
+    <div class="sg-title">Zones</div>
+    <div class="sg-desc">index.html alternates light and dark zones. All inner content is constrained by .zone-inner (max-width 1060px, padding var(--s5)).</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">zone-light</div>
+    <div class="sg-light-preview">
+      <div style="font-size:13px;color:var(--fg);margin-bottom:8px">zone-light — background: var(--bg) #f2f0ec, color: var(--fg) #3a3a36</div>
+      <div style="font-size:12px;color:var(--fg2)">Secondary text at --fg2 #6a6a64</div>
+      <div style="font-size:12px;color:var(--fg3)">Muted text at --fg3 #8a8880</div>
+    </div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">zone-dark</div>
+    <div style="background:var(--bg-dark);border:1px solid var(--rule-dk);border-radius:8px;padding:var(--s3)">
+      <div style="font-size:13px;color:#c8c4b8;margin-bottom:8px">zone-dark — background: var(--bg-dark) #131311, color: #c8c4b8</div>
+      <div style="font-size:12px;color:#888">Prose text at #888 (hardcoded, see audit)</div>
+      <div style="font-size:12px;color:#555">Muted at #555</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     NAVIGATION
+     ============================================================ -->
+<div class="sg-section" id="nav">
+  <div class="sg-section-head">
+    <div class="sg-label">Wayfinding</div>
+    <div class="sg-title">Navigation</div>
+    <div class="sg-desc">Two distinct nav implementations exist: the adaptive nav on index.html and the fixed global-nav used by start/concepts/api.</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">global-nav (start.html, concepts.html, api.html)</div>
+    <div class="sg-globalnavpreview">
+      <span class="sg-navbrand">glyph</span>
+      <ul class="sg-navlinks">
+        <li><a href="#" class="active">Get Started</a></li>
+        <li><a href="#">Concepts</a></li>
+        <li><a href="#">API</a></li>
+        <li><a href="#" style="color:#555">&#9679;</a></li>
+      </ul>
+    </div>
+    <div class="sg-note">Always dark. Height 48px. backdrop-filter blur(8px). Max-width 1060px inner.</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">nav — index.html (adaptive: transparent → scrolled light → in-dark)</div>
+    <div class="code">nav               transparent, no border
+nav.scrolled      bg rgba(242,240,236,0.95), blur(8px), border --rule
+nav.in-dark       bg rgba(19,19,17,0.95), border --rule-dk
+nav.brand-visible .nav-brand opacity 1 (hidden until scrolled)
+nav.brand-visible .nav-section opacity 1</div>
+    <div class="sg-note">Link style: 11px, uppercase, letter-spacing 0.1em. Same as global-nav.</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">sidenav (start.html, concepts.html, api.html — desktop only)</div>
+    <div class="sg-sidenav-preview">
+      <a class="sidenav-link" style="font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:#333;text-decoration:none;padding:8px 0 8px 14px;border-left:2px solid transparent;display:block">Install</a>
+      <a class="sidenav-link active" style="font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:#c8c4b8;text-decoration:none;padding:8px 0 8px 14px;border-left:2px solid var(--accent);display:block">First App</a>
+      <a class="sidenav-link" style="font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:#333;text-decoration:none;padding:8px 0 8px 14px;border-left:2px solid transparent;display:block">Lists</a>
+      <a class="sidenav-link" style="font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:#333;text-decoration:none;padding:8px 0 8px 14px;border-left:2px solid transparent;display:block">Layout</a>
+    </div>
+    <div class="sg-note">Fixed, left-anchored, top 48px. Hidden below 960px. Active state uses --accent border. Active border uses border-image: var(--grad) 1 for gradient border.</div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SECTION HEADERS
+     ============================================================ -->
+<div class="sg-section" id="sections">
+  <div class="sg-section-head">
+    <div class="sg-label">Structure</div>
+    <div class="sg-title">Section Headers</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Dark zone — section-head + section-num + section-title + section-desc</div>
+    <div class="section-head-preview">
+      <div class="section-num">01</div>
+      <div class="section-meta">
+        <div class="section-label">Category</div>
+        <div class="section-title">Section Title</div>
+        <div class="section-desc">Italic descriptor text, max-width 540px. Border-left 1px --rule-dk, padding-left 20px.</div>
+      </div>
+    </div>
+    <div class="sg-note">
+      section-num: DIN Rounded wght 200, 84px, color #1e1e1c.<br>
+      section-label: 10px, uppercase, color #444.<br>
+      section-title: Akzidenz 700, 34px, color #e8e4d8 (dark) / var(--fg0) (light).
+    </div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Light zone — same structure, different colours</div>
+    <div class="sg-light-preview">
+      <div style="display:flex;align-items:flex-start;gap:var(--s4);padding:var(--s3) 0">
+        <div style="font-family:var(--din-r);font-variation-settings:'wght' 200;font-size:84px;line-height:0.82;letter-spacing:-0.04em;color:var(--bg2);flex-shrink:0;min-width:110px">02</div>
+        <div style="padding-top:8px">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--fg4);margin-bottom:4px">Category</div>
+          <div style="font-family:var(--akz);font-weight:700;font-size:34px;color:var(--fg0);letter-spacing:-0.02em;line-height:1.1">Section Title</div>
+          <div style="font-size:12px;color:var(--fg3);font-style:italic;margin-top:var(--s2);border-left:1px solid var(--rule);padding-left:20px">Descriptor text in light zone.</div>
+        </div>
+      </div>
+    </div>
+    <div class="sg-note">section-num uses --bg2 (ghosted). section-label uses --fg4. section-title uses --fg0.</div>
+  </div>
+</div>
+
+<!-- ============================================================
+     CODE BLOCKS
+     ============================================================ -->
+<div class="sg-section" id="code">
+  <div class="sg-section-head">
+    <div class="sg-label">Content</div>
+    <div class="sg-title">Code Blocks</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Dark zone — bg-dark3, border rule-dk</div>
+    <div class="code"><span class="kw">func</span> <span class="fn">main</span>() {
+    app, err := <span class="fn">NewApp</span>()
+    <span class="kw">if</span> err != <span class="tp">nil</span> {
+        log.<span class="fn">Fatal</span>(err) <span class="cm">// handle startup errors</span>
+    }
+    count := <span class="nr">0</span>
+    greeting := <span class="str">"hello, world"</span>
+    app.<span class="fn">Run</span>()
+}</div>
+    <div class="sg-note">Berkeley Mono 12px, line-height 1.8, color #999. border-radius 8px.</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Light zone — bg-dark (no border)</div>
+    <div style="background:var(--bg-dark);padding:var(--s3);font-family:var(--mono);font-size:12px;line-height:1.8;color:#c8c4b8;border-radius:8px;white-space:pre">$ go get github.com/kungfusheep/glyph@latest</div>
+    <div class="sg-note">Light zone code blocks use --bg-dark bg, color #c8c4b8. No border.</div>
+  </div>
+</div>
+
+<!-- ============================================================
+     COMPONENTS
+     ============================================================ -->
+<div class="sg-section" id="components">
+  <div class="sg-section-head">
+    <div class="sg-label">Patterns</div>
+    <div class="sg-title">Components</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Feature Card — index.html</div>
+    <div class="feature-card">
+      <div class="feature-info">
+        <div class="feature-title">Declarative Composition</div>
+        <div class="feature-desc">Build UIs by composing typed values. No template strings, no markup.</div>
+      </div>
+      <div class="code" style="margin:0;border-radius:0;border:none;background:rgba(0,0,0,0.2)"><span class="fn">VBox</span>(
+    <span class="fn">Text</span>(<span class="str">"hello"</span>).<span class="fn">Bold</span>(),
+    <span class="fn">Text</span>(&amp;count),
+)</div>
+    </div>
+    <div class="sg-note">Grid: 35% info / 65% code. Border #1e1e1c. border-radius 8px. Feature-info bg: rgba(255,255,255,0.025).</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Battery Card — index.html dark zone</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s2)">
+      <div class="battery">
+        <div class="battery-label">Layout</div>
+        <div class="battery-items">
+          <span>VBox</span><span>HBox</span><span>Overlay</span><span>Space</span>
+        </div>
+      </div>
+      <div class="battery">
+        <div class="battery-label">Input</div>
+        <div class="battery-items">
+          <span>Input</span><span>Checkbox</span><span>Radio</span>
+        </div>
+      </div>
+      <div class="battery">
+        <div class="battery-label">Data</div>
+        <div class="battery-items">
+          <span>List</span><span>FilterList</span><span>AutoTable</span>
+        </div>
+      </div>
+    </div>
+    <div class="sg-note">Gradient top-border via background shorthand. Hover gets accent glow via ::after. On light zone: solid white bg, no gradient border.</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Callout — dark zone (Build / Execute phases)</div>
+    <div class="callout-preview">
+      <div>
+        <div class="callout-label">Phase 01</div>
+        <div class="callout-title">Build</div>
+        <div class="callout-body">Construct the component tree. Returns a flat operation list. Runs once.</div>
+      </div>
+      <div>
+        <div class="callout-label">Phase 02</div>
+        <div class="callout-title">Execute</div>
+        <div class="callout-body">Walk the list each frame. Dereference pointers. Write ANSI output.</div>
+      </div>
+    </div>
+    <div class="sg-note">Label uses gradient text clip. Title: Akzidenz 700 18px #e8e4d8. Body: 12px #777.</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Footer</div>
+    <div class="sg-footer-preview">
+      <div class="footer-brand">glyph</div>
+      <div class="footer-links">
+        <a href="#">Home</a>
+        <a href="#">Get Started</a>
+        <a href="#">API</a>
+        <a href="#">Concepts</a>
+        <a href="#">Source</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     INTERACTIVE
+     ============================================================ -->
+<div class="sg-section" id="interactive">
+  <div class="sg-section-head">
+    <div class="sg-label">Elements</div>
+    <div class="sg-title">Interactive</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">hero-install (dark zone variant — shown above in Animation)</div>
+    <div class="sg-row">
+      <div class="hero-install"><span class="prompt">$</span> go get github.com/kungfusheep/glyph@latest</div>
+    </div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">start-links (light zone)</div>
+    <div class="sg-light-preview">
+      <div class="start-links-preview">
+        <a href="#">Get started &rarr;</a>
+        <a href="#">Read the concepts &rarr;</a>
+        <a href="#">Browse the API &rarr;</a>
+      </div>
+    </div>
+    <div class="sg-note">12px, color --fg2, border-bottom 1px --rule. Hover: --fg0, border --fg0.</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">start-links (dark zone)</div>
+    <div style="display:flex;gap:var(--s5)">
+      <a href="#" style="font-size:12px;color:#c8c4b8;text-decoration:none;border-bottom:1px solid #333;padding-bottom:2px">Concepts &rarr;</a>
+      <a href="#" style="font-size:12px;color:#c8c4b8;text-decoration:none;border-bottom:1px solid #333;padding-bottom:2px">API Reference &rarr;</a>
+    </div>
+    <div class="sg-note">12px, color #c8c4b8, border-bottom #333. Hover: border-color #c8c4b8.</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">next-links (start.html — uppercase mono)</div>
+    <div style="display:flex;gap:var(--s3)">
+      <a href="#" style="font-family:var(--mono);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:#555;text-decoration:none">Concepts &rarr;</a>
+      <a href="#" style="font-family:var(--mono);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:#555;text-decoration:none">API Reference &rarr;</a>
+    </div>
+    <div class="sg-note">Different from start-links: no border-bottom, uppercase, weight 700. Hover: #c8c4b8.</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Omni Search Panel (injected by omni.js)</div>
+    <div style="position:relative;height:200px;background:#0a0a08;border-radius:8px;border:1px solid var(--rule-dk);overflow:hidden;display:flex;align-items:flex-start;justify-content:center;padding-top:var(--s3)">
+      <div style="width:360px;background:var(--bg-dark3);border-radius:10px;overflow:hidden;box-shadow:0 4px 30px rgba(0,0,0,0.5)">
+        <input type="text" placeholder="Search API..." style="display:block;width:100%;background:var(--bg-dark3);border:none;border-bottom:1px solid var(--rule-dk);color:#c8c4b8;font-family:var(--mono);font-size:16px;padding:14px 16px;outline:none" readonly>
+        <div style="padding:10px 16px;display:flex;align-items:center;gap:8px;color:#8a8880;border-bottom:1px solid var(--rule-dk)">
+          <span style="font-family:var(--mono);font-weight:600;font-size:14px;color:#c8c4b8">Overlay</span>
+          <span style="font-family:var(--mono);font-size:13px;color:#666">.Open</span>
+          <span style="font-size:11px;color:#555;margin-left:auto">func(…) *OverlayNode</span>
+        </div>
+        <div style="padding:8px 16px;font-size:11px;color:#333;font-family:var(--mono);display:flex;gap:12px">
+          <span><kbd style="background:#1a1a18;border:1px solid #333;border-radius:3px;padding:1px 5px;font-size:10px">↑↓</kbd> navigate</span>
+          <span><kbd style="background:#1a1a18;border:1px solid #333;border-radius:3px;padding:1px 5px;font-size:10px">↵</kbd> open</span>
+          <span><kbd style="background:#1a1a18;border:1px solid #333;border-radius:3px;padding:1px 5px;font-size:10px">esc</kbd> close</span>
+        </div>
+      </div>
+    </div>
+    <div class="sg-note">Backdrop: rgba(0,0,0,0.6) + blur(2px). Panel: fixed top 22vh, width min(520px, 100vw-32px). Spinning accent border. Opens on '/' keypress or nav search icon.</div>
+  </div>
+</div>
+
+<!-- ============================================================
+     AUDIT
+     ============================================================ -->
+<div class="sg-section" id="audit">
+  <div class="sg-section-head">
+    <div class="sg-label">Consistency</div>
+    <div class="sg-title">Audit</div>
+    <div class="sg-desc">Issues found across pages. Use this as a checklist when updating the site.</div>
+  </div>
+
+  <div class="audit-ok">
+    <strong>Fixed:</strong> Undefined CSS variable <code>--berk</code> — corrected to <code>var(--mono)</code> in <code>index.html</code>.
+  </div>
+
+  <div class="audit-ok">
+    <strong>Fixed:</strong> Prose text color — <code>.concept-prose</code> now uses <code>var(--fg3)</code> across all pages.
+  </div>
+
+  <div class="audit-ok">
+    <strong>Fixed:</strong> Comment syntax highlight color — all pages now use <code>.code .cm { color: #444 }</code>.
+  </div>
+
+  <div class="audit-ok">
+    <strong>Fixed:</strong> Partial token sets — all pages now link <code>tokens.css</code> as single source of truth. Inline <code>:root</code> blocks removed.
+  </div>
+
+  <div class="audit-ok">
+    <strong>Fixed:</strong> <code>--akz-c</code> removed from <code>tokens.css</code> (unused).
+  </div>
+
+  <div class="audit-ok">
+    <strong>Fixed:</strong> Nav class names unified — <code>start.html</code> and <code>concepts.html</code> now use <code>.nav</code> / <code>.nav-inner</code> / <code>.nav-brand</code> / <code>.nav-links</code> matching <code>index.html</code> and <code>api.html</code>.
+  </div>
+
+  <div class="audit-ok">
+    <strong>Fixed:</strong> Section label/title class names unified — <code>.concept-label</code> / <code>.concept-title</code> renamed to <code>.section-label</code> / <code>.section-title</code> on <code>start.html</code> and <code>concepts.html</code>.
+  </div>
+
+  <div class="audit-ok">
+    <strong>Fixed:</strong> Section head bottom spacing — <code>margin-bottom</code> on <code>start.html</code> / <code>concepts.html</code> changed from <code>var(--s3)</code> to <code>var(--s4)</code>, matching <code>index.html</code> and <code>api.html</code>.
+  </div>
+
+  <div class="audit-item">
+    <div class="audit-title">Hardcoded dark-page text colours not tokenised</div>
+    <div class="audit-body">
+      <code>#c8c4b8</code>, <code>#e8e4d8</code>, <code>#888</code>, <code>#777</code>, <code>#666</code>,
+      <code>#555</code>, <code>#444</code>, <code>#333</code>, <code>#1e1e1c</code> are all used directly
+      throughout dark-page styles. These are consistent in intent but not backed by tokens,
+      making them fragile to a palette shift.
+    </div>
+  </div>
+
+  <div class="audit-ok">
+    Spacing scale is consistent — all padding and gap values use <code>--s1</code>–<code>--s8</code> tokens across all pages.
+  </div>
+  <div class="audit-ok">
+    Max content width is consistent — 1060px applied via <code>.zone-inner</code> and <code>.page</code> on all pages.
+  </div>
+  <div class="audit-ok">
+    Nav height is consistent — 48px across all nav variants.
+  </div>
+  <div class="audit-ok">
+    Accent colours are consistent — all spinning border animations use the same conic gradient stops.
+  </div>
+  <div class="audit-ok">
+    Font sizes and weights are consistent — body 13px / Berkeley Mono applies globally.
+  </div>
+</div>
+
+</div><!-- .sg-page -->
+
+<script>
+// sidenav scroll tracking
+(function() {
+  const sections = Array.from(document.querySelectorAll('.sg-section[id]'));
+  const links = document.querySelectorAll('.sg-sidenav-link');
+
+  function setActive(id) {
+    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+  }
+
+  const obs = new IntersectionObserver(entries => {
+    for (const e of entries) {
+      if (e.isIntersecting) setActive(e.target.id);
+    }
+  }, { rootMargin: '-15% 0px -75% 0px' });
+
+  sections.forEach(s => obs.observe(s));
+
+  links.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const id = link.getAttribute('href').slice(1);
+      const target = document.getElementById(id);
+      if (target) {
+        setActive(id);
+        target.scrollIntoView({ behavior: 'instant' });
+        history.replaceState(null, '', '#' + id);
+      }
+    });
+  });
+
+  setActive(sections[0]?.id || '');
+})();
+</script>
+
+</body>
+</html>

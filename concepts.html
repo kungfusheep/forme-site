@@ -33,7 +33,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="preload" href="BerkeleyMonoVariable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="https://use.typekit.net/rgt4idh.css">
-
+<link rel="stylesheet" href="tokens.css">
 <style>
   @view-transition { navigation: auto; }
   ::view-transition-old(root),
@@ -46,40 +46,26 @@
     font-display: swap;
   }
 
-  :root {
-    --bg-dark:  #131311;
-    --bg-dark2: #1a1a18;
-    --bg-dark3: #0e0e0c;
-    --rule-dk:  #262624;
-    --accent:   #c44040;
-    --grad:     linear-gradient(135deg, #c44040 0%, #983848 50%, #682850 100%);
-    --mono:  'Berkeley Mono', monospace;
-    --akz:   'akzidenz-grotesk-next-pro', sans-serif;
-    --din-r: 'din-2014-rounded-variable', sans-serif;
-    --s1: 8px; --s2: 16px; --s3: 24px; --s4: 32px;
-    --s5: 48px; --s6: 64px; --s7: 80px; --s8: 120px;
-  }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     background: var(--bg-dark);
-    color: #c8c4b8;
+    color: var(--dk);
     font-family: var(--mono);
     font-size: 13px;
     line-height: 1.7;
     -webkit-font-smoothing: antialiased;
   }
-  ::selection { background: #c8c4b8; color: var(--bg-dark); }
+  ::selection { background: var(--dk); color: var(--bg-dark); }
 
   .page { max-width: 1060px; margin: 0 auto; padding: 48px var(--s5) 0; }
 
   @media (min-width: 960px) {
     .page { margin-left: 216px; }
-    .global-nav-inner { margin-left: 216px; }
+    .nav-inner { margin-left: 216px; }
   }
   @media (min-width: 1492px) {
     .page { margin-left: auto; }
-    .global-nav-inner { margin-left: auto; }
+    .nav-inner { margin-left: auto; }
   }
 
   /* ============================================================
@@ -96,7 +82,7 @@
     display: flex;
     align-items: flex-start;
     gap: var(--s4);
-    margin-bottom: var(--s3);
+    margin-bottom: var(--s4);
   }
   .section-num {
     font-family: var(--din-r);
@@ -105,39 +91,39 @@
     line-height: 0.82;
     letter-spacing: -0.04em;
     flex-shrink: 0;
-    color: #1e1e1c;
+    color: var(--dk-border);
     min-width: 110px;
   }
   .section-meta { padding-top: 8px; }
-  .concept-label {
+  .section-label {
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: #444;
+    color: var(--dk-6);
     margin-bottom: 4px;
   }
-  .concept-title {
+  .section-title {
     font-family: var(--akz);
     font-weight: 700;
     font-size: 34px;
-    color: #e8e4d8;
+    color: var(--dk-hi);
     letter-spacing: -0.02em;
     line-height: 1.1;
   }
   .concept-prose {
     font-size: 13px;
-    color: #888;
+    color: var(--fg3);
     line-height: 1.8;
     max-width: 640px;
     margin-bottom: var(--s4);
   }
   .concept-prose strong {
-    color: #c8c4b8;
+    color: var(--dk);
     font-weight: 400;
   }
   .concept-prose code {
     font-family: var(--mono);
-    color: #999;
+    color: var(--dk-2);
     font-size: 12px;
   }
 
@@ -155,7 +141,7 @@
   .flow-node {
     flex: 1 1 0%;
     width: 0;
-    border: 1px solid #1e1e1c;
+    border: 1px solid var(--dk-border);
     border-radius: 6px;
     padding: 14px 16px;
     display: flex;
@@ -169,17 +155,17 @@
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #555;
+    color: var(--dk-5);
   }
   .flow-node-name {
     font-size: 13px;
-    color: #c8c4b8;
+    color: var(--dk);
     overflow: hidden;
     text-overflow: ellipsis;
   }
   .flow-node-detail {
     font-size: 11px;
-    color: #444;
+    color: var(--dk-6);
     line-height: 1.5;
   }
   .flow-node.accent {
@@ -191,7 +177,7 @@
   .flow-arrow {
     display: flex;
     align-items: center;
-    color: #333;
+    color: var(--dk-6);
     font-size: 16px;
     padding: 0 6px;
   }
@@ -207,7 +193,7 @@
   .cascade-step {
     display: grid;
     grid-template-columns: 140px 1fr;
-    border: 1px solid #1e1e1c;
+    border: 1px solid var(--dk-border);
     border-radius: 6px;
     overflow: hidden;
   }
@@ -224,22 +210,22 @@
     font-size: 9px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #555;
+    color: var(--dk-5);
   }
   .cascade-phase-name {
     font-size: 12px;
-    color: #c8c4b8;
+    color: var(--dk);
   }
   .cascade-body {
     padding: 12px 16px;
     font-size: 11px;
-    color: #555;
+    color: var(--dk-5);
     line-height: 1.5;
-    border-left: 1px solid #1e1e1c;
+    border-left: 1px solid var(--dk-border);
   }
   .cascade-arrow {
     text-align: center;
-    color: #333;
+    color: var(--dk-6);
     font-size: 14px;
     padding: 2px 0;
   }
@@ -467,7 +453,7 @@
     padding-bottom: 1px;
   }
   .stack-frame {
-    border: 1px solid #1e1e1c;
+    border: 1px solid var(--dk-border);
     border-radius: 6px;
     padding: 10px 16px;
     display: flex;
@@ -480,14 +466,14 @@
   }
   .stack-frame-name {
     font-size: 12px;
-    color: #c8c4b8;
+    color: var(--dk);
   }
   .stack-frame:first-child .stack-frame-name {
-    color: #e8e4d8;
+    color: var(--dk-hi);
   }
   .stack-frame-hint {
     font-size: 10px;
-    color: #444;
+    color: var(--dk-6);
   }
   .stack-frame:first-child .stack-frame-hint {
     color: var(--accent);
@@ -510,13 +496,13 @@
   .buffer-row {
     font-size: 11px;
     padding: 3px 12px;
-    border: 1px solid #1e1e1c;
+    border: 1px solid var(--dk-border);
     margin-bottom: -1px;
-    color: #444;
+    color: var(--dk-6);
     white-space: nowrap;
   }
   .buffer-row.visible {
-    color: #c8c4b8;
+    color: var(--dk);
     background: rgba(152, 56, 72, 0.04);
     position: relative;
     z-index: 1;
@@ -536,7 +522,7 @@
     font-size: 9px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #444;
+    color: var(--dk-6);
     padding: 4px 0;
   }
   .buffer-label.accent { color: var(--accent); }
@@ -551,7 +537,7 @@
     line-height: 1.8;
     margin: var(--s3) 0;
     overflow-x: auto;
-    color: #999;
+    color: var(--dk-2);
     white-space: pre;
     tab-size: 4;
     border-radius: 8px;
@@ -559,7 +545,7 @@
   .code .kw  { color: #d47080; }
   .code .fn  { color: #eeeee4; }
   .code .str { color: #d4887a; }
-  .code .cm  { color: #444; }
+  .code .cm  { color: var(--dk-6); }
   .code .tp  { color: #a088b8; }
   .code .nr  { color: #c488a8; }
 
@@ -577,17 +563,17 @@
     padding: 6px 12px;
     border: 1px solid #333;
     border-radius: 4px;
-    color: #c8c4b8;
+    color: var(--dk);
     background: rgba(255,255,255,0.02);
     white-space: nowrap;
   }
   .keypath-arrow {
-    color: #333;
+    color: var(--dk-6);
     font-size: 14px;
   }
   .keypath-label {
     font-size: 10px;
-    color: #555;
+    color: var(--dk-5);
   }
 
   /* ============================================================
@@ -610,7 +596,7 @@
     font-size: 9px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #555;
+    color: var(--dk-5);
   }
   .boxmodel-margin {
     background: rgba(196, 64, 64, 0.06);
@@ -638,15 +624,15 @@
     top: -9px;
     left: 10px;
     font-size: 9px;
-    color: #666;
+    color: var(--dk-4);
     background: var(--bg-dark);
     padding: 0 4px;
   }
   .boxmodel-border-title {
     font-size: 10px;
-    color: #888;
+    color: var(--dk-3);
     padding: 2px 8px;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid var(--dk-6);
     background: rgba(255,255,255,0.02);
   }
   .boxmodel-content {
@@ -654,11 +640,11 @@
   }
   .boxmodel-child {
     background: rgba(255,255,255,0.03);
-    border: 1px solid #1e1e1c;
+    border: 1px solid var(--dk-border);
     border-radius: 3px;
     padding: 10px 12px;
     font-size: 11px;
-    color: #888;
+    color: var(--dk-3);
   }
   .boxmodel-child + .boxmodel-child {
     margin-top: 0;
@@ -700,12 +686,12 @@
     flex: 0 0 auto;
     padding: 6px 12px;
     background: rgba(0, 0, 0, 0.2);
-    color: #555;
+    color: var(--dk-5);
   }
   .grow-slot.flex {
     flex: 1;
     border-left: 2px solid var(--accent);
-    color: #c8c4b8;
+    color: var(--dk);
   }
   .grow-slot-name {
     flex: 1;
@@ -754,20 +740,20 @@
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #555;
+    color: var(--dk-5);
   }
   .lc-vbox {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    border: 1px solid #1e1e1c;
+    border: 1px solid var(--dk-border);
     border-radius: 6px;
     padding: 8px;
   }
   .lc-hbox {
     display: flex;
     gap: 4px;
-    border: 1px solid #1e1e1c;
+    border: 1px solid var(--dk-border);
     border-radius: 6px;
     padding: 8px;
   }
@@ -777,7 +763,7 @@
     border-radius: 3px;
     padding: 6px 10px;
     font-size: 10px;
-    color: #888;
+    color: var(--dk-3);
     text-align: center;
   }
   .lc-hbox .lc-item { flex: 1; }
@@ -788,7 +774,7 @@
   /* ============================================================
      GLOBAL NAV
      ============================================================ */
-  .global-nav {
+  .nav {
     position: fixed;
     top: 0; left: 0; right: 0;
     z-index: 200;
@@ -800,7 +786,7 @@
     -webkit-backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--rule-dk);
   }
-  .global-nav-inner {
+  .nav-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -809,39 +795,39 @@
     margin: 0 auto;
     padding: 0 var(--s5);
   }
-  .global-nav-brand {
+  .nav-brand {
     font-family: var(--din-r);
     font-variation-settings: 'wght' 400;
     font-size: 18px;
-    color: #e8e4d8;
+    color: var(--dk-hi);
     text-decoration: none;
     letter-spacing: -0.02em;
   }
-  .global-nav-links {
+  .nav-links {
     display: flex;
     align-items: center;
     gap: var(--s3);
     list-style: none;
   }
-  .global-nav-links a {
+  .nav-links a {
     font-family: var(--mono);
     font-weight: 700;
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: #555;
+    color: var(--dk-5);
     text-decoration: none;
     transition: color 0.15s;
   }
-  .global-nav-links a:hover { color: #e8e4d8; }
-  .global-nav-links a.active { color: #e8e4d8; }
+  .nav-links a:hover { color: var(--dk-hi); }
+  .nav-links a.active { color: var(--dk-hi); }
 
   .nav-search {
     background: none; border: none; cursor: pointer;
-    color: #555; padding: 2px 0; display: flex; align-items: center; position: relative; top: 1px;
+    color: var(--dk-5); padding: 2px 0; display: flex; align-items: center; position: relative; top: 1px;
     transition: color 0.15s;
   }
-  .nav-search:hover { color: #e8e4d8; }
+  .nav-search:hover { color: var(--dk-hi); }
 
   .sidenav {
     position: fixed;
@@ -861,7 +847,7 @@
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #333;
+    color: var(--dk-6);
     text-decoration: none;
     padding: 8px 0 8px 14px;
     border-left: 2px solid transparent;
@@ -869,10 +855,10 @@
     line-height: 1.3;
   }
   .sidenav-link:hover {
-    color: #666;
+    color: var(--dk-4);
   }
   .sidenav-link.active {
-    color: #c8c4b8;
+    color: var(--dk);
     border-left-color: var(--accent);
   }
 
@@ -907,7 +893,7 @@
       font-size: 9px;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: #444;
+      color: var(--dk-6);
       text-decoration: none;
       padding: 12px 12px;
       white-space: nowrap;
@@ -915,20 +901,20 @@
       transition: color 0.2s, border-color 0.2s;
       flex-shrink: 0;
     }
-    .topnav-link:hover { color: #888; }
+    .topnav-link:hover { color: var(--dk-3); }
     .topnav-link.active {
-      color: #c8c4b8;
+      color: var(--dk);
       border-bottom-color: var(--accent);
     }
   }
 
   @media (max-width: 640px) {
-    .global-nav-inner { padding: 0 var(--s2); }
-    .global-nav-links { gap: 10px; }
+    .nav-inner { padding: 0 var(--s2); }
+    .nav-links { gap: 10px; }
   }
 
   @media (max-width: 768px) {
-    .global-nav-inner { padding: 0 var(--s3); }
+    .nav-inner { padding: 0 var(--s3); }
     .section-head { flex-direction: column; gap: var(--s2); }
     .section-num { font-size: 48px; min-width: auto; }
     .hero-install { font-size: 11px; padding: 10px 14px; max-width: 100%; }
@@ -943,7 +929,7 @@
     .flow-node { width: auto; }
     .flow-arrow { transform: rotate(90deg); padding: 4px 0; justify-content: center; }
     .cascade-step { grid-template-columns: 1fr; }
-    .cascade-body { border-left: none; border-top: 1px solid #1e1e1c; }
+    .cascade-body { border-left: none; border-top: 1px solid var(--dk-border); }
     .viewport-diagram { grid-template-columns: 1fr; }
     .layout-compare { grid-template-columns: 1fr; }
   }
@@ -951,7 +937,7 @@
   /* footer */
   footer {
     padding: var(--s7) 0 var(--s5);
-    border-top: 1px solid #1e1e1c;
+    border-top: 1px solid var(--dk-border);
     text-align: center;
   }
 
@@ -959,7 +945,7 @@
     font-family: var(--din-r);
     font-variation-settings: 'wght' 400;
     font-size: 18px;
-    color: #c8c4b8;
+    color: var(--dk);
     letter-spacing: -0.02em;
     margin-bottom: var(--s2);
   }
@@ -976,12 +962,12 @@
   }
 
   .footer-links a {
-    color: #444;
+    color: var(--dk-6);
     text-decoration: none;
     transition: color 0.2s;
   }
 
-  .footer-links a:hover { color: #c8c4b8; }
+  .footer-links a:hover { color: var(--dk); }
 
   /* hero install */
   @property --angle {
@@ -1024,7 +1010,7 @@
     align-items: center;
     gap: 16px;
     background: var(--bg-dark3);
-    color: #c8c4b8;
+    color: var(--dk);
     padding: 12px 20px;
     font-family: var(--mono);
     font-size: 13px;
@@ -1036,11 +1022,11 @@
 
   .hero-install:hover { background: #111; }
 
-  .hero-install .prompt { color: #555; user-select: none; }
+  .hero-install .prompt { color: var(--dk-5); user-select: none; }
 
   .hero-install .copied {
     font-size: 11px;
-    color: #e8e4d8;
+    color: var(--dk-hi);
     margin-left: 16px;
     opacity: 0;
     transition: opacity 0.15s;
@@ -1095,7 +1081,7 @@
 
   .install-section {
     padding: 48px 0;
-    border-top: 1px solid #1e1e1c;
+    border-top: 1px solid var(--dk-border);
     isolation: isolate;
   }
 
@@ -1103,7 +1089,7 @@
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: #444;
+    color: var(--dk-6);
     margin-bottom: 4px;
   }
 
@@ -1111,7 +1097,7 @@
     font-family: var(--akz);
     font-weight: 700;
     font-size: 34px;
-    color: #e8e4d8;
+    color: var(--dk-hi);
     letter-spacing: -0.02em;
     line-height: 1.1;
     margin-bottom: 24px;
@@ -1125,14 +1111,14 @@
 
   .start-links a {
     font-size: 12px;
-    color: #c8c4b8;
+    color: var(--dk);
     text-decoration: none;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid var(--dk-6);
     padding-bottom: 2px;
     transition: border-color 0.15s;
   }
 
-  .start-links a:hover { border-color: #c8c4b8; }
+  .start-links a:hover { border-color: var(--dk); }
 
   /* gradient accent */
   .flow-node.accent {
@@ -1168,10 +1154,10 @@
 </head>
 <body>
 
-<nav class="global-nav">
-  <div class="global-nav-inner">
-    <a href="index.html" class="global-nav-brand">glyph</a>
-    <ul class="global-nav-links">
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">glyph</a>
+    <ul class="nav-links">
       <li><a href="start.html">Get Started</a></li>
       <li><a href="concepts.html" class="active">Concepts</a></li>
       <li><a href="api.html">API</a></li>
@@ -1214,8 +1200,8 @@
   <div class="section-head">
     <div class="section-num">01</div>
     <div class="section-meta">
-      <div class="concept-label">System</div>
-      <div class="concept-title">Build & Execute</div>
+      <div class="section-label">System</div>
+      <div class="section-title">Build & Execute</div>
     </div>
   </div>
 
@@ -1223,8 +1209,8 @@
     Every glyph view goes through two distinct phases. <strong>Build</strong> happens once
     when you call <code>SetView()</code>. The declarative tree is compiled into a flat array
     of operations via reflection and type switches. <strong>Execute</strong> happens every frame,
-    walking the compiled ops and dereferences pointers to read current state. No tree rebuilds,
-    no diffing, no allocation in steady state.
+    walking the compiled ops and dereferencing pointers to read current state.
+    The frame cost is constant regardless of what changed.
   </div>
 
   <div class="flow">
@@ -1247,7 +1233,7 @@
     </div>
     <div class="flow-arrow">→</div>
     <div class="flow-node">
-      <div class="flow-node-label">Each frame</div>
+      <div class="flow-node-label">Each update</div>
       <div class="flow-node-name">Execute()</div>
       <div class="flow-node-detail">deref pointers → buffer</div>
     </div>
@@ -1263,13 +1249,13 @@
     The composable API surface, <code>VBox.Gap(2).Border(BorderRounded)</code>, is purely
     a build-time convenience. At runtime, the template is just a flat array walk with pointer reads.
     Values exist in three variants. <strong>Static</strong> (embedded literal),
-    <strong>pointer</strong> (dereferenced each frame), and <strong>offset</strong>
+    <strong>pointer</strong> (dereferenced each update), and <strong>offset</strong>
     (ForEach element base + unsafe.Pointer arithmetic).
   </div>
 
   <div class="code code-raw">SetView(                        // build: compiled once
     VBox.Gap(2).Border(BorderRounded)(
-        Text(&title),              // pointer: read each frame
+        Text(&title),              // pointer: read each update
         Text("static label"),       // static: embedded in op
     ),
 )</div>
@@ -1282,15 +1268,15 @@
   <div class="section-head">
     <div class="section-num">02</div>
     <div class="section-meta">
-      <div class="concept-label">System</div>
-      <div class="concept-title">Render Cycle</div>
+      <div class="section-label">System</div>
+      <div class="section-title">Render Cycle</div>
     </div>
   </div>
 
   <div class="concept-prose">
     Rendering is a four-phase pipeline that runs on every frame, designed for terminal
     workloads. Each phase operates directly on flat <strong>Op</strong> and <strong>Geom</strong>
-    arrays. No tree rebuilds, no node allocation. Components outside the viewport are culled
+    arrays. Components outside the viewport are culled
     before rendering, and the final flush diffs against the previous frame to emit only the
     cells that actually changed.
   </div>
@@ -1337,8 +1323,7 @@
         <div class="cascade-phase-name">Render</div>
       </div>
       <div class="cascade-body">
-        Walk the ops from root, write cells to the buffer at computed absolute positions.
-        Borders, text, fills. One pass with final x/y/w/h coordinates.
+        Walk the ops from root, writing cells to the buffer at their computed positions. One pass covering borders, text, and fills.
       </div>
     </div>
   </div>
@@ -1357,8 +1342,8 @@
   <div class="section-head">
     <div class="section-num">03</div>
     <div class="section-meta">
-      <div class="concept-label">Visual</div>
-      <div class="concept-title">Layout Properties</div>
+      <div class="section-label">Visual</div>
+      <div class="section-title">Layout Properties</div>
     </div>
   </div>
 
@@ -1528,15 +1513,15 @@
   <div class="section-head">
     <div class="section-num">04</div>
     <div class="section-meta">
-      <div class="concept-label">Core</div>
-      <div class="concept-title">Live State</div>
+      <div class="section-label">Core</div>
+      <div class="section-title">Live State</div>
     </div>
   </div>
 
   <div class="concept-prose">
-    There's no reactivity in glyph. No subscriptions, no change detection.
-    When the framework renders, it dereferences your pointers and reads whatever value is there right now.
-    That's it.
+    There is no reactivity in glyph. State is plain Go. The framework dereferences your pointers at frame time
+    and reads whatever is there. Mutations take effect on the next render without any
+    subscription or notification mechanism.
   </div>
 
   <div class="code code-raw">title := "Hello"
@@ -1548,20 +1533,18 @@ title = "World"               // next render shows "World"</div>
   <div class="concept-prose">
     Pass a <code>*string</code> and the text updates when the string changes. Pass a <code>string</code>
     literal and it's static forever. Same pattern for <code>*int</code>, <code>*bool</code>,
-    <code>*[]T</code>. Anything behind a pointer is live, anything without one is baked in at compile time.
+    <code>*[]T</code>. Anything behind a pointer is read each update; anything without one is fixed at compile time.
   </div>
 
   <div class="concept-prose">
-    There's no state diffing, no change detection. You mutate your variables directly, and the
-    next render reads current values through pointers. Renders happen when you return from a key
-    handler, or when you call <code>RequestRender()</code> from a goroutine. That's the whole model.
+    Mutate your variables directly. The next render reads current values through the pointers
+    you registered. Renders happen when you return from a key handler, or when you call
+    <code>RequestRender()</code> from a goroutine.
   </div>
 
   <div class="concept-prose">
-    Because there is no propagation mechanism, problems like render thrashing, cascading updates, and stale intermediate states do not apply.
-
-    Nothing stops you building reactive patterns on top - an observer that calls <code>RequestRender()</code> when a channel
-    fires is a few lines of code. glyph just doesn't ship that complexity by default.
+    Nothing stops you building reactive patterns on top. An observer that calls <code>RequestRender()</code> when a channel
+    fires is often just a few lines of code, if that's what the application needs.
   </div>
 </div>
 
@@ -1572,8 +1555,8 @@ title = "World"               // next render shows "World"</div>
   <div class="section-head">
     <div class="section-num">05</div>
     <div class="section-meta">
-      <div class="concept-label">System</div>
-      <div class="concept-title">Dynamic Children</div>
+      <div class="section-label">System</div>
+      <div class="section-title">Dynamic Children</div>
     </div>
   </div>
 
@@ -1620,7 +1603,7 @@ title = "World"               // next render shows "World"</div>
     <div class="cascade-arrow">↓</div>
     <div class="cascade-step sweep-down">
       <div class="cascade-phase">
-        <div class="cascade-phase-dir" data-dir="each frame">each frame</div>
+        <div class="cascade-phase-dir" data-dir="each update">each update</div>
         <div class="cascade-phase-name">Layout per item</div>
       </div>
       <div class="cascade-body">
@@ -1647,13 +1630,12 @@ title = "World"               // next render shows "World"</div>
   <div class="concept-prose">
     <strong>If</strong> compiles both branches into separate sub-templates at build time. At runtime
     the condition is evaluated and only the active branch is laid out and rendered. The inactive branch
-    costs nothing. It's not even visited.
+    costs nothing.
   </div>
 
   <div class="concept-prose">
     <strong>Switch</strong> creates N+1 sub-templates (one per case + default).
-    <code>getMatchIndex()</code> linear-scans to find the matching case. Only the winner
-    is laid out.
+    <code>getMatchIndex()</code> linear-scans to find the matching case. Only the matching case is laid out and rendered.
   </div>
 
   <div class="concept-prose">
@@ -1679,8 +1661,8 @@ title = "World"               // next render shows "World"</div>
   <div class="section-head">
     <div class="section-num">06</div>
     <div class="section-meta">
-      <div class="concept-label">System</div>
-      <div class="concept-title">Input Handling</div>
+      <div class="section-label">System</div>
+      <div class="section-title">Input Handling</div>
     </div>
   </div>
 
@@ -1746,8 +1728,8 @@ app.Pop()</div>
   <div class="section-head">
     <div class="section-num">07</div>
     <div class="section-meta">
-      <div class="concept-label">System</div>
-      <div class="concept-title">Jump Labels</div>
+      <div class="section-label">System</div>
+      <div class="section-title">Jump Labels</div>
     </div>
   </div>
 
@@ -1806,8 +1788,8 @@ app.SetView(
   <div class="section-head">
     <div class="section-num">08</div>
     <div class="section-meta">
-      <div class="concept-label">System</div>
-      <div class="concept-title">Routing & Views</div>
+      <div class="section-label">System</div>
+      <div class="section-title">Routing & Views</div>
     </div>
   </div>
 
@@ -1877,15 +1859,15 @@ app.RunFrom("list")</div>
   <div class="section-head">
     <div class="section-num">09</div>
     <div class="section-meta">
-      <div class="concept-label">System</div>
-      <div class="concept-title">Layers & Scrolling</div>
+      <div class="section-label">System</div>
+      <div class="section-title">Layers & Scrolling</div>
     </div>
   </div>
 
   <div class="concept-prose">
     When content is taller than the viewport, <strong>Layer</strong> provides a pre-rendered
     off-screen buffer with scroll management. Content is rendered into the full-size buffer once,
-    then the visible portion is blitted to the screen each frame. The layer only re-renders
+    then the visible portion is blitted to the screen each update. The layer only re-renders
     when the viewport width changes.
   </div>
 

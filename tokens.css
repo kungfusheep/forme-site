@@ -1,0 +1,55 @@
+/* ============================================================
+   DESIGN TOKENS — single source of truth
+   linked by all pages; do not define :root here on individual pages
+   ============================================================ */
+:root {
+  /* light backgrounds */
+  --bg:       #f2f0ec;
+  --bg2:      #e6e4de;
+  --bg3:      #ffffff;
+
+  /* dark backgrounds */
+  --bg-dark:  #131311;
+  --bg-dark2: #1a1a18;
+  --bg-dark3: #0e0e0c;
+
+  /* foreground scale (light context) */
+  --fg0:  #131311;
+  --fg:   #3a3a36;
+  --fg2:  #6a6a64;
+  --fg3:  #8a8880;
+  --fg4:  #b0aba0;
+
+  /* rules */
+  --rule:    #d4d0c8;
+  --rule-dk: #262624;
+
+  /* accent */
+  --accent:  #c44040;
+  --grad:    linear-gradient(135deg, #c44040 0%, #983848 50%, #682850 100%);
+
+  /* typefaces */
+  --mono:  'Berkeley Mono', monospace;
+  --akz:   'akzidenz-grotesk-next-pro', sans-serif;
+  --din-r: 'din-2014-rounded-variable', sans-serif;
+
+  /* dark-page text scale */
+  --dk-hi:     #e8e4d8;  /* headings, active/hover, selection bg */
+  --dk:        #c8c4b8;  /* primary dark-page body text, code blocks */
+  --dk-2:      #999;     /* inline code, secondary code elements */
+  --dk-3:      #888;     /* muted prose, secondary body copy (absorbs #777) */
+  --dk-4:      #666;     /* recessive text, asides, descriptions */
+  --dk-5:      #555;     /* inactive nav, prompts, labels */
+  --dk-6:      #444;     /* very muted, code comments, sidenav (absorbs #333) */
+  --dk-border: #1e1e1c;  /* structural dark: section nums, borders */
+
+  /* spacing scale (8px base) */
+  --s1: 8px;
+  --s2: 16px;
+  --s3: 24px;
+  --s4: 32px;
+  --s5: 48px;
+  --s6: 64px;
+  --s7: 80px;
+  --s8: 120px;
+}
