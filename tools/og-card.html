@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://use.typekit.net/rgt4idh.css">
+<style>
+  @font-face {
+    font-family: 'Berkeley Mono';
+    src: url('../BerkeleyMonoVariable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: block;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1200px;
+    height: 630px;
+    background: #f2f0ec;
+    overflow: hidden;
+    font-family: 'Berkeley Mono', monospace;
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+  }
+
+  /* accent bar */
+  .accent-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(135deg, #c44040 0%, #983848 50%, #682850 100%);
+  }
+
+  .content {
+    padding: 72px 88px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+  }
+
+  .label {
+    font-family: 'Berkeley Mono', monospace;
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: #b0aba0;
+    margin-bottom: 36px;
+  }
+
+  .wordmark {
+    font-family: 'din-2014-rounded-variable', sans-serif;
+    font-variation-settings: 'wght' 350;
+    font-size: 156px;
+    line-height: 0.88;
+    color: #131311;
+    letter-spacing: -0.025em;
+    margin-bottom: 52px;
+  }
+
+  .tagline {
+    font-family: 'Berkeley Mono', monospace;
+    font-size: 19px;
+    font-weight: 700;
+    color: #3a3a36;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  .sub {
+    font-family: 'Berkeley Mono', monospace;
+    font-size: 16px;
+    font-weight: 400;
+    color: #6a6a64;
+    letter-spacing: -0.01em;
+  }
+</style>
+</head>
+<body>
+  <div class="accent-bar"></div>
+  <div class="content">
+    <div class="label">Go TUI Framework</div>
+    <div class="wordmark">glyph</div>
+    <div class="tagline">Batteries-included terminal UI framework for Go.</div>
+    <div class="sub">Declarative composition. Your data, rendered directly.</div>
+  </div>
+</body>
+</html>
