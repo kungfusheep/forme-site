@@ -22,19 +22,19 @@
 
   body {
     background: var(--bg-dark);
-    color: #c8c4b8;
+    color: var(--dk);
     font-family: var(--mono);
     font-size: 13px;
     line-height: 1.7;
     -webkit-font-smoothing: antialiased;
   }
 
-  ::selection { background: #c8c4b8; color: var(--bg-dark); }
+  ::selection { background: var(--dk); color: var(--bg-dark); }
 
   /* ============================================================
      CHROME
      ============================================================ */
-  .sg-nav {
+  .nav {
     position: fixed;
     top: 0; left: 0; right: 0;
     z-index: 200;
@@ -43,24 +43,25 @@
     align-items: center;
     background: rgba(19, 19, 17, 0.95);
     backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--rule-dk);
   }
 
-  .sg-nav-inner {
+  .nav-inner {
     display: flex;
     align-items: center;
-    gap: var(--s3);
+    justify-content: space-between;
     width: 100%;
     max-width: 1060px;
     margin: 0 auto;
     padding: 0 var(--s5);
   }
 
-  .sg-nav-brand {
+  .nav-brand {
     font-family: var(--din-r);
     font-variation-settings: 'wght' 400;
     font-size: 18px;
-    color: #e8e4d8;
+    color: var(--dk-hi);
     text-decoration: none;
     letter-spacing: -0.02em;
   }
@@ -69,52 +70,58 @@
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: #444;
+    color: var(--dk-6);
   }
 
-  .sg-sidenav {
+  .sidenav {
     position: fixed;
     top: 48px;
     left: max(0px, calc(50vw - 746px));
     width: 200px;
     height: calc(100vh - 48px);
     padding: var(--s5) var(--s3) var(--s3);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    z-index: 100;
     overflow-y: auto;
     scrollbar-width: none;
   }
-  .sg-sidenav::-webkit-scrollbar { display: none; }
+  .sidenav::-webkit-scrollbar { display: none; }
 
-  .sg-sidenav-link {
+  .sidenav-link {
     display: block;
+    font-family: var(--mono);
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #333;
+    color: var(--dk-6);
     text-decoration: none;
-    padding: 7px 0 7px 14px;
+    padding: 8px 0 8px 14px;
     border-left: 2px solid transparent;
     transition: color 0.2s, border-color 0.2s;
+    line-height: 1.3;
   }
-  .sg-sidenav-link:hover { color: #666; }
-  .sg-sidenav-link.active { color: #c8c4b8; border-left-color: var(--accent); }
+  .sidenav-link:hover { color: var(--dk-4); }
+  .sidenav-link.active { color: var(--dk); border-left-color: var(--accent); }
 
-  .sg-page {
-    max-width: 860px;
+  .page {
+    max-width: 1060px;
     margin: 0 auto;
-    padding: 80px var(--s5) var(--s8);
+    padding: 48px var(--s5) var(--s8);
   }
 
   @media (min-width: 960px) {
-    .sg-page { margin-left: 216px; }
-    .sg-nav-inner { margin-left: 216px; }
+    .page { margin-left: 216px; }
+    .nav-inner { margin-left: 216px; }
   }
   @media (min-width: 1492px) {
-    .sg-page { margin-left: auto; }
-    .sg-nav-inner { margin-left: auto; }
+    .page { margin-left: auto; }
+    .nav-inner { margin-left: auto; }
   }
   @media (max-width: 959px) {
-    .sg-sidenav { display: none; }
+    .sidenav { display: none; }
   }
 
   /* ============================================================
@@ -126,33 +133,49 @@
   }
   .sg-section:last-child { border-bottom: none; }
 
-  .sg-section-head {
+  .section-head {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--s4);
     margin-bottom: var(--s4);
   }
 
-  .sg-label {
+  .section-num {
+    font-family: var(--din-r);
+    font-variation-settings: 'wght' 200;
+    font-size: 84px;
+    line-height: 0.82;
+    letter-spacing: -0.04em;
+    flex-shrink: 0;
+    color: var(--dk-border);
+    min-width: 110px;
+  }
+
+  .section-meta { padding-top: 8px; }
+
+  .section-label {
     font-size: 10px;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: #444;
+    letter-spacing: 0.1em;
+    color: var(--dk-6);
     margin-bottom: 4px;
   }
 
-  .sg-title {
+  .section-title {
     font-family: var(--akz);
     font-weight: 700;
-    font-size: 28px;
-    color: #e8e4d8;
+    font-size: 34px;
+    color: var(--dk-hi);
     letter-spacing: -0.02em;
     line-height: 1.1;
-    margin-bottom: var(--s2);
   }
 
   .sg-desc {
     font-size: 12px;
-    color: #666;
+    color: var(--dk-4);
     line-height: 1.75;
     max-width: 580px;
+    margin-bottom: var(--s4);
   }
 
   .sg-row {
@@ -176,7 +199,7 @@
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: #333;
+    color: var(--dk-6);
     margin-bottom: var(--s2);
     padding-bottom: 8px;
     border-bottom: 1px solid var(--rule-dk);
@@ -200,7 +223,7 @@
 
   .sg-note {
     font-size: 11px;
-    color: #555;
+    color: var(--dk-5);
     margin-top: 6px;
     font-style: italic;
   }
@@ -351,28 +374,44 @@
 
   /* battery card */
   .battery {
-    background: linear-gradient(
-      to right, transparent 0%, #c44040 15%, #e85050 35%, #983848 65%, #682850 85%, transparent 100()
-    ) top / 100% 1px no-repeat, #1a1a18;
+    background:
+      linear-gradient(to right, transparent 0%, #c44040 15%, #e85050 35%, #983848 65%, #682850 85%, transparent 100%) top / 100% 1px no-repeat,
+      #1a1a18;
     padding: var(--s3);
     border-radius: 6px;
     border: 1px solid transparent;
     transition: border-color 0.15s;
     position: relative;
   }
+  .battery:hover { border-color: var(--rule-dk); }
+  .battery::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 10px;
+    background: conic-gradient(from var(--angle), #c44040, #e85050, #983848, #682850, #e85050, #c44040);
+    filter: blur(16px);
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+    z-index: -1;
+  }
+  .battery:hover::after { animation: spin 3s linear infinite; opacity: 0.15; }
   .battery-label {
     font-family: var(--akz);
     font-weight: 700;
     font-size: 13px;
-    color: #c8c4b8;
+    color: var(--dk);
     margin-bottom: 8px;
   }
   .battery-items {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
+    font-family: var(--mono);
     font-size: 11px;
-    color: #999;
+    color: var(--dk-2);
+    line-height: 1.6;
   }
   .battery-items span {
     padding: 2px 8px;
@@ -650,45 +689,89 @@
 </head>
 <body>
 
-<nav class="sg-nav">
-  <div class="sg-nav-inner">
-    <a href="index.html" class="sg-nav-brand">glyph</a>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">glyph</a>
     <span class="sg-nav-label">Style Guide</span>
   </div>
 </nav>
 
-<nav class="sg-sidenav" id="sg-sidenav">
-  <a href="#tokens" class="sg-sidenav-link">Tokens</a>
-  <a href="#color" class="sg-sidenav-link">Color</a>
-  <a href="#typography" class="sg-sidenav-link">Typography</a>
-  <a href="#spacing" class="sg-sidenav-link">Spacing</a>
-  <a href="#animation" class="sg-sidenav-link">Animation</a>
-  <a href="#zones" class="sg-sidenav-link">Zones</a>
-  <a href="#nav" class="sg-sidenav-link">Navigation</a>
-  <a href="#sections" class="sg-sidenav-link">Sections</a>
-  <a href="#code" class="sg-sidenav-link">Code Blocks</a>
-  <a href="#components" class="sg-sidenav-link">Components</a>
-  <a href="#interactive" class="sg-sidenav-link">Interactive</a>
-  <a href="#audit" class="sg-sidenav-link">Audit</a>
+<nav class="sidenav">
+  <a href="#foreword" class="sidenav-link">Foreword</a>
+  <a href="#tokens" class="sidenav-link">Tokens</a>
+  <a href="#color" class="sidenav-link">Color</a>
+  <a href="#typography" class="sidenav-link">Typography</a>
+  <a href="#spacing" class="sidenav-link">Spacing</a>
+  <a href="#breakpoints" class="sidenav-link">Breakpoints</a>
+  <a href="#animation" class="sidenav-link">Animation</a>
+  <a href="#zones" class="sidenav-link">Zones</a>
+  <a href="#zindex" class="sidenav-link">Z-Index</a>
+  <a href="#nav" class="sidenav-link">Navigation</a>
+  <a href="#icons" class="sidenav-link">Iconography</a>
+  <a href="#sections" class="sidenav-link">Sections</a>
+  <a href="#code" class="sidenav-link">Code Blocks</a>
+  <a href="#components" class="sidenav-link">Components</a>
+  <a href="#interactive" class="sidenav-link">Interactive</a>
+  <a href="#audit" class="sidenav-link">Audit</a>
 </nav>
 
-<div class="sg-page">
+<div class="page">
+
+<!-- ============================================================
+     FOREWORD
+     ============================================================ -->
+<div class="sg-section" id="foreword">
+  <div class="section-head">
+    <div class="section-num">00</div>
+    <div class="section-meta">
+      <div class="section-label">About</div>
+      <div class="section-title">Foreword</div>
+    </div>
+  </div>
+  <div class="sg-desc">A living reference for the glyph site design system. When a pattern changes, update this document too.</div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Pages</div>
+    <div class="code">index.html     light marketing landing page — alternating light/dark zones
+start.html     dark documentation — Get Started tutorial
+concepts.html  dark documentation — Concepts reference
+api.html       dark documentation — API reference with interactive search</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Design Intent</div>
+    <div class="sg-desc">Minimal, precise. Monospace body type signals developer audience without saying so. The accent red (<code style="font-family:var(--mono);color:var(--dk-2);font-size:11px">--accent: #c44040</code>) appears sparingly — active states and gradient borders only. When in doubt, leave it out.</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Tone</div>
+    <div class="sg-desc">Technical and direct. Code demonstrates; prose supports. Short sentences, no filler. Documentation pages assume the reader writes Go. Light zone marketing copy is confident but never hyperbolic.</div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Maintenance</div>
+    <div class="sg-desc"><code style="font-family:var(--mono);color:var(--dk-2);font-size:11px">tokens.css</code> is the single source of truth for all design tokens — link it first on every page. Update this styleguide whenever a new pattern is established. A stale reference is worse than none.</div>
+  </div>
+</div>
 
 <!-- ============================================================
      TOKENS
      ============================================================ -->
 <div class="sg-section" id="tokens">
-  <div class="sg-section-head">
-    <div class="sg-label">Reference</div>
-    <div class="sg-title">Design Tokens</div>
-    <div class="sg-desc">
-      CSS custom properties defined in <code style="font-family:var(--mono);color:#999;font-size:11px">:root</code>.
-      Only <code style="font-family:var(--mono);color:#999;font-size:11px">index.html</code> declares the full set.
-      <code style="font-family:var(--mono);color:#999;font-size:11px">start.html</code> and <code style="font-family:var(--mono);color:#999;font-size:11px">concepts.html</code>
-      declare a dark-only subset (no <code style="font-family:var(--mono);color:#999;font-size:11px">--bg</code>,
-      <code style="font-family:var(--mono);color:#999;font-size:11px">--fg0</code>&ndash;<code style="font-family:var(--mono);color:#999;font-size:11px">--fg4</code>,
-      <code style="font-family:var(--mono);color:#999;font-size:11px">--rule</code>, <code style="font-family:var(--mono);color:#999;font-size:11px">--akz-c</code>).
+  <div class="section-head">
+    <div class="section-num">01</div>
+    <div class="section-meta">
+      <div class="section-label">Reference</div>
+      <div class="section-title">Design Tokens</div>
     </div>
+  </div>
+  <div class="sg-desc">
+    CSS custom properties defined in <code style="font-family:var(--mono);color:#999;font-size:11px">:root</code>.
+    Only <code style="font-family:var(--mono);color:#999;font-size:11px">index.html</code> declares the full set.
+    <code style="font-family:var(--mono);color:#999;font-size:11px">start.html</code> and <code style="font-family:var(--mono);color:#999;font-size:11px">concepts.html</code>
+    declare a dark-only subset (no <code style="font-family:var(--mono);color:#999;font-size:11px">--bg</code>,
+    <code style="font-family:var(--mono);color:#999;font-size:11px">--fg0</code>&ndash;<code style="font-family:var(--mono);color:#999;font-size:11px">--fg4</code>,
+    <code style="font-family:var(--mono);color:#999;font-size:11px">--rule</code>, <code style="font-family:var(--mono);color:#999;font-size:11px">--akz-c</code>).
   </div>
 
   <div class="code">/* backgrounds — light */
@@ -731,9 +814,12 @@
      COLOR
      ============================================================ -->
 <div class="sg-section" id="color">
-  <div class="sg-section-head">
-    <div class="sg-label">Palette</div>
-    <div class="sg-title">Color</div>
+  <div class="section-head">
+    <div class="section-num">02</div>
+    <div class="section-meta">
+      <div class="section-label">Palette</div>
+      <div class="section-title">Color</div>
+    </div>
   </div>
 
   <div class="sg-subsection">
@@ -912,11 +998,14 @@
      TYPOGRAPHY
      ============================================================ -->
 <div class="sg-section" id="typography">
-  <div class="sg-section-head">
-    <div class="sg-label">Type System</div>
-    <div class="sg-title">Typography</div>
-    <div class="sg-desc">Three typefaces. Monospace as default body. Akzidenz for headings. DIN Rounded for brand.</div>
+  <div class="section-head">
+    <div class="section-num">03</div>
+    <div class="section-meta">
+      <div class="section-label">Type System</div>
+      <div class="section-title">Typography</div>
+    </div>
   </div>
+  <div class="sg-desc">Three typefaces. Monospace as default body. Akzidenz for headings. DIN Rounded for brand.</div>
 
   <div class="sg-subsection">
     <div class="sg-sublabel">Berkeley Mono — var(--mono) — body, code, nav</div>
@@ -994,7 +1083,7 @@
     <div class="type-specimen">
       <div class="type-meta">84px / wght 200 / tracking -0.04em — section-num</div>
       <div style="font-family:var(--din-r);font-variation-settings:'wght' 200;font-size:84px;letter-spacing:-0.04em;line-height:0.82;color:#1e1e1c">
-        01
+        0X
       </div>
     </div>
     <div class="type-specimen">
@@ -1010,11 +1099,14 @@
      SPACING
      ============================================================ -->
 <div class="sg-section" id="spacing">
-  <div class="sg-section-head">
-    <div class="sg-label">Scale</div>
-    <div class="sg-title">Spacing</div>
-    <div class="sg-desc">8px base unit. All tokens are multiples of 8.</div>
+  <div class="section-head">
+    <div class="section-num">04</div>
+    <div class="section-meta">
+      <div class="section-label">Scale</div>
+      <div class="section-title">Spacing</div>
+    </div>
   </div>
+  <div class="sg-desc">8px base unit. All tokens are multiples of 8.</div>
 
   <div class="spacing-row"><div class="spacing-token">--s1</div><div class="spacing-bar-wrap"><div class="spacing-bar" style="width:8px"></div><div class="spacing-px">8px</div></div></div>
   <div class="spacing-row"><div class="spacing-token">--s2</div><div class="spacing-bar-wrap"><div class="spacing-bar" style="width:16px"></div><div class="spacing-px">16px</div></div></div>
@@ -1032,14 +1124,36 @@
 </div>
 
 <!-- ============================================================
+     BREAKPOINTS
+     ============================================================ -->
+<div class="sg-section" id="breakpoints">
+  <div class="section-head">
+    <div class="section-num">05</div>
+    <div class="section-meta">
+      <div class="section-label">Responsive</div>
+      <div class="section-title">Breakpoints</div>
+    </div>
+  </div>
+  <div class="sg-desc">Three breakpoints, defined consistently across all documentation pages.</div>
+
+  <div class="code">@media (max-width: 640px)   mobile  — nav padding tightens to --s2, nav-links gap narrows to 10px
+@media (min-width: 960px)   desktop — sidenav appears; .page + .nav-inner gain margin-left: 216px
+@media (min-width: 1492px)  wide    — .page + .nav-inner revert to margin: 0 auto</div>
+  <div class="sg-note">960px is the primary layout break. Below it, .sidenav hides and .topnav (horizontal scrolling tab strip) appears instead. The 1492px threshold prevents content drifting too far right on ultra-wide displays.</div>
+</div>
+
+<!-- ============================================================
      ANIMATION
      ============================================================ -->
 <div class="sg-section" id="animation">
-  <div class="sg-section-head">
-    <div class="sg-label">Motion</div>
-    <div class="sg-title">Animation &amp; Effects</div>
-    <div class="sg-desc">All animated effects use the same spinning conic gradient. Duration is 3s linear infinite.</div>
+  <div class="section-head">
+    <div class="section-num">06</div>
+    <div class="section-meta">
+      <div class="section-label">Motion</div>
+      <div class="section-title">Animation &amp; Effects</div>
+    </div>
   </div>
+  <div class="sg-desc">All animated effects use the same spinning conic gradient. Duration is 3s linear infinite.</div>
 
   <div class="sg-subsection">
     <div class="sg-sublabel">Spinning Accent Border — hero-install, omni panel</div>
@@ -1077,11 +1191,14 @@
      ZONES
      ============================================================ -->
 <div class="sg-section" id="zones">
-  <div class="sg-section-head">
-    <div class="sg-label">Layout</div>
-    <div class="sg-title">Zones</div>
-    <div class="sg-desc">index.html alternates light and dark zones. All inner content is constrained by .zone-inner (max-width 1060px, padding var(--s5)).</div>
+  <div class="section-head">
+    <div class="section-num">07</div>
+    <div class="section-meta">
+      <div class="section-label">Layout</div>
+      <div class="section-title">Zones</div>
+    </div>
   </div>
+  <div class="sg-desc">index.html alternates light and dark zones. All inner content is constrained by .zone-inner (max-width 1060px, padding var(--s5)).</div>
 
   <div class="sg-subsection">
     <div class="sg-sublabel">zone-light</div>
@@ -1103,14 +1220,38 @@
 </div>
 
 <!-- ============================================================
+     Z-INDEX
+     ============================================================ -->
+<div class="sg-section" id="zindex">
+  <div class="section-head">
+    <div class="section-num">08</div>
+    <div class="section-meta">
+      <div class="section-label">Layering</div>
+      <div class="section-title">Z-Index</div>
+    </div>
+  </div>
+  <div class="sg-desc">Explicit stacking layers. Do not introduce arbitrary z-index values outside this scale.</div>
+
+  <div class="code">9999   .omni             search panel — above everything
+9998   .omni-overlay     dimming backdrop behind the panel
+ 200   .nav              global nav bar
+ 100   .sidenav          sidebar navigation (desktop)
+ 100   .topnav           horizontal tab strip (mobile)
+  -1   decorative        ::before / ::after pseudo-elements behind content</div>
+</div>
+
+<!-- ============================================================
      NAVIGATION
      ============================================================ -->
 <div class="sg-section" id="nav">
-  <div class="sg-section-head">
-    <div class="sg-label">Wayfinding</div>
-    <div class="sg-title">Navigation</div>
-    <div class="sg-desc">Two distinct nav implementations exist: the adaptive nav on index.html and the fixed global-nav used by start/concepts/api.</div>
+  <div class="section-head">
+    <div class="section-num">09</div>
+    <div class="section-meta">
+      <div class="section-label">Wayfinding</div>
+      <div class="section-title">Navigation</div>
+    </div>
   </div>
+  <div class="sg-desc">Two distinct nav implementations exist: the adaptive nav on index.html and the fixed global-nav used by start/concepts/api.</div>
 
   <div class="sg-subsection">
     <div class="sg-sublabel">global-nav (start.html, concepts.html, api.html)</div>
@@ -1149,18 +1290,74 @@ nav.brand-visible .nav-section opacity 1</div>
 </div>
 
 <!-- ============================================================
+     ICONOGRAPHY
+     ============================================================ -->
+<div class="sg-section" id="icons">
+  <div class="section-head">
+    <div class="section-num">10</div>
+    <div class="section-meta">
+      <div class="section-label">Visual</div>
+      <div class="section-title">Iconography</div>
+    </div>
+  </div>
+  <div class="sg-desc">All icons are inline SVG — no icon font or sprite sheet. Color always inherits via <code style="font-family:var(--mono);color:var(--dk-2);font-size:11px">stroke="currentColor"</code> or <code style="font-family:var(--mono);color:var(--dk-2);font-size:11px">fill="currentColor"</code>, controlled by the CSS <code style="font-family:var(--mono);color:var(--dk-2);font-size:11px">color</code> property on the parent.</div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Search — nav-search button (all pages)</div>
+    <div style="display:flex;align-items:center;gap:var(--s4);padding:var(--s3) 0">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <div class="code" style="margin:0;flex:1">width="14" height="14" viewBox="0 0 24 24"
+fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+&lt;circle cx="11" cy="11" r="7"/&gt; &lt;line x1="21" y1="21" x2="16.65" y2="16.65"/&gt;</div>
+    </div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">GitHub mark — nav link (index.html)</div>
+    <div style="display:flex;align-items:center;gap:var(--s4);padding:var(--s3) 0">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      <div class="code" style="margin:0;flex:1">width="16" height="16" viewBox="0 0 16 16"
+fill="currentColor"  ← path-based, no stroke
+&lt;path d="M8 0C3.58 0 ..."/&gt;</div>
+    </div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Hamburger — mobile nav toggle (api.html only)</div>
+    <div style="display:flex;align-items:center;gap:var(--s4);padding:var(--s3) 0">
+      <svg viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="4" x2="16" y2="4"/><line x1="2" y1="9" x2="16" y2="9"/><line x1="2" y1="14" x2="16" y2="14"/></svg>
+      <div class="code" style="margin:0;flex:1">viewBox="0 0 18 18" fill="none" stroke-width="1.5"
+3 × &lt;line&gt; at y=4, y=9, y=14</div>
+    </div>
+  </div>
+
+  <div class="sg-subsection">
+    <div class="sg-sublabel">Chevron — result item toggle (api.html only)</div>
+    <div style="display:flex;align-items:center;gap:var(--s4);padding:var(--s3) 0">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 2 L7 5 L3.5 8"/></svg>
+      <div class="code" style="margin:0;flex:1">width="10" height="10" viewBox="0 0 10 10"
+stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+&lt;path d="M3.5 2 L7 5 L3.5 8"/&gt;  ← points right</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
      SECTION HEADERS
      ============================================================ -->
 <div class="sg-section" id="sections">
-  <div class="sg-section-head">
-    <div class="sg-label">Structure</div>
-    <div class="sg-title">Section Headers</div>
+  <div class="section-head">
+    <div class="section-num">11</div>
+    <div class="section-meta">
+      <div class="section-label">Structure</div>
+      <div class="section-title">Section Headers</div>
+    </div>
   </div>
 
   <div class="sg-subsection">
     <div class="sg-sublabel">Dark zone — section-head + section-num + section-title + section-desc</div>
     <div class="section-head-preview">
-      <div class="section-num">01</div>
+      <div class="section-num">0X</div>
       <div class="section-meta">
         <div class="section-label">Category</div>
         <div class="section-title">Section Title</div>
@@ -1178,7 +1375,7 @@ nav.brand-visible .nav-section opacity 1</div>
     <div class="sg-sublabel">Light zone — same structure, different colours</div>
     <div class="sg-light-preview">
       <div style="display:flex;align-items:flex-start;gap:var(--s4);padding:var(--s3) 0">
-        <div style="font-family:var(--din-r);font-variation-settings:'wght' 200;font-size:84px;line-height:0.82;letter-spacing:-0.04em;color:var(--bg2);flex-shrink:0;min-width:110px">02</div>
+        <div style="font-family:var(--din-r);font-variation-settings:'wght' 200;font-size:84px;line-height:0.82;letter-spacing:-0.04em;color:var(--bg2);flex-shrink:0;min-width:110px">0X</div>
         <div style="padding-top:8px">
           <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--fg4);margin-bottom:4px">Category</div>
           <div style="font-family:var(--akz);font-weight:700;font-size:34px;color:var(--fg0);letter-spacing:-0.02em;line-height:1.1">Section Title</div>
@@ -1194,9 +1391,12 @@ nav.brand-visible .nav-section opacity 1</div>
      CODE BLOCKS
      ============================================================ -->
 <div class="sg-section" id="code">
-  <div class="sg-section-head">
-    <div class="sg-label">Content</div>
-    <div class="sg-title">Code Blocks</div>
+  <div class="section-head">
+    <div class="section-num">12</div>
+    <div class="section-meta">
+      <div class="section-label">Content</div>
+      <div class="section-title">Code Blocks</div>
+    </div>
   </div>
 
   <div class="sg-subsection">
@@ -1224,9 +1424,12 @@ nav.brand-visible .nav-section opacity 1</div>
      COMPONENTS
      ============================================================ -->
 <div class="sg-section" id="components">
-  <div class="sg-section-head">
-    <div class="sg-label">Patterns</div>
-    <div class="sg-title">Components</div>
+  <div class="section-head">
+    <div class="section-num">13</div>
+    <div class="section-meta">
+      <div class="section-label">Patterns</div>
+      <div class="section-title">Components</div>
+    </div>
   </div>
 
   <div class="sg-subsection">
@@ -1305,9 +1508,12 @@ nav.brand-visible .nav-section opacity 1</div>
      INTERACTIVE
      ============================================================ -->
 <div class="sg-section" id="interactive">
-  <div class="sg-section-head">
-    <div class="sg-label">Elements</div>
-    <div class="sg-title">Interactive</div>
+  <div class="section-head">
+    <div class="section-num">14</div>
+    <div class="section-meta">
+      <div class="section-label">Elements</div>
+      <div class="section-title">Interactive</div>
+    </div>
   </div>
 
   <div class="sg-subsection">
@@ -1372,11 +1578,14 @@ nav.brand-visible .nav-section opacity 1</div>
      AUDIT
      ============================================================ -->
 <div class="sg-section" id="audit">
-  <div class="sg-section-head">
-    <div class="sg-label">Consistency</div>
-    <div class="sg-title">Audit</div>
-    <div class="sg-desc">Issues found across pages. Use this as a checklist when updating the site.</div>
+  <div class="section-head">
+    <div class="section-num">15</div>
+    <div class="section-meta">
+      <div class="section-label">Consistency</div>
+      <div class="section-title">Audit</div>
+    </div>
   </div>
+  <div class="sg-desc">Issues found across pages. Use this as a checklist when updating the site.</div>
 
   <div class="audit-ok">
     <strong>Fixed:</strong> Undefined CSS variable <code>--berk</code> — corrected to <code>var(--mono)</code> in <code>index.html</code>.
@@ -1437,13 +1646,13 @@ nav.brand-visible .nav-section opacity 1</div>
   </div>
 </div>
 
-</div><!-- .sg-page -->
+</div><!-- .page -->
 
 <script>
 // sidenav scroll tracking
 (function() {
   const sections = Array.from(document.querySelectorAll('.sg-section[id]'));
-  const links = document.querySelectorAll('.sg-sidenav-link');
+  const links = document.querySelectorAll('nav.sidenav .sidenav-link');
 
   function setActive(id) {
     links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
