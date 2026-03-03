@@ -229,6 +229,17 @@
 
   .search-hint.hidden { display: none; }
 
+  .search-syntax {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--dk-6);
+    padding: 6px 4px 0;
+    display: flex;
+    gap: 16px;
+  }
+  .search-syntax span { white-space: nowrap; }
+  .search-syntax code { color: var(--dk-5); }
+
   .search-count {
     position: absolute;
     right: 12px;
@@ -385,27 +396,31 @@
 
   .sidebar-method:hover { color: var(--dk-3); }
 
-  /* hamburger button — hidden on desktop */
-  .hamburger {
+  /* floating sidebar toggle — hidden on desktop */
+  .sidebar-fab {
     display: none;
-    background: none;
-    border: none;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 8000;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #1a1a18;
+    border: 1px solid #2a2a28;
     cursor: pointer;
-    padding: 4px;
-    margin-right: 12px;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.5);
   }
-
-  .hamburger svg {
-    display: block;
-    width: 18px;
-    height: 18px;
+  .sidebar-fab svg {
+    width: 16px; height: 16px;
     stroke: var(--dk-3);
     stroke-width: 2;
     stroke-linecap: round;
     transition: stroke 0.15s;
   }
-
-  .hamburger:hover svg { stroke: var(--dk-hi); }
+  .sidebar-fab:hover svg { stroke: var(--dk-hi); }
 
   /* backdrop for mobile sidebar */
   .sidebar-backdrop {
@@ -431,7 +446,7 @@
     .nav-inner { margin-left: auto; }
   }
 
-  /* tablet/mobile: sidebar as hamburger overlay */
+  /* tablet/mobile: sidebar as overlay */
   @media (max-width: 999px) {
     .sidebar {
       left: 16px;
@@ -442,7 +457,7 @@
       z-index: 110;
     }
     .sidebar.open { transform: translateX(0); }
-    .hamburger { display: block; }
+    .sidebar-fab { display: flex; }
   }
 
   /* ============================================================
@@ -837,6 +852,7 @@
 
   .footer-links {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     gap: var(--s3);
     font-family: var(--mono);
@@ -1017,22 +1033,31 @@
   }
 
   /* gradient accent */
+  .skip-to-content {
+    position: absolute;
+    left: -9999px;
+    top: 8px;
+    z-index: 9999;
+    background: var(--fg0);
+    color: var(--bg);
+    padding: 8px 16px;
+    font-family: var(--mono);
+    font-size: 13px;
+    text-decoration: none;
+  }
+  .skip-to-content:focus { left: 8px; }
 
 </style>
 </head>
 <body>
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <!-- ============================================================
      NAV
      ============================================================ -->
 <nav>
   <div class="nav-inner">
-    <div style="display:flex;align-items:center;">
-      <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
-        <svg viewBox="0 0 18 18" fill="none"><line x1="2" y1="4" x2="16" y2="4"/><line x1="2" y1="9" x2="16" y2="9"/><line x1="2" y1="14" x2="16" y2="14"/></svg>
-      </button>
-      <a href="/" class="nav-brand">glyph</a>
-    </div>
+    <a href="/" class="nav-brand">glyph</a>
     <ul class="nav-links">
       <li><a href="/start.html">Get Started</a></li>
       <li><a href="/concepts.html">Concepts</a></li>
@@ -1042,10 +1067,13 @@
     </ul>
   </div>
 </nav>
-
 <!-- sidebar tree nav (populated by JS) -->
+<main id="main-content">
 <aside class="sidebar" id="sidebar"></aside>
 <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+<button class="sidebar-fab" id="hamburger" aria-label="Toggle navigation">
+  <svg viewBox="0 0 18 18" fill="none"><line x1="2" y1="4" x2="16" y2="4"/><line x1="2" y1="9" x2="16" y2="9"/><line x1="2" y1="14" x2="16" y2="14"/></svg>
+</button>
 
 <!-- ============================================================
      SEARCH
@@ -1055,6 +1083,13 @@
     <input type="text" class="search-input" id="search" placeholder="Search API..." autocomplete="off" spellcheck="false">
     <span class="search-hint" id="search-hint">/</span>
     <div class="search-count hidden" id="search-count"></div>
+  </div>
+  <div class="search-syntax">
+    <span><code>'term</code> exact</span>
+    <span><code>^term</code> prefix</span>
+    <span><code>term$</code> suffix</span>
+    <span><code>!term</code> exclude</span>
+    <span>space = AND</span>
   </div>
 </div>
 
@@ -1096,6 +1131,7 @@
     </div>
   </div>
 </div>
+</main>
 
 <!-- ============================================================
      GET STARTED
@@ -1106,7 +1142,7 @@
       <div class="install-label">Install</div>
       <div class="install-title">Get Started</div>
 
-      <div class="hero-install" onclick="copyInstall(this)">
+      <div class="hero-install" onclick="copyInstall(this)" role="button" tabindex="0" aria-label="Copy install command">
         <span class="prompt">$</span>
         go get github.com/kungfusheep/glyph@latest
         <span class="copied">copied</span>
@@ -1127,6 +1163,8 @@
         <a href="/api.html">API</a>
         <a href="/concepts.html">Concepts</a>
         <a href="https://github.com/kungfusheep/glyph">Source</a>
+        <a href="https://github.com/kungfusheep/glyph/issues">Issues</a>
+        <a href="https://github.com/kungfusheep/glyph/blob/main/CONTRIBUTING.md">Contributing</a>
       </div>
     </footer>
   </div>
@@ -1716,8 +1754,11 @@ function copyInstall(el) {
 
       const head = document.createElement('div');
       head.className = 'sidebar-cat-head';
+      head.setAttribute('role', 'button');
+      head.setAttribute('tabindex', '0');
       head.innerHTML = `${chevronSVG(10)} ${esc(catName)}`;
       head.addEventListener('click', () => cat.classList.toggle('open'));
+      head.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cat.classList.toggle('open'); } });
       cat.appendChild(head);
 
       const items = document.createElement('div');

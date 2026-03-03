@@ -711,6 +711,7 @@
 
   .footer-links {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     gap: var(--s3);
     font-family: var(--mono);
@@ -766,10 +767,24 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
+  .skip-to-content {
+    position: absolute;
+    left: -9999px;
+    top: 8px;
+    z-index: 9999;
+    background: var(--fg0);
+    color: var(--bg);
+    padding: 8px 16px;
+    font-family: var(--mono);
+    font-size: 13px;
+    text-decoration: none;
+  }
+  .skip-to-content:focus { left: 8px; }
 
 </style>
 </head>
 <body>
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <!-- ============================================================
      NAV
@@ -789,10 +804,10 @@
     </ul>
   </div>
 </nav>
-
 <!-- ============================================================
      HERO (light)
      ============================================================ -->
+<main id="main-content">
 <div class="zone-light">
   <div class="zone-inner">
     <div class="hero">
@@ -801,7 +816,7 @@
       <div class="hero-headline">Batteries-included terminal UI framework for Go.</div>
       <div class="hero-desc">
         Declarative composition. Your data, rendered directly. Keyboard-first. Fast.</div>
-      <div class="hero-install" onclick="copyInstall(this)">
+      <div class="hero-install" onclick="copyInstall(this)" role="button" tabindex="0" aria-label="Copy install command">
         <span class="prompt">$</span>
         go get github.com/kungfusheep/glyph@latest
         <span class="copied">copied</span>
@@ -878,7 +893,7 @@ func main() {
           <div class="callout-body">
             Rendering walks the compiled ops and dereferences pointers to read current
             state. Pointer reads into a cell buffer, then a diff-based flush to the terminal.
-            The execute path is often zero-alloc. <a href="https://github.com/kungfusheep/glyph" style="color:inherit;text-decoration:underline;text-underline-offset:2px;opacity:0.7;">Benchmarks in the repo.</a>
+            The execute path is zero-alloc by design.
           </div>
         </div>
       </div>
@@ -1131,7 +1146,7 @@ func main() {
       </div>
     </div>
 
-    <div class="hero-install" onclick="copyInstall(this)">
+    <div class="hero-install" onclick="copyInstall(this)" role="button" tabindex="0" aria-label="Copy install command">
       <span class="prompt">$</span>
       go get github.com/kungfusheep/glyph@latest
       <span class="copied">copied</span>
@@ -1145,6 +1160,7 @@ func main() {
   </div>
 
   <!-- FOOTER -->
+  </main>
   <div class="zone-inner">
     <footer>
       <div class="footer-brand">glyph</div>
@@ -1154,6 +1170,8 @@ func main() {
         <a href="/api.html">API</a>
         <a href="/concepts.html">Concepts</a>
         <a href="https://github.com/kungfusheep/glyph">Source</a>
+        <a href="https://github.com/kungfusheep/glyph/issues">Issues</a>
+        <a href="https://github.com/kungfusheep/glyph/blob/main/CONTRIBUTING.md">Contributing</a>
       </div>
     </footer>
   </div>
