@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>glyph — Privacy Policy</title>
+<meta name="description" content="Privacy policy for glyph and the glyph Claude Code plugin.">
+<meta name="author" content="Pete Griffiths">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://useglyph.sh/privacy.html">
+<meta name="theme-color" content="#131311">
+
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="preload" href="BerkeleyMonoVariable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="https://use.typekit.net/rgt4idh.css">
+<link rel="stylesheet" href="tokens.css">
+
+<style>
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none; }
+
+  @font-face {
+    font-family: 'Berkeley Mono';
+    src: url('BerkeleyMonoVariable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: swap;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg-dark);
+    color: var(--dk);
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--dk); color: var(--bg-dark); }
+
+  .page { max-width: 1060px; margin: 0 auto; padding: 48px var(--s5) 0; }
+
+  @media (min-width: 960px) {
+    .page { margin-left: 216px; }
+  }
+  @media (min-width: 1492px) {
+    .page { margin-left: auto; }
+  }
+
+  /* ============================================================
+     PAGE HEADER
+     ============================================================ */
+  .page-header {
+    padding: var(--s7) 0 var(--s5);
+    border-bottom: 1px solid var(--rule-dk);
+  }
+  .page-header-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--dk-6);
+    margin-bottom: 4px;
+  }
+  .page-header-title {
+    font-family: var(--akz);
+    font-weight: 700;
+    font-size: 34px;
+    color: var(--dk-hi);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  /* ============================================================
+     SECTION
+     ============================================================ */
+  .concept {
+    padding: var(--s7) 0;
+    border-bottom: 1px solid var(--rule-dk);
+    overflow-x: clip;
+  }
+  .concept:last-child { border-bottom: none; }
+
+  .section-head {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--s4);
+    margin-bottom: var(--s4);
+  }
+  .section-num {
+    font-family: var(--din-r);
+    font-variation-settings: 'wght' 200;
+    font-size: 84px;
+    line-height: 0.82;
+    letter-spacing: -0.04em;
+    flex-shrink: 0;
+    color: var(--dk-border);
+    min-width: 110px;
+  }
+  .section-meta { padding-top: 8px; }
+  .section-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--dk-6);
+    margin-bottom: 4px;
+  }
+  .section-title {
+    font-family: var(--akz);
+    font-weight: 700;
+    font-size: 34px;
+    color: var(--dk-hi);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .concept-prose {
+    font-size: 13px;
+    color: var(--fg3);
+    line-height: 1.8;
+    max-width: 640px;
+    margin-bottom: var(--s4);
+  }
+  .concept-prose:last-child { margin-bottom: 0; }
+  .concept-prose a { color: var(--dk); }
+
+  /* ============================================================
+     SIDE NAV
+     ============================================================ */
+  .sidenav {
+    position: fixed;
+    top: 48px;
+    left: max(0px, calc(50vw - 746px));
+    width: 200px;
+    height: calc(100vh - 48px);
+    padding: var(--s5) var(--s3) var(--s3) var(--s3);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    z-index: 100;
+  }
+  .sidenav-link {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--dk-6);
+    text-decoration: none;
+    padding: 8px 0 8px 14px;
+    border-left: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    line-height: 1.3;
+  }
+  .sidenav-link:hover { color: var(--dk-4); }
+  .sidenav-link.active {
+    color: var(--dk);
+    border-left-color: var(--accent);
+  }
+  .sidenav-link.active { border-image: var(--grad) 1; }
+
+  /* ============================================================
+     TOP NAV (mobile)
+     ============================================================ */
+  .topnav { display: none; }
+
+  @media (max-width: 959px) {
+    .sidenav { display: none; }
+
+    .topnav {
+      display: flex;
+      position: sticky;
+      top: 48px;
+      z-index: 100;
+      background: var(--bg-dark);
+      border-bottom: 1px solid var(--rule-dk);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      gap: 0;
+      padding: 0 var(--s2);
+    }
+    .topnav::-webkit-scrollbar { display: none; }
+    .topnav-link {
+      font-family: var(--mono);
+      font-weight: 700;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--dk-6);
+      text-decoration: none;
+      padding: 12px 12px;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+      flex-shrink: 0;
+    }
+    .topnav-link:hover { color: var(--dk-3); }
+    .topnav-link.active {
+      color: var(--dk);
+      border-bottom-color: var(--accent);
+    }
+  }
+  .topnav-link.active { border-image: var(--grad) 1; }
+
+  @media (max-width: 768px) {
+    .section-head { flex-direction: column; gap: var(--s2); }
+    .section-num { font-size: 48px; min-width: auto; }
+  }
+
+  footer {
+    padding: var(--s7) 0 var(--s5);
+    border-top: 1px solid var(--dk-border);
+    text-align: center;
+  }
+
+  .footer-brand {
+    font-family: var(--din-r);
+    font-variation-settings: 'wght' 400;
+    font-size: 18px;
+    color: var(--dk);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--s2);
+  }
+
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--s3);
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .footer-links a {
+    color: var(--dk-6);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--dk); }
+
+  .skip-to-content {
+    position: absolute;
+    left: -9999px;
+    top: 8px;
+    z-index: 9999;
+    background: var(--fg0);
+    color: var(--bg);
+    padding: 8px 16px;
+    font-family: var(--mono);
+    font-size: 13px;
+    text-decoration: none;
+  }
+  .skip-to-content:focus { left: 8px; }
+
+  /* ============================================================
+     GLOBAL NAV
+     ============================================================ */
+  .nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 200;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    background: rgba(19, 19, 17, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--rule-dk);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 0 var(--s5);
+  }
+  .nav-brand {
+    font-family: var(--din-r);
+    font-variation-settings: 'wght' 400;
+    font-size: 18px;
+    color: var(--dk-hi);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--s3);
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--dk-5);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .nav-links a:hover { color: var(--dk-hi); }
+  .nav-links a.active { color: var(--dk-hi); }
+
+  .nav-search {
+    background: none; border: none; cursor: pointer;
+    color: var(--dk-5); padding: 2px 0; display: flex; align-items: center; position: relative; top: 1px;
+    transition: color 0.15s;
+  }
+  .nav-search:hover { color: var(--dk-hi); }
+
+  @media (max-width: 640px) {
+    .nav-inner { padding: 0 var(--s2); }
+    .nav-links { gap: 10px; }
+  }
+</style>
+</head>
+<body>
+<a class="skip-to-content" href="#main-content">Skip to content</a>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">glyph</a>
+    <ul class="nav-links">
+      <li><a href="/start.html">Get Started</a></li>
+      <li><a href="/concepts.html">Concepts</a></li>
+      <li><a href="/api.html">API</a></li>
+      <li><a href="https://github.com/kungfusheep/glyph" style="display:flex;align-items:center" aria-label="GitHub"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="color:#555"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a></li>
+      <li><button class="nav-search" onclick="window.openOmni?.()" aria-label="Search API"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button></li>
+    </ul>
+  </div>
+</nav>
+
+<nav class="sidenav">
+  <a href="#website" class="sidenav-link">Website</a>
+  <a href="#plugin" class="sidenav-link">Plugin</a>
+  <a href="#rights" class="sidenav-link">Your Rights</a>
+  <a href="#contact" class="sidenav-link">Contact</a>
+</nav>
+
+<nav class="topnav">
+  <a href="#website" class="topnav-link">Website</a>
+  <a href="#plugin" class="topnav-link">Plugin</a>
+  <a href="#rights" class="topnav-link">Your Rights</a>
+  <a href="#contact" class="topnav-link">Contact</a>
+</nav>
+
+<main id="main-content">
+<div class="page">
+
+<!-- page title -->
+<div class="page-header">
+  <div class="page-header-label">Legal</div>
+  <div class="page-header-title">Privacy Policy</div>
+</div>
+
+<!-- ============================================================
+     1. WEBSITE
+     ============================================================ -->
+<div class="concept" id="website">
+  <div class="section-head">
+    <div class="section-num">01</div>
+    <div class="section-meta">
+      <div class="section-label">Legal</div>
+      <div class="section-title">This Website</div>
+    </div>
+  </div>
+
+  <div class="concept-prose">
+    Effective date: March 2026. This policy covers useglyph.sh and the glyph Claude Code plugin.
+  </div>
+
+  <div class="concept-prose">
+    useglyph.sh uses Cloudflare Web Analytics to measure basic traffic patterns (page views, referrers, country-level geography). This data is aggregated and contains no personally identifiable information. No cookies are set and no cross-site tracking occurs. Traffic data is processed by Cloudflare subject to <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare's Privacy Policy</a>.
+  </div>
+</div>
+
+<!-- ============================================================
+     2. PLUGIN
+     ============================================================ -->
+<div class="concept" id="plugin">
+  <div class="section-head">
+    <div class="section-num">02</div>
+    <div class="section-meta">
+      <div class="section-label">Legal</div>
+      <div class="section-title">glyph Claude Code Plugin</div>
+    </div>
+  </div>
+
+  <div class="concept-prose">
+    The plugin is a read-only skill file. It loads a context document into your local Claude Code session. It contains no executable code and makes no network requests.
+  </div>
+
+  <div class="concept-prose">
+    Claude Code is operated by Anthropic. Data processed through Claude Code is subject to <a href="https://www.anthropic.com/legal/privacy">Anthropic's Privacy Policy</a>.
+  </div>
+</div>
+
+<!-- ============================================================
+     3. RIGHTS
+     ============================================================ -->
+<div class="concept" id="rights">
+  <div class="section-head">
+    <div class="section-num">03</div>
+    <div class="section-meta">
+      <div class="section-label">Legal</div>
+      <div class="section-title">Your Rights</div>
+    </div>
+  </div>
+
+  <div class="concept-prose">
+    Because no personal data is collected, there is nothing to access, correct, or delete. If you believe data about you has been collected in error, contact us and we will investigate.
+  </div>
+</div>
+
+<!-- ============================================================
+     4. CONTACT
+     ============================================================ -->
+<div class="concept" id="contact">
+  <div class="section-head">
+    <div class="section-num">04</div>
+    <div class="section-meta">
+      <div class="section-label">Legal</div>
+      <div class="section-title">Contact</div>
+    </div>
+  </div>
+
+  <div class="concept-prose">
+    <a href="https://github.com/kungfusheep/glyph/issues">github.com/kungfusheep/glyph/issues</a>
+  </div>
+</div>
+
+</div><!-- .page -->
+</main>
+
+<footer>
+  <div class="footer-brand">glyph</div>
+  <div class="footer-links">
+    <a href="/">Home</a>
+    <a href="/start.html">Get Started</a>
+    <a href="/api.html">API</a>
+    <a href="/concepts.html">Concepts</a>
+    <a href="https://github.com/kungfusheep/glyph">Source</a>
+    <a href="https://github.com/kungfusheep/glyph/issues">Issues</a>
+    <a href="/privacy.html">Privacy</a>
+  </div>
+</footer>
+
+
+<script>
+(function() {
+  const sections = Array.from(document.querySelectorAll('.concept[id]'));
+  const sideLinks = document.querySelectorAll('.sidenav-link');
+  const topLinks = document.querySelectorAll('.topnav-link');
+  const topnav = document.querySelector('.topnav');
+
+  let jumping = false;
+
+  function setActive(id) {
+    sideLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+    topLinks.forEach(a => {
+      const isActive = a.getAttribute('href') === '#' + id;
+      a.classList.toggle('active', isActive);
+      if (isActive && topnav) {
+        topnav.scrollTo({ left: a.offsetLeft - topnav.offsetWidth / 2 + a.offsetWidth / 2, behavior: 'smooth' });
+      }
+    });
+  }
+
+  const observer = new IntersectionObserver(entries => {
+    if (jumping) return;
+    for (const entry of entries) {
+      if (entry.isIntersecting) setActive(entry.target.id);
+    }
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+
+  [...sideLinks, ...topLinks].forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const id = link.getAttribute('href').slice(1);
+      const target = document.getElementById(id);
+      if (target) {
+        jumping = true;
+        setActive(id);
+        const topnavH = topnav ? topnav.offsetHeight : 0;
+        const y = target.getBoundingClientRect().top + window.scrollY - topnavH - 8;
+        window.scrollTo({ top: y, behavior: 'instant' });
+        history.replaceState(null, '', '#' + id);
+        setTimeout(() => { jumping = false; }, 100);
+      }
+    });
+  });
+
+  setActive(sections[0]?.id || '');
+})();
+</script>
+
+<script src="fzf.js"></script>
+<script src="omni.js" defer></script>
+<script type="speculationrules">
+{
+	"prerender": [{
+		"source": "list",
+		"urls": ["index.html", "start.html", "concepts.html", "api.html"],
+		"eagerness": "eager"
+	}]
+}
+</script>
+</body>
+</html>
