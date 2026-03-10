@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>glyph — Go TUI Framework</title>
-<meta name="description" content="Batteries-included terminal UI framework for Go. Declarative composition. Your data, rendered directly. Keyboard-first. Fast.">
+<meta name="description" content="Batteries-included terminal UI framework for Go. Declarative composition. Your data structures. Keyboard-first. Fast.">
 <meta name="keywords" content="go,golang,tui,terminal,ui,framework,cli,declarative,keyboard">
 <meta name="author" content="Pete Griffiths">
 <meta name="robots" content="index, follow">
@@ -16,7 +16,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="glyph — Go TUI Framework">
 <meta property="og:image" content="https://useglyph.sh/og.png">
-<meta property="og:description" content="Batteries-included terminal UI framework for Go. Declarative composition. Your data, rendered directly. Keyboard-first. Fast.">
+<meta property="og:description" content="Batteries-included terminal UI framework for Go. Declarative composition. Your data structures. Keyboard-first. Fast.">
 <meta property="og:url" content="https://useglyph.sh/">
 <meta property="og:site_name" content="glyph">
 <meta property="og:locale" content="en_GB">
@@ -27,7 +27,7 @@
 <meta name="twitter:title" content="glyph — Go TUI Framework">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://useglyph.sh/og.png">
-<meta name="twitter:description" content="Batteries-included terminal UI framework for Go. Declarative composition. Your data, rendered directly. Keyboard-first. Fast.">
+<meta name="twitter:description" content="Batteries-included terminal UI framework for Go. Declarative composition. Your data structures. Keyboard-first. Fast.">
 
 <!-- structured data -->
 <script type="application/ld+json">
@@ -35,7 +35,7 @@
   "@context": "https://schema.org",
   "@type": "SoftwareSourceCode",
   "name": "glyph",
-  "description": "Batteries-included terminal UI framework for Go. Declarative composition. Your data, rendered directly. Keyboard-first. Fast.",
+  "description": "Batteries-included terminal UI framework for Go. Declarative composition. Your data structures. Keyboard-first. Fast.",
   "url": "https://useglyph.sh/",
   "codeRepository": "https://github.com/kungfusheep/glyph",
   "programmingLanguage": "Go",
@@ -667,6 +667,48 @@
   .zone-dark .battery-items a { color: var(--dk-3); }
   .zone-dark .battery-items a:hover { color: var(--dk); background: rgba(255, 255, 255, 0.05); }
 
+  .principle-intro {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--dk-5);
+    margin-bottom: var(--s3);
+  }
+
+  .principle-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 560px;
+    margin-bottom: var(--s7);
+  }
+
+  /* option a — bulleted */
+  .principle-item {
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--dk-2);
+    display: flex;
+    gap: var(--s2);
+  }
+  .principle-item::before {
+    content: '→';
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* option b — statementy (swap class on .principle-list to try) */
+  .principle-list.statements .principle-item {
+    font-family: var(--akz);
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    color: var(--dk-hi);
+    display: block;
+  }
+  .principle-list.statements .principle-item::before { display: none; }
+
   /* ============================================================
      START LINKS
      ============================================================ */
@@ -800,6 +842,7 @@
       <li><a href="/concepts.html">Concepts</a></li>
       <li><a href="/api.html">API</a></li>
       <li><a href="https://github.com/kungfusheep/glyph" style="display:flex;align-items:center" aria-label="GitHub"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a></li>
+      <li><a href="https://discord.gg/34T2kTsZ" style="display:flex;align-items:center" aria-label="Discord"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg></a></li>
       <li><button class="nav-search" onclick="window.openOmni?.()" aria-label="Search API"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button></li>
     </ul>
   </div>
@@ -815,7 +858,7 @@
       <div class="hero-title">glyph</div>
       <div class="hero-headline">Batteries-included terminal UI framework for Go.</div>
       <div class="hero-desc">
-        Declarative composition. Your data, rendered directly. Keyboard-first. Fast.</div>
+        Declarative composition. Your data structures. Keyboard-first. Fast.</div>
       <div class="hero-install" onclick="copyInstall(this)" role="button" tabindex="0" aria-label="Copy install command">
         <span class="prompt">$</span>
         go get github.com/kungfusheep/glyph@latest
@@ -863,8 +906,8 @@ func main() {
 		),
 	)
 
-	app.Handle("up", func() { count++ })
-	app.Handle("down", func() { count-- })
+	app.Handle("&lt;Up&gt;", func() { count++ })
+	app.Handle("&lt;Down&gt;", func() { count-- })
 	app.Handle("q", app.Stop)
 	app.Run()
 }</div>
@@ -1026,6 +1069,32 @@ func main() {
 	Field("Terms", Checkbox(&agree, "I accept").Validate(VTrue, VOnSubmit)),
 )</div>
         </div>
+
+        <div class="feature-card">
+          <div class="feature-info">
+            <div class="feature-title">Modal with screen effects</div>
+            <div class="feature-desc">
+              Full-screen post-processing passes declared in the view tree.
+              Focus and Dodge target or exclude specific nodes. Effects compose left-to-right.
+            </div>
+          </div>
+          <div class="code code-raw">var modal NodeRef
+
+ScreenEffect(
+	SEFocusDim(&modal).Strength(0.6),
+	SEDropShadow().Focus(&modal),
+)
+
+Overlay(
+	VBox.NodeRef(&modal).Border(BorderRounded)(
+		Text("confirm delete?"),
+		HBox.Gap(2)(
+			Button("yes", onConfirm),
+			Button("no", onCancel),
+		),
+	),
+)</div>
+        </div>
       </div>
     </div>
   </div>
@@ -1122,6 +1191,17 @@ func main() {
           </div>
         </div>
         <div class="battery">
+          <div class="battery-label">Screen Effects</div>
+          <div class="battery-items">
+            <a href="/api.html#ScreenEffect">ScreenEffect</a>
+            <a href="/api.html#Effect">Vignette</a>
+            <a href="/api.html#Effect">Tint</a>
+            <a href="/api.html#Effect">Bloom</a>
+            <a href="/api.html#Effect">Focus / Dodge</a>
+            <a href="/api.html#Effect">Blend Modes</a>
+          </div>
+        </div>
+        <div class="battery">
           <div class="battery-label">Rendering</div>
           <div class="battery-items">
             <a href="/api.html#Buffer">Double Buffer</a>
@@ -1136,10 +1216,34 @@ func main() {
 
   <div class="section-rule"></div>
 
-  <!-- 04 — GET STARTED -->
+  <!-- 04 — PRINCIPLES -->
   <div class="zone-inner">
     <div class="section-head">
       <div class="section-num">04</div>
+      <div class="section-meta">
+        <div class="section-label">Philosophy</div>
+        <div class="section-title">Tenets</div>
+      </div>
+    </div>
+
+    <div class="principle-intro">The values guiding glyph.</div>
+
+    <div class="principle-list">
+      <div class="principle-item">Performance is a feature.</div>
+      <div class="principle-item">Views are a story, not an investigation.</div>
+      <div class="principle-item">Time-to-understand is a design goal.</div>
+      <div class="principle-item">The common case should already be solved.</div>
+      <div class="principle-item">Make the right thing the obvious thing.</div>
+      <div class="principle-item">Complexity belongs to the framework, not the builder.</div>
+    </div>
+  </div>
+
+  <div class="section-rule"></div>
+
+  <!-- 05 — GET STARTED -->
+  <div class="zone-inner">
+    <div class="section-head">
+      <div class="section-num">05</div>
       <div class="section-meta">
         <div class="section-label">Install</div>
         <div class="section-title">Get Started</div>
@@ -1172,6 +1276,7 @@ func main() {
         <a href="https://github.com/kungfusheep/glyph">Source</a>
         <a href="https://github.com/kungfusheep/glyph/issues">Issues</a>
         <a href="https://github.com/kungfusheep/glyph/blob/main/CONTRIBUTING.md">Contributing</a>
+        <a href="https://discord.gg/34T2kTsZ">Discord</a>
       </div>
     </footer>
   </div>

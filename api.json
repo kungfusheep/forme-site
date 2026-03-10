@@ -20,7 +20,7 @@
       ],
       "examples": [
         {
-          "doc": "Text alignment.\nAlign is set via the Style struct — AlignLeft, AlignCenter, or AlignRight within a fixed width.\n",
+          "doc": "Text alignment.\nAlign is set via the Style struct. AlignLeft, AlignCenter, or AlignRight within a fixed width.\n",
           "code": "VBox(\n\tText(\"left-aligned\"),\n\tText(\"centered\").Style(Style{Align: AlignCenter}).Width(40),\n\tText(\"right-aligned\").Style(Style{Align: AlignRight}).Width(40),\n)"
         }
       ]
@@ -55,15 +55,15 @@
       ],
       "methods": [
         {
-          "name": "AddJumpTarget",
-          "doc": "AddJumpTarget registers a jump target during rendering.\nCalled by Jump components when jump mode is active.\n",
-          "signature": "func (a *App) AddJumpTarget(x, y int16, onSelect func(), style Style)",
+          "name": "AddEffect",
+          "doc": "AddEffect appends a post-processing pass to the pipeline.\nPasses run in order after template rendering, before screen flush.\nClosures captured by the pass act as shader uniforms — mutate them to\nchange behaviour next frame.\n",
+          "signature": "func (a *App) AddEffect(pp Effect) *App",
           "recv": "*App"
         },
         {
-          "name": "AddPostProcess",
-          "doc": "AddPostProcess appends a post-processing pass to the pipeline.\nPasses run in order after template rendering, before screen flush.\nClosures captured by the pass act as shader uniforms — mutate them to\nchange behaviour next frame.\n",
-          "signature": "func (a *App) AddPostProcess(pp PostProcess) *App",
+          "name": "AddJumpTarget",
+          "doc": "AddJumpTarget registers a jump target during rendering.\nCalled by Jump components when jump mode is active.\n",
+          "signature": "func (a *App) AddJumpTarget(x, y int16, onSelect func(), style Style)",
           "recv": "*App"
         },
         {
@@ -277,15 +277,15 @@
           "recv": "*App"
         },
         {
-          "name": "SetJumpStyle",
-          "doc": "SetJumpStyle sets the global style for jump labels.\n",
-          "signature": "func (a *App) SetJumpStyle(style JumpStyle) *App",
+          "name": "SetEffect",
+          "doc": "SetEffect replaces the entire post-processing pipeline.\nCall with no arguments to clear all passes.\n",
+          "signature": "func (a *App) SetEffect(passes ...Effect) *App",
           "recv": "*App"
         },
         {
-          "name": "SetPostProcess",
-          "doc": "SetPostProcess replaces the entire post-processing pipeline.\nCall with no arguments to clear all passes.\n",
-          "signature": "func (a *App) SetPostProcess(passes ...PostProcess) *App",
+          "name": "SetJumpStyle",
+          "doc": "SetJumpStyle sets the global style for jump labels.\n",
+          "signature": "func (a *App) SetJumpStyle(style JumpStyle) *App",
           "recv": "*App"
         },
         {
@@ -532,7 +532,7 @@
     },
     {
       "name": "BlendMode",
-      "doc": "BlendMode controls how two colours are combined during post-processing.\nUse with WithBlend to wrap any PostProcess effect.\n",
+      "doc": "BlendMode controls how two colours are combined during post-processing.\nUse with WithBlend to wrap any Effect effect.\n",
       "decl": "type BlendMode int",
       "consts": [
         {
@@ -795,7 +795,7 @@
         },
         {
           "name": "WriteProgressBar",
-          "doc": "WriteProgressBar writes a progress bar directly to the buffer.\nUses partial block characters for smooth sub-character precision.\nBackground color fills the empty space for seamless appearance.\nWrites all cells in a single pass.\n",
+          "doc": "WriteProgressBar writes a progress bar directly to the buffer.\nUses partial block characters for smooth sub-character precision.\nBackground color fills the empty space.\nWrites all cells in a single pass.\n",
           "signature": "func (b *Buffer) WriteProgressBar(x, y, width int, ratio float32, style Style)",
           "recv": "*Buffer"
         },
@@ -974,7 +974,7 @@
         },
         {
           "name": "Checked",
-          "doc": "Checked provides the bool pointer that controls each item's checkbox.\nfn: func(item *T) *bool — return a pointer to the item's checked field.\n",
+          "doc": "Checked provides the bool pointer that controls each item's checkbox.\nfn: func(item *T) *bool. return a pointer to the item's checked field.\n",
           "signature": "func (c *CheckListC[T]) Checked(fn func(*T) *bool) *CheckListC[T]",
           "recv": "*CheckListC[T]"
         },
@@ -1004,7 +1004,7 @@
         },
         {
           "name": "Handle",
-          "doc": "Handle registers a key binding that acts on the currently selected item.\nfn: func(item *T) — receives a pointer to the selected item (skipped if empty).\n",
+          "doc": "Handle registers a key binding that acts on the currently selected item.\nfn: func(item *T). receives a pointer to the selected item (skipped if empty).\n",
           "signature": "func (c *CheckListC[T]) Handle(key string, fn func(*T)) *CheckListC[T]",
           "recv": "*CheckListC[T]"
         },
@@ -1076,7 +1076,7 @@
         },
         {
           "name": "Render",
-          "doc": "Render customises how each item appears after its checkbox.\nfn: func(item *T) any — return a component tree for the item content.\n",
+          "doc": "Render customises how each item appears after its checkbox.\nfn: func(item *T) any. return a component tree for the item content.\n",
           "signature": "func (c *CheckListC[T]) Render(fn func(*T) any) *CheckListC[T]",
           "recv": "*CheckListC[T]"
         },
@@ -1227,7 +1227,13 @@
         {
           "name": "BlendColor",
           "doc": "BlendColor combines two RGB colours using the specified blend mode.\n",
-          "signature": "func BlendColor(base, top Color, mode BlendMode) Color"
+          "signature": "func BlendColor(base, top Color, mode BlendMode) Color",
+          "examples": [
+            {
+              "doc": "Manual colour blend.\nBlendColor combines two colours with a Photoshop-style mode — useful inside custom effects.\n",
+              "code": "base := RGB(100, 150, 200)\ntop := RGB(255, 100, 50)\n_ = BlendColor(base, top, BlendScreen)"
+            }
+          ]
         },
         {
           "name": "DefaultColor",
@@ -1400,7 +1406,7 @@
       "constructors": [
         {
           "name": "If",
-          "doc": "If conditionally renders content based on a pointer value.\nRequires a pointer — compile-time enforced via generics.\n\n\tIf(\u0026visible).Then(content)              // show when true\n\tIf(\u0026mode).Eq(\"edit\").Then(editor)       // show when equal\n\tIf(\u0026count).Ne(0).Then(badge).Else(Text(\"empty\"))\n",
+          "doc": "If conditionally renders content based on a pointer value.\nRequires a pointer, compile-time enforced via generics.\n\n\tIf(\u0026visible).Then(content)              // show when true\n\tIf(\u0026mode).Eq(\"edit\").Then(editor)       // show when equal\n\tIf(\u0026count).Ne(0).Then(badge).Else(Text(\"empty\"))\n",
           "signature": "func If[T comparable](ptr *T) *Condition[T]",
           "examples": [
             {
@@ -1513,6 +1519,62 @@
       ]
     },
     {
+      "name": "Effect",
+      "doc": "Effect transforms the buffer after rendering, before flush.\nLike a GPU shader pass. Receives the full cell buffer and frame context.\nMutate cells in-place. Chain multiple passes for layered effects.\n",
+      "decl": "type Effect interface {\n\tApply(buf *Buffer, ctx PostContext)\n}",
+      "constructors": [
+        {
+          "name": "EachCell",
+          "doc": "EachCell wraps a per-cell transform into a Effect.\nThe fragment shader equivalent. You define the per-cell logic,\niteration is handled for you. Splits work across four quadrants\nusing a persistent worker pool. Zero allocations in the hot path.\n",
+          "signature": "func EachCell(fn func(x, y int, cell Cell, ctx PostContext) Cell) Effect",
+          "examples": [
+            {
+              "doc": "Per-cell transform.\nThe fragment shader equivalent — define per-cell logic, iteration is handled.\n",
+              "code": "EachCell(func(x, y int, c Cell, ctx PostContext) Cell {\n\tif y%2 == 0 {\n\t\tc.Style.Attr = c.Style.Attr.With(AttrDim)\n\t}\n\treturn c\n})"
+            }
+          ]
+        },
+        {
+          "name": "SEDimAll",
+          "doc": "SEDimAll applies the terminal Dim attribute to every cell.\nThe simplest possible effect — one attribute, whole screen.\n",
+          "signature": "func SEDimAll() Effect",
+          "examples": [
+            {
+              "doc": "Dim entire screen uniformly.\n",
+              "code": "ScreenEffect(SEDimAll())"
+            }
+          ]
+        },
+        {
+          "name": "WithBlend",
+          "doc": "WithBlend wraps any Effect with a blend mode. Snapshots the buffer\nbefore the effect runs, then blends the effect's output with the original\nusing the specified mode. Works with any effect, plasma through multiply,\nfire through screen, etc.\n",
+          "signature": "func WithBlend(mode BlendMode, pp Effect) Effect",
+          "examples": [
+            {
+              "doc": "Blend mode wrapper.\nSnapshots the buffer, runs the effect, then blends the result back using a Photoshop-style mode.\n",
+              "code": "ScreenEffect(WithBlend(BlendScreen, SEFire()))"
+            },
+            {
+              "name": "quantized",
+              "doc": "Plasma through overlay blend.\nCombine blend modes with quantization for efficient animated effects.\n",
+              "code": "ScreenEffect(WithQuantize(32, WithBlend(BlendOverlay, SEPlasma())))"
+            }
+          ]
+        },
+        {
+          "name": "WithQuantize",
+          "doc": "WithQuantize wraps a Effect with output quantization.\nRuns pp first, then snaps all resulting RGB values to the nearest multiple of step.\nUse step=32 for animated effects like SEPlasma — reduces bytes/frame by ~40-50%\nwith acceptable banding at typical terminal sizes.\n",
+          "signature": "func WithQuantize(step uint8, pp Effect) Effect",
+          "examples": [
+            {
+              "doc": "Quantize wrapper.\nSnap colours to step-size buckets after an effect runs. Use step=32 to cut animation bytes ~40%.\n",
+              "code": "ScreenEffect(WithQuantize(32, SEPlasma()))"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "ElseNode",
       "doc": "ElseNode renders when preceding If was false.\n",
       "decl": "type ElseNode struct {\n\tThen any\n}",
@@ -1526,7 +1588,7 @@
     },
     {
       "name": "Filter",
-      "doc": "Filter provides fzf-style filtering mechanics for a slice of items.\nIt handles query parsing, scoring, filtering and index mapping back to the\noriginal source slice. No UI opinions — bring your own rendering.\n\nusage:\n\n\tf := NewFilter(\u0026items, func(item *Item) string { return item.Name })\n\tf.Update(\"query\")           // re-filter when query changes\n\tf.Items                     // filtered+ranked subset — point a ListC at \u0026f.Items\n\tf.Original(selectedIndex)   // map filtered index back to source item\n",
+      "doc": "Filter provides fzf-style filtering mechanics for a slice of items.\nIt handles query parsing, scoring, filtering and index mapping back to the\noriginal source slice. No UI opinions, bring your own rendering.\n\nusage:\n\n\tf := NewFilter(\u0026items, func(item *Item) string { return item.Name })\n\tf.Update(\"query\")           // re-filter when query changes\n\tf.Items                     // filtered+ranked subset, point a ListC at \u0026f.Items\n\tf.Original(selectedIndex)   // map filtered index back to source item\n",
       "decl": "type Filter[T any] struct {\n\tItems []T // filtered+ranked subset, safe to point a ListC at \u0026f.Items\n\t// contains filtered or unexported fields\n}",
       "constructors": [
         {
@@ -1582,12 +1644,12 @@
     },
     {
       "name": "FilterListC",
-      "doc": "",
+      "doc": "FilterListC is a drop-in filterable list. it composes an input, a\nfilter and a list into a single template node. the caller owns the\nsource slice; mutations happen through a [StreamWriter] obtained\nfrom [FilterListC.Stream].\n\nusage:\n\n\tFilterList(\u0026items, func(p *Profile) string { return p.Name }).\n\t    Placeholder(\"filter...\").\n\t    Render(func(p *Profile) any { return Text(p.Name) }).\n\t    MaxVisible(20).\n\t    Handle(\"\u003cEnter\u003e\", func(p *Profile) { ... })\n\nstreaming:\n\n\tw := fl.Stream(app.RequestRender)\n\tgo func() {\n\t    defer w.Close()\n\t    for p := range produce() {\n\t        w.Write(p)\n\t    }\n\t}()\n",
       "decl": "type FilterListC[T any] struct {\n\t// contains filtered or unexported fields\n}",
       "constructors": [
         {
           "name": "FilterList",
-          "doc": "FilterList creates a filterable list that composes an input, a filter and a list.\nextract: func(*T) string — returns the searchable text for each item.\n\n\tFilterList(\u0026items, func(p *Profile) string { return p.Name }).\n\t    Placeholder(\"filter...\").\n\t    Render(func(p *Profile) any { return Text(p.Name) }).\n\t    MaxVisible(20).\n\t    Handle(\"\u003cEnter\u003e\", func(p *Profile) { ... })\n",
+          "doc": "FilterList creates a filterable list backed by the caller's source slice.\n",
           "signature": "func FilterList[T any](source *[]T, extract func(*T) string) *FilterListC[T]",
           "examples": [
             {
@@ -1623,6 +1685,12 @@
           "recv": "*FilterListC[T]"
         },
         {
+          "name": "DeleteCharBefore",
+          "doc": "DeleteCharBefore removes the last character from the filter query.\n",
+          "signature": "func (fl *FilterListC[T]) DeleteCharBefore()",
+          "recv": "*FilterListC[T]"
+        },
+        {
           "name": "Filter",
           "doc": "Filter returns the underlying Filter for direct access.\n",
           "signature": "func (fl *FilterListC[T]) Filter() *Filter[T]",
@@ -1630,7 +1698,7 @@
         },
         {
           "name": "Handle",
-          "doc": "Handle registers a key binding that acts on the currently selected item.\nfn: func(item *T) — receives a pointer to the selected source item (skipped if empty).\n",
+          "doc": "Handle registers a key binding that acts on the currently selected item.\nfn: func(item *T). receives a pointer to the selected source item (skipped if empty).\n",
           "signature": "func (fl *FilterListC[T]) Handle(key string, fn func(*T)) *FilterListC[T]",
           "recv": "*FilterListC[T]"
         },
@@ -1671,9 +1739,27 @@
           "recv": "*FilterListC[T]"
         },
         {
+          "name": "PageDown",
+          "doc": "PageDown moves the list selection down by a page.\n",
+          "signature": "func (fl *FilterListC[T]) PageDown()",
+          "recv": "*FilterListC[T]"
+        },
+        {
+          "name": "PageUp",
+          "doc": "PageUp moves the list selection up by a page.\n",
+          "signature": "func (fl *FilterListC[T]) PageUp()",
+          "recv": "*FilterListC[T]"
+        },
+        {
           "name": "Placeholder",
           "doc": "Placeholder sets the input placeholder text.\n",
           "signature": "func (fl *FilterListC[T]) Placeholder(p string) *FilterListC[T]",
+          "recv": "*FilterListC[T]"
+        },
+        {
+          "name": "Query",
+          "doc": "Query returns the current filter query string.\n",
+          "signature": "func (fl *FilterListC[T]) Query() string",
           "recv": "*FilterListC[T]"
         },
         {
@@ -1683,9 +1769,27 @@
           "recv": "*FilterListC[T]"
         },
         {
+          "name": "Refresh",
+          "doc": "Refresh re-evaluates the filter against the current source slice contents.\nCall this after mutating source items in-place (e.g. live data updates).\n",
+          "signature": "func (fl *FilterListC[T]) Refresh()",
+          "recv": "*FilterListC[T]"
+        },
+        {
           "name": "Render",
-          "doc": "Render customises how each item appears in the list.\nfn: func(item *T) any — return a component tree for the item row.\n",
+          "doc": "Render customises how each item appears in the list.\nfn: func(item *T) any. return a component tree for the item row.\n",
           "signature": "func (fl *FilterListC[T]) Render(fn func(*T) any) *FilterListC[T]",
+          "recv": "*FilterListC[T]"
+        },
+        {
+          "name": "SelectNext",
+          "doc": "SelectNext moves the list selection down by one.\n",
+          "signature": "func (fl *FilterListC[T]) SelectNext()",
+          "recv": "*FilterListC[T]"
+        },
+        {
+          "name": "SelectPrev",
+          "doc": "SelectPrev moves the list selection up by one.\n",
+          "signature": "func (fl *FilterListC[T]) SelectPrev()",
           "recv": "*FilterListC[T]"
         },
         {
@@ -1704,6 +1808,18 @@
           "name": "SelectedStyle",
           "doc": "SelectedStyle sets the style for the selected row.\n",
           "signature": "func (fl *FilterListC[T]) SelectedStyle(s Style) *FilterListC[T]",
+          "recv": "*FilterListC[T]"
+        },
+        {
+          "name": "SetQuery",
+          "doc": "SetQuery sets the filter query directly and syncs the list.\n",
+          "signature": "func (fl *FilterListC[T]) SetQuery(q string)",
+          "recv": "*FilterListC[T]"
+        },
+        {
+          "name": "Stream",
+          "doc": "Stream begins a streaming session: a spinner appears next to the\ncounter and the returned [StreamWriter] can be used to append items.\nCall [StreamWriter.Close] when all items have been written.\n\nrequestRender is called after each write and spinner tick to signal\nthat the UI should redraw (typically app.RequestRender).\n",
+          "signature": "func (fl *FilterListC[T]) Stream(requestRender func()) *StreamWriter[T]",
           "recv": "*FilterListC[T]"
         },
         {
@@ -1963,7 +2079,7 @@
       "constructors": [
         {
           "name": "ForEach",
-          "doc": "ForEach renders a template for each item in a slice.\ntemplate: func(item *T) any — return a component tree for each item.\nPointer fields inside *T are reactive; mutate and re-render to update.\n\n\tForEach(\u0026todos, func(t *Todo) any {\n\t    return HBox(Text(\u0026t.Name), Text(\u0026t.Status))\n\t})\n",
+          "doc": "ForEach renders a template for each item in a slice.\ntemplate: func(item *T) any. return a component tree for each item.\nPointer fields inside *T are reactive; mutate and re-render to update.\n\n\tForEach(\u0026todos, func(t *Todo) any {\n\t    return HBox(Text(\u0026t.Name), Text(\u0026t.Status))\n\t})\n",
           "signature": "func ForEach[T any](items *[]T, template func(item *T) any) ForEachC[T]",
           "examples": [
             {
@@ -2228,6 +2344,12 @@
           "recv": "HBoxFn"
         },
         {
+          "name": "NodeRef",
+          "doc": "NodeRef attaches a reference that is populated with this node's rendered\nscreen bounds each frame. Use it in effects or anywhere that needs to know\nwhere a node actually rendered.\n",
+          "signature": "func (f HBoxFn) NodeRef(ref *NodeRef) HBoxFn",
+          "recv": "HBoxFn"
+        },
+        {
           "name": "Size",
           "doc": "Size sets a fixed width and height.\n",
           "signature": "func (f HBoxFn) Size(w, h int16) HBoxFn",
@@ -2374,6 +2496,12 @@
           "name": "Char",
           "doc": "Char sets the display character.\n",
           "signature": "func (h HRuleC) Char(c rune) HRuleC",
+          "recv": "HRuleC"
+        },
+        {
+          "name": "Extend",
+          "doc": "Extend marks the rule to meet a sibling VRule, producing ┼ junctions.\n",
+          "signature": "func (h HRuleC) Extend() HRuleC",
           "recv": "HRuleC"
         },
         {
@@ -2910,7 +3038,7 @@
       ],
       "examples": [
         {
-          "doc": "Scrollable canvas.\nLayerView displays a Layer — a virtual canvas that can be larger than the viewport.\n",
+          "doc": "Scrollable canvas.\nLayerView displays a Layer, a virtual canvas that can be larger than the viewport.\n",
           "code": "layer := NewLayer()\n\nLayerView(layer).Grow(1)"
         }
       ]
@@ -3086,7 +3214,7 @@
         },
         {
           "name": "Handle",
-          "doc": "Handle registers a key binding that acts on the currently selected item.\nfn: func(item *T) — receives a pointer to the selected item (skipped if empty).\n",
+          "doc": "Handle registers a key binding that acts on the currently selected item.\nfn: func(item *T). receives a pointer to the selected item (skipped if empty).\n",
           "signature": "func (l *ListC[T]) Handle(key string, fn func(*T)) *ListC[T]",
           "recv": "*ListC[T]"
         },
@@ -3140,7 +3268,7 @@
         },
         {
           "name": "OnSelect",
-          "doc": "OnSelect fires when the user moves to a different item.\nfn: func(item *T) — receives a pointer to the newly selected item.\n",
+          "doc": "OnSelect fires when the user moves to a different item.\nfn: func(item *T). receives a pointer to the newly selected item.\n",
           "signature": "func (l *ListC[T]) OnSelect(fn func(*T)) *ListC[T]",
           "recv": "*ListC[T]"
         },
@@ -3164,7 +3292,7 @@
         },
         {
           "name": "Render",
-          "doc": "Render customises how each item appears in the list.\nfn: func(item *T) any — return a component tree for the item.\n",
+          "doc": "Render customises how each item appears in the list.\nfn: func(item *T) any. return a component tree for the item.\n",
           "signature": "func (l *ListC[T]) Render(fn func(*T) any) *ListC[T]",
           "recv": "*ListC[T]"
         },
@@ -3316,9 +3444,14 @@
       ]
     },
     {
+      "name": "NodeRef",
+      "doc": "NodeRef holds a node's rendered screen bounds, populated each frame after layout.\nDeclare one, attach it to a node with .NodeRef(), then read it in effects or\nanywhere that needs to know where something actually rendered.\n",
+      "decl": "type NodeRef = Rect"
+    },
+    {
       "name": "Op",
       "doc": "Op represents a single compiled template instruction.\nThe template compiler produces a flat array of these; Execute walks them to render.\n",
-      "decl": "type Op struct {\n\tKind   OpKind\n\tDepth  int8  // tree depth (root children = 0)\n\tParent int16 // parent op index, -1 for root children\n\n\t// Value access - one used based on Kind\n\tStaticStr string\n\tStrPtr    *string\n\tStrOff    uintptr // offset from element base (for ForEach)\n\tTextStyle Style   // style for text rendering\n\n\tStaticInt int\n\tIntPtr    *int\n\tIntOff    uintptr\n\n\t// Layout hints\n\tWidth        int16   // explicit width\n\tHeight       int16   // explicit height\n\tPercentWidth float32 // 0.0-1.0\n\tFlexGrow     float32 // share of remaining space\n\tGap          int8    // gap between children\n\tContentSized bool    // has fixed-width children (don't implicit flex)\n\tFitContent   bool    // size to content instead of filling available space\n\n\t// Container\n\tIsRow        bool        // true=HBox, false=VBox\n\tBorder       BorderStyle // border style\n\tBorderFG     *Color      // border foreground color\n\tBorderBG     *Color      // border background color\n\tTitle        string      // border title\n\tChildStart   int16       // first child op index\n\tChildEnd     int16       // last child op index (exclusive)\n\tCascadeStyle *Style      // style inherited by children (pointer for dynamic themes)\n\tFill         Color       // container fill color (fills entire area)\n\tMargin       [4]int16    // outer margin: top, right, bottom, left\n\n\t// Control flow\n\tCondPtr  *bool         // for If (simple bool pointer)\n\tCondNode conditionNode // for If (builder-style conditions)\n\tThenTmpl *Template     // for If\n\tElseTmpl *Template     // for If/Else\n\tIterTmpl *Template     // for ForEach\n\tSlicePtr unsafe.Pointer\n\tElemSize uintptr\n\n\t// Switch\n\tSwitchNode  switchNodeInterface\n\tSwitchCases []*Template\n\tSwitchDef   *Template\n\n\t// Custom renderer\n\tCustomRenderer Renderer\n\n\t// Custom layout\n\tCustomLayout LayoutFunc\n\n\t// Layer\n\tLayerPtr    *Layer // pointer to Layer\n\tLayerWidth  int16  // viewport width (0 = fill available)\n\tLayerHeight int16  // viewport height (0 = fill available)\n\n\t// RichText\n\tStaticSpans []Span    // for static spans\n\tSpansPtr    *[]Span   // for pointer to spans\n\tSpansOff    uintptr   // for ForEach offset\n\tSpanStrOffs []uintptr // per-span *string offsets for Textf (^0 = static)\n\n\t// SelectionList\n\tSelectionListPtr *SelectionList // pointer to the list for len/offset updates\n\tSelectedPtr      *int           // pointer to selected index\n\tMarker           string         // selection marker (e.g., \"\u003e \")\n\tMarkerWidth      int16          // cached rune count of marker\n\tMarkerSpaces     string         // pre-computed spaces matching marker width\n\n\t// Leader\n\tLeaderLabel    string   // static label\n\tLeaderValue    string   // static value (OpLeader)\n\tLeaderValuePtr *string  // pointer value (OpLeaderPtr)\n\tLeaderIntPtr   *int     // pointer to int (OpLeaderIntPtr)\n\tLeaderFloatPtr *float64 // pointer to float64 (OpLeaderFloatPtr)\n\tLeaderFill     rune     // fill character (default '.')\n\tLeaderStyle    Style    // styling\n\n\t// Table\n\tTableColumns     []TableColumn // column definitions\n\tTableRowsPtr     *[][]string   // pointer to row data\n\tTableShowHeader  bool          // show header row\n\tTableHeaderStyle Style         // style for header\n\tTableRowStyle    Style         // style for rows\n\tTableAltStyle    Style         // alternating row style\n\n\t// AutoTable (reactive pointer-backed)\n\tAutoTableSlicePtr any                 // *[]T -- pointer to slice of structs\n\tAutoTableFields   []int               // field indices into the struct\n\tAutoTableHeaders  []string            // header labels\n\tAutoTableHdrStyle Style               // header style\n\tAutoTableRowStyle Style               // row style\n\tAutoTableAltStyle *Style              // alternating row style\n\tAutoTableGap      int8                // gap between columns\n\tAutoTableFill     Color               // row fill for alt rows\n\tAutoTableColCfgs  []*ColumnConfig     // per-column config (parallel to Fields, nil = no config)\n\tAutoTableSort     *autoTableSortState // nil unless sorting enabled\n\tAutoTableScroll   *autoTableScroll    // nil unless scrolling enabled\n\n\t// Sparkline\n\tSparkValues    []float64  // static values\n\tSparkValuesPtr *[]float64 // pointer values\n\tSparkMin       float64    // min value (0 = auto)\n\tSparkMax       float64    // max value (0 = auto)\n\tSparkStyle     Style      // styling\n\n\t// HRule/VRule\n\tRuleChar  rune  // line character\n\tRuleStyle Style // styling\n\n\t// Spinner\n\tSpinnerFramePtr *int     // pointer to frame index\n\tSpinnerFrames   []string // animation frames\n\tSpinnerStyle    Style    // styling\n\n\t// Scrollbar\n\tScrollContentSize int   // total content size\n\tScrollViewSize    int   // visible viewport size\n\tScrollPosPtr      *int  // pointer to scroll position\n\tScrollHorizontal  bool  // true for horizontal scrollbar\n\tScrollTrackChar   rune  // track character\n\tScrollThumbChar   rune  // thumb character\n\tScrollTrackStyle  Style // track styling\n\tScrollThumbStyle  Style // thumb styling\n\n\t// Tabs\n\tTabsLabels        []string  // tab labels\n\tTabsSelectedPtr   *int      // pointer to selected tab index\n\tTabsStyleType     TabsStyle // visual style\n\tTabsGap           int       // gap between tabs\n\tTabsActiveStyle   Style     // style for active tab\n\tTabsInactiveStyle Style     // style for inactive tabs\n\n\t// TreeView\n\tTreeRoot          *TreeNode // root node\n\tTreeShowRoot      bool      // whether to display root\n\tTreeIndent        int       // indentation per level\n\tTreeShowLines     bool      // show connecting lines\n\tTreeExpandedChar  rune      // expanded indicator\n\tTreeCollapsedChar rune      // collapsed indicator\n\tTreeLeafChar      rune      // leaf indicator\n\tTreeStyle         Style     // styling\n\n\t// Jump (jump target wrapper) - just marks a position, child is inline\n\tJumpOnSelect func() // callback when target is selected\n\tJumpStyle    Style  // label style override (zero = use app default)\n\n\t// TextInput\n\tTextInputFieldPtr       *InputState // Field-based API (bundles Value+Cursor)\n\tTextInputFocusGroupPtr  *FocusGroup // shared focus tracker\n\tTextInputFocusIndex     int         // this field's index in focus group\n\tTextInputValuePtr       *string     // bound text value (legacy)\n\tTextInputCursorPtr      *int        // bound cursor position (legacy)\n\tTextInputFocusedPtr     *bool       // show cursor only when true (legacy)\n\tTextInputPlaceholder    string      // placeholder text\n\tTextInputMask           rune        // password mask (0 = none)\n\tTextInputStyle          Style       // text style\n\tTextInputPlaceholderSty Style       // placeholder style\n\tTextInputCursorStyle    Style       // cursor style\n\n\t// Overlay\n\tOverlayCentered    bool      // center on screen\n\tOverlayX, OverlayY int16     // explicit position\n\tOverlayBackdrop    bool      // draw backdrop\n\tOverlayBackdropFG  Color     // backdrop color\n\tOverlayBG          Color     // background fill for overlay content area\n\tOverlayChildTmpl   *Template // compiled child content\n\n\t// ScreenEffect\n\tScreenEffectFn PostProcess // full-screen post-process function\n\t// contains filtered or unexported fields\n}"
+      "decl": "type Op struct {\n\tKind   OpKind\n\tDepth  int8  // tree depth (root children = 0)\n\tParent int16 // parent op index, -1 for root children\n\n\t// Value access - one used based on Kind\n\tStaticStr string\n\tStrPtr    *string\n\tStrOff    uintptr       // offset from element base (for ForEach)\n\tStrFn     func() string // called each frame\n\tTextStyle Style         // style for text rendering\n\n\tStaticInt int\n\tIntPtr    *int\n\tIntOff    uintptr\n\n\t// Layout hints\n\tWidth        int16   // explicit width\n\tHeight       int16   // explicit height\n\tPercentWidth float32 // 0.0-1.0\n\tFlexGrow     float32 // share of remaining space\n\tGap          int8    // gap between children\n\tContentSized bool    // has fixed-width children (don't implicit flex)\n\tFitContent   bool    // size to content instead of filling available space\n\n\t// Container\n\tIsRow        bool        // true=HBox, false=VBox\n\tBorder       BorderStyle // border style\n\tBorderFG     *Color      // border foreground color\n\tBorderBG     *Color      // border background color\n\tTitle        string      // border title\n\tChildStart   int16       // first child op index\n\tChildEnd     int16       // last child op index (exclusive)\n\tCascadeStyle *Style      // style inherited by children (pointer for dynamic themes)\n\tFill         Color       // container fill color (fills entire area)\n\tMargin       [4]int16    // outer margin: top, right, bottom, left\n\tNodeRef      *NodeRef    // if set, populated with rendered screen bounds each frame\n\n\t// Control flow\n\tCondPtr  *bool         // for If (simple bool pointer)\n\tCondNode conditionNode // for If (builder-style conditions)\n\tThenTmpl *Template     // for If\n\tElseTmpl *Template     // for If/Else\n\tIterTmpl *Template     // for ForEach\n\tSlicePtr unsafe.Pointer\n\tElemSize uintptr\n\n\t// Switch\n\tSwitchNode  switchNodeInterface\n\tSwitchCases []*Template\n\tSwitchDef   *Template\n\n\t// Custom renderer\n\tCustomRenderer Renderer\n\n\t// Custom layout\n\tCustomLayout LayoutFunc\n\n\t// Layer\n\tLayerPtr    *Layer // pointer to Layer\n\tLayerWidth  int16  // viewport width (0 = fill available)\n\tLayerHeight int16  // viewport height (0 = fill available)\n\n\t// RichText\n\tStaticSpans []Span    // for static spans\n\tSpansPtr    *[]Span   // for pointer to spans\n\tSpansOff    uintptr   // for ForEach offset\n\tSpanStrOffs []uintptr // per-span *string offsets for Textf (^0 = static)\n\n\t// SelectionList\n\tSelectionListPtr *SelectionList // pointer to the list for len/offset updates\n\tSelectedPtr      *int           // pointer to selected index\n\tMarker           string         // selection marker (e.g., \"\u003e \")\n\tMarkerWidth      int16          // cached rune count of marker\n\tMarkerSpaces     string         // pre-computed spaces matching marker width\n\n\t// Leader\n\tLeaderLabel    string   // static label\n\tLeaderValue    string   // static value (OpLeader)\n\tLeaderValuePtr *string  // pointer value (OpLeaderPtr)\n\tLeaderIntPtr   *int     // pointer to int (OpLeaderIntPtr)\n\tLeaderFloatPtr *float64 // pointer to float64 (OpLeaderFloatPtr)\n\tLeaderFill     rune     // fill character (default '.')\n\tLeaderStyle    Style    // styling\n\n\t// Counter\n\tCounterCurrentPtr   *int   // pointer to current count\n\tCounterTotalPtr     *int   // pointer to total count\n\tCounterPrefix       string // prefix string (e.g. \"  \")\n\tCounterStreamingPtr *bool  // when non-nil and true, show spinner\n\tCounterFramePtr     *int32 // spinner frame counter, accessed atomically\n\n\t// Table\n\tTableColumns     []TableColumn // column definitions\n\tTableRowsPtr     *[][]string   // pointer to row data\n\tTableShowHeader  bool          // show header row\n\tTableHeaderStyle Style         // style for header\n\tTableRowStyle    Style         // style for rows\n\tTableAltStyle    Style         // alternating row style\n\n\t// AutoTable (reactive pointer-backed)\n\tAutoTableSlicePtr any                 // *[]T -- pointer to slice of structs\n\tAutoTableFields   []int               // field indices into the struct\n\tAutoTableHeaders  []string            // header labels\n\tAutoTableHdrStyle Style               // header style\n\tAutoTableRowStyle Style               // row style\n\tAutoTableAltStyle *Style              // alternating row style\n\tAutoTableGap      int8                // gap between columns\n\tAutoTableFill     Color               // row fill for alt rows\n\tAutoTableColCfgs  []*ColumnConfig     // per-column config (parallel to Fields, nil = no config)\n\tAutoTableSort     *autoTableSortState // nil unless sorting enabled\n\tAutoTableScroll   *autoTableScroll    // nil unless scrolling enabled\n\n\t// Sparkline\n\tSparkValues    []float64  // static values\n\tSparkValuesPtr *[]float64 // pointer values\n\tSparkMin       float64    // min value (0 = auto)\n\tSparkMax       float64    // max value (0 = auto)\n\tSparkStyle     Style      // styling\n\n\t// HRule/VRule\n\tRuleChar        rune  // line character\n\tRuleStyle       Style // styling\n\tRuleExtend      bool  // extend to meet an adjacent rule (annotated at layout time)\n\tRuleVRuleX      int16 // signed X delta from HRule absX to nearest left/right VRule (set by HBox)\n\tRuleVRuleX2     int16 // signed X delta to the second adjacent VRule (when flanked on both sides)\n\tRuleExtendTop   bool  // extend VRule up 1 row to meet sibling HRule or border (set by VBox)\n\tRuleExtendBot   bool  // extend VRule down 1 row to meet sibling HRule or border (set by VBox)\n\tRuleExtendLeft  int16 // extend HRule left N cols to meet parent border (set by HBox annotation)\n\tRuleExtendRight int16 // extend HRule right N cols to meet parent border (set by HBox annotation)\n\n\t// Spinner\n\tSpinnerFramePtr *int     // pointer to frame index\n\tSpinnerFrames   []string // animation frames\n\tSpinnerStyle    Style    // styling\n\n\t// Scrollbar\n\tScrollContentSize int   // total content size\n\tScrollViewSize    int   // visible viewport size\n\tScrollPosPtr      *int  // pointer to scroll position\n\tScrollHorizontal  bool  // true for horizontal scrollbar\n\tScrollTrackChar   rune  // track character\n\tScrollThumbChar   rune  // thumb character\n\tScrollTrackStyle  Style // track styling\n\tScrollThumbStyle  Style // thumb styling\n\n\t// Tabs\n\tTabsLabels        []string  // tab labels\n\tTabsSelectedPtr   *int      // pointer to selected tab index\n\tTabsStyleType     TabsStyle // visual style\n\tTabsGap           int       // gap between tabs\n\tTabsActiveStyle   Style     // style for active tab\n\tTabsInactiveStyle Style     // style for inactive tabs\n\n\t// TreeView\n\tTreeRoot          *TreeNode // root node\n\tTreeShowRoot      bool      // whether to display root\n\tTreeIndent        int       // indentation per level\n\tTreeShowLines     bool      // show connecting lines\n\tTreeExpandedChar  rune      // expanded indicator\n\tTreeCollapsedChar rune      // collapsed indicator\n\tTreeLeafChar      rune      // leaf indicator\n\tTreeStyle         Style     // styling\n\n\t// Jump (jump target wrapper) - just marks a position, child is inline\n\tJumpOnSelect func() // callback when target is selected\n\tJumpStyle    Style  // label style override (zero = use app default)\n\n\t// TextInput\n\tTextInputFieldPtr       *InputState // Field-based API (bundles Value+Cursor)\n\tTextInputFocusGroupPtr  *FocusGroup // shared focus tracker\n\tTextInputFocusIndex     int         // this field's index in focus group\n\tTextInputValuePtr       *string     // bound text value (legacy)\n\tTextInputCursorPtr      *int        // bound cursor position (legacy)\n\tTextInputFocusedPtr     *bool       // show cursor only when true (legacy)\n\tTextInputPlaceholder    string      // placeholder text\n\tTextInputMask           rune        // password mask (0 = none)\n\tTextInputStyle          Style       // text style\n\tTextInputPlaceholderSty Style       // placeholder style\n\tTextInputCursorStyle    Style       // cursor style\n\n\t// Overlay\n\tOverlayCentered    bool      // center on screen\n\tOverlayX, OverlayY int16     // explicit position\n\tOverlayBackdrop    bool      // draw backdrop\n\tOverlayBackdropFG  Color     // backdrop color\n\tOverlayBG          Color     // background fill for overlay content area\n\tOverlayChildTmpl   *Template // compiled child content\n\n\t// ScreenEffect\n\tScreenEffectFns []Effect // full-screen post-process functions\n\t// contains filtered or unexported fields\n}"
     },
     {
       "name": "OpKind",
@@ -3331,6 +3464,7 @@
             "OpText",
             "OpTextPtr",
             "OpTextOff",
+            "OpTextFn",
             "OpProgress",
             "OpProgressPtr",
             "OpProgressOff",
@@ -3349,6 +3483,7 @@
             "OpLeaderPtr",
             "OpLeaderIntPtr",
             "OpLeaderFloatPtr",
+            "OpCounter",
             "OpTable",
             "OpAutoTable",
             "OpSparkline",
@@ -3365,7 +3500,7 @@
             "OpOverlay",
             "OpScreenEffect"
           ],
-          "decl": "const (\n\tOpText OpKind = iota\n\tOpTextPtr\n\tOpTextOff\n\n\tOpProgress\n\tOpProgressPtr\n\tOpProgressOff\n\n\tOpContainer // VBox or HBox (determined by IsRow)\n\n\tOpIf\n\tOpForEach\n\tOpSwitch\n\n\tOpCustom // Custom renderer\n\tOpLayout // Custom layout\n\tOpLayer  // LayerView (scrollable off-screen buffer)\n\n\tOpRichText    // RichText with static spans\n\tOpRichTextPtr // RichText with pointer to spans\n\tOpRichTextOff // RichText with offset (ForEach)\n\n\tOpSelectionList // SelectionList with marker and windowing\n\n\tOpLeader         // Leader with static label and value\n\tOpLeaderPtr      // Leader with pointer value\n\tOpLeaderIntPtr   // Leader with int pointer value\n\tOpLeaderFloatPtr // Leader with float64 pointer value\n\n\tOpTable     // Table with columns and rows\n\tOpAutoTable // AutoTable with pointer to slice of structs (reactive)\n\n\tOpSparkline    // Sparkline with static values\n\tOpSparklinePtr // Sparkline with pointer values\n\n\tOpHRule        // Horizontal line\n\tOpVRule        // Vertical line\n\tOpSpacer       // Empty space\n\tOpSpinner      // Animated spinner\n\tOpScrollbar    // Scroll indicator\n\tOpTabs         // Tab headers\n\tOpTreeView     // Hierarchical tree\n\tOpJump         // Jump target wrapper\n\tOpTextInput    // Single-line text input\n\tOpOverlay      // Floating overlay/modal\n\tOpScreenEffect // Full-screen post-processing effect\n)"
+          "decl": "const (\n\tOpText OpKind = iota\n\tOpTextPtr\n\tOpTextOff\n\tOpTextFn\n\n\tOpProgress\n\tOpProgressPtr\n\tOpProgressOff\n\n\tOpContainer // VBox or HBox (determined by IsRow)\n\n\tOpIf\n\tOpForEach\n\tOpSwitch\n\n\tOpCustom // Custom renderer\n\tOpLayout // Custom layout\n\tOpLayer  // LayerView (scrollable off-screen buffer)\n\n\tOpRichText    // RichText with static spans\n\tOpRichTextPtr // RichText with pointer to spans\n\tOpRichTextOff // RichText with offset (ForEach)\n\n\tOpSelectionList // SelectionList with marker and windowing\n\n\tOpLeader         // Leader with static label and value\n\tOpLeaderPtr      // Leader with pointer value\n\tOpLeaderIntPtr   // Leader with int pointer value\n\tOpLeaderFloatPtr // Leader with float64 pointer value\n\n\tOpCounter // Counter with current/total int pointers\n\n\tOpTable     // Table with columns and rows\n\tOpAutoTable // AutoTable with pointer to slice of structs (reactive)\n\n\tOpSparkline    // Sparkline with static values\n\tOpSparklinePtr // Sparkline with pointer values\n\n\tOpHRule        // Horizontal line\n\tOpVRule        // Vertical line\n\tOpSpacer       // Empty space\n\tOpSpinner      // Animated spinner\n\tOpScrollbar    // Scroll indicator\n\tOpTabs         // Tab headers\n\tOpTreeView     // Hierarchical tree\n\tOpJump         // Jump target wrapper\n\tOpTextInput    // Single-line text input\n\tOpOverlay      // Floating overlay/modal\n\tOpScreenEffect // Full-screen post-processing effect\n)"
         }
       ]
     },
@@ -3521,118 +3656,6 @@
       "name": "PostContext",
       "doc": "PostContext provides frame metadata to post-processing passes.\n",
       "decl": "type PostContext struct {\n\tWidth  int\n\tHeight int\n\tFrame  uint64\n\tDelta  time.Duration // time since last frame\n\tTime   time.Duration // total elapsed since first render\n\n\t// terminal's default FG/BG detected via OSC 10/11 at startup.\n\t// Mode == ColorRGB when detected, ColorDefault when unknown.\n\tDefaultFG Color\n\tDefaultBG Color\n}"
-    },
-    {
-      "name": "PostProcess",
-      "doc": "PostProcess transforms the buffer after rendering, before flush.\nLike a GPU shader pass — receives the full cell buffer and frame context.\nMutate cells in-place. Chain multiple passes for layered effects.\n",
-      "decl": "type PostProcess func(buf *Buffer, ctx PostContext)",
-      "constructors": [
-        {
-          "name": "EachCell",
-          "doc": "EachCell wraps a per-cell transform into a PostProcess.\nThe fragment shader equivalent — you define the per-cell logic,\niteration is handled for you. Splits work across four quadrants\nusing a persistent worker pool — zero allocations in the hot path.\n",
-          "signature": "func EachCell(fn func(x, y int, cell Cell, ctx PostContext) Cell) PostProcess"
-        },
-        {
-          "name": "PPBloom",
-          "doc": "PPBloom creates a coloured glow around bright cells.\nradius controls spread in cells (2-4 recommended).\nthreshold 0.0-1.0 sets minimum brightness that blooms.\nintensity controls glow strength (0.3 = subtle, 1.0 = vivid).\nBleeds bright colours into both FG and BG of surrounding cells.\n",
-          "signature": "func PPBloom(radius int, threshold, intensity float64) PostProcess"
-        },
-        {
-          "name": "PPCRT",
-          "doc": "PPCRT simulates a CRT monitor — scanlines, vignette, and warm phosphor\ntint in a single pass.\n",
-          "signature": "func PPCRT() PostProcess"
-        },
-        {
-          "name": "PPDesaturate",
-          "doc": "PPDesaturate removes colour saturation from all RGB cells.\namount 0.0 = full colour, 1.0 = fully monochrome.\nUses perceptual luminance weights (BT.601).\n",
-          "signature": "func PPDesaturate(amount float64) PostProcess"
-        },
-        {
-          "name": "PPDimAll",
-          "doc": "PPDimAll applies the dim attribute to every cell on screen.\nSimple building block for focus patterns and background dimming.\n",
-          "signature": "func PPDimAll() PostProcess"
-        },
-        {
-          "name": "PPDissolve",
-          "doc": "PPDissolve randomly hides cells based on progress.\nprogress 0.0 = fully visible, 1.0 = fully dissolved.\nDeterministic per-cell — same cells always dissolve at the same progress point.\n",
-          "signature": "func PPDissolve(progress *float64) PostProcess"
-        },
-        {
-          "name": "PPDropShadow",
-          "doc": "PPDropShadow projects a shadow behind non-empty cells.\noffsetX/offsetY control direction (1,1 = light from top-left).\nopacity controls shadow darkness (0.3 = subtle, 1.0 = solid).\n",
-          "signature": "func PPDropShadow(offsetX, offsetY int, opacity float64) PostProcess"
-        },
-        {
-          "name": "PPFadeRows",
-          "doc": "PPFadeRows fades the top and bottom N rows toward a colour.\nCreates a natural scroll-hint or edge-softening effect.\n",
-          "signature": "func PPFadeRows(topRows, bottomRows int, target Color) PostProcess"
-        },
-        {
-          "name": "PPFire",
-          "doc": "PPFire simulates a rising fire effect using cellular automaton heat propagation.\nThe fire burns from the bottom of the screen upward, overlaying content with\nfire colours and shade block characters.\n",
-          "signature": "func PPFire() PostProcess"
-        },
-        {
-          "name": "PPFocusDim",
-          "doc": "PPFocusDim dims everything outside a rectangular focus area.\nUses pointers for reactivity — move the focus rect, next frame adapts.\n",
-          "signature": "func PPFocusDim(fx, fy, fw, fh *int) PostProcess"
-        },
-        {
-          "name": "PPFrost",
-          "doc": "PPFrost replaces characters with shade blocks and tints toward a frosted\nwhite. Simulates frosted glass — ideal behind modals and overlays.\nopacity 0.0 = clear, 1.0 = fully frosted.\n",
-          "signature": "func PPFrost(opacity float64) PostProcess"
-        },
-        {
-          "name": "PPGradientMap",
-          "doc": "PPGradientMap remaps all colour luminance through a three-stop gradient.\nComputes perceptual luminance, then maps dark→mid→bright.\nUse for dramatic colour themes: cyberpunk, matrix, sunset, etc.\n",
-          "signature": "func PPGradientMap(dark, mid, bright Color) PostProcess"
-        },
-        {
-          "name": "PPHighContrast",
-          "doc": "PPHighContrast boosts contrast by pushing colour channels toward extremes.\namount 1.0 = noticeable punch, 3.0+ = stark black/white.\nUseful for accessibility or just making content pop.\n",
-          "signature": "func PPHighContrast(amount float64) PostProcess"
-        },
-        {
-          "name": "PPMatrix",
-          "doc": "PPMatrix overlays falling green code rain using half-width Katakana and\nsymbols to replicate the look of the Matrix films.\ndensity controls how many drops per column (1 = sparse, 3 = dense).\nUses sparse column iteration — only touches cells within drop trails.\n",
-          "signature": "func PPMatrix(density int) PostProcess"
-        },
-        {
-          "name": "PPMonochrome",
-          "doc": "PPMonochrome converts all colours to a single-tint monochrome.\nPass RGB(0, 255, 0) for green phosphor, RGB(255, 180, 0) for amber.\n",
-          "signature": "func PPMonochrome(tint Color) PostProcess"
-        },
-        {
-          "name": "PPPlasma",
-          "doc": "PPPlasma overlays a classic 4-oscillator sine plasma on cell colours.\nintensity 0.0 = no effect, 1.0 = full plasma replacement.\n",
-          "signature": "func PPPlasma(intensity float64) PostProcess"
-        },
-        {
-          "name": "PPPulse",
-          "doc": "PPPulse oscillates screen brightness over time using a sine wave.\nspeed controls frequency (1.0 = one cycle per second).\namount controls how much it dims at the trough (0.3 = subtle, 0.8 = dramatic).\n",
-          "signature": "func PPPulse(speed, amount float64) PostProcess"
-        },
-        {
-          "name": "PPScreenShake",
-          "doc": "PPScreenShake displaces the entire buffer horizontally with a sine wave.\namplitude controls max displacement in cells.\nOscillates each frame for a continuous shake — set amplitude via pointer\nand decay it yourself for a triggered one-shot shake.\n",
-          "signature": "func PPScreenShake(amplitude float64) PostProcess"
-        },
-        {
-          "name": "PPTint",
-          "doc": "PPTint shifts all RGB colours toward a target colour.\namount 0.0 = no change, 1.0 = fully tinted.\nThink colour grading — warm/cool/moody tones in one line.\n",
-          "signature": "func PPTint(target Color, amount float64) PostProcess"
-        },
-        {
-          "name": "PPVignette",
-          "doc": "PPVignette darkens cells near the screen edges.\nstrength 0.0 = no effect, 1.0 = full darkening at edges.\nQuadratic falloff for a natural cinematic feel.\n",
-          "signature": "func PPVignette(strength float64) PostProcess"
-        },
-        {
-          "name": "WithBlend",
-          "doc": "WithBlend wraps any PostProcess with a blend mode. Snapshots the buffer\nbefore the effect runs, then blends the effect's output with the original\nusing the specified mode. Works with any effect — plasma through multiply,\nfire through screen, etc.\n",
-          "signature": "func WithBlend(mode BlendMode, pp PostProcess) PostProcess"
-        }
-      ]
     },
     {
       "name": "ProgressC",
@@ -3996,8 +4019,8 @@
         },
         {
           "name": "FlushInline",
-          "doc": "FlushInline renders the buffer for inline mode (no alternate screen).\nRenders at current cursor position using relative movement.\nReturns the number of lines rendered for cleanup tracking.\n",
-          "signature": "func (s *Screen) FlushInline(height int) int",
+          "doc": "FlushInline renders the buffer for inline mode (no alternate screen).\nRenders at current cursor position using relative movement.\nprevLines is the number of lines rendered in the previous frame; any\nlines beyond the current content up to prevLines are cleared so that\nstale content does not remain on screen when the view shrinks.\nReturns the number of lines rendered for cleanup tracking.\n",
+          "signature": "func (s *Screen) FlushInline(height, prevLines int) int",
           "recv": "*Screen"
         },
         {
@@ -4026,7 +4049,7 @@
         },
         {
           "name": "QueryDefaultColors",
-          "doc": "QueryDefaultColors queries the terminal for its default foreground and\nbackground colours using OSC 10 (FG) and OSC 11 (BG), and the basic-16\npalette using OSC 4;N;?. Must be called after entering raw mode.\nReturns zero-value Colors on failure (unsupported terminal, timeout, etc.)\n— callers should check Mode != ColorDefault.\n",
+          "doc": "QueryDefaultColors queries the terminal for its default foreground and\nbackground colours using OSC 10 (FG) and OSC 11 (BG), and the basic-16\npalette using OSC 4;N;?. Must be called after entering raw mode.\nReturns zero-value Colors on failure (unsupported terminal, timeout, etc.)\nCallers should check Mode != ColorDefault.\n",
           "signature": "func (s *Screen) QueryDefaultColors() (fg, bg Color)",
           "recv": "*Screen"
         },
@@ -4064,13 +4087,29 @@
     },
     {
       "name": "ScreenEffectNode",
-      "doc": "ScreenEffectNode is a declarative node that registers a full-screen\npost-processing effect. Place it anywhere in the view tree — it takes\nzero layout space and applies to the entire screen. Works with If()\nfor reactive toggling.\n",
-      "decl": "type ScreenEffectNode struct {\n\tEffect PostProcess\n}",
+      "doc": "ScreenEffectNode is a declarative node that registers one or more full-screen\npost-processing effects. Place it anywhere in the view tree. It takes zero\nlayout space and applies to the entire screen. Works with If() for reactive\ntoggling. Accepts multiple effects in a single node.\n",
+      "decl": "type ScreenEffectNode struct {\n\tEffects []Effect\n}",
       "constructors": [
         {
           "name": "ScreenEffect",
-          "doc": "ScreenEffect creates a declarative full-screen post-processing node.\n",
-          "signature": "func ScreenEffect(pp PostProcess) ScreenEffectNode"
+          "doc": "ScreenEffect creates a declarative full-screen post-processing node.\nAccepts multiple effects — they apply in order, left to right.\n",
+          "signature": "func ScreenEffect(pp ...Effect) ScreenEffectNode",
+          "examples": [
+            {
+              "doc": "Single post-processing effect.\nPlace ScreenEffect anywhere in the view tree — it applies to the whole screen.\n",
+              "code": "ScreenEffect(SEVignette())"
+            },
+            {
+              "name": "conditional",
+              "doc": "Conditional effect.\nWrap in If() to toggle reactively based on state.\n",
+              "code": "dimmed := false\nIf(\u0026dimmed).Then(ScreenEffect(SEDimAll()))"
+            },
+            {
+              "name": "multiple",
+              "doc": "Stacked effects.\nEffects apply in order, left to right — each sees the output of the previous.\n",
+              "code": "ScreenEffect(\n\tSEDesaturate().Strength(0.5),\n\tSETint(Hex(0xFF6600)).Strength(0.1),\n)"
+            }
+          ]
         }
       ]
     },
@@ -4474,6 +4513,31 @@
       "decl": "type SpinnerNode struct {\n\tFrame  *int     // pointer to current frame index\n\tFrames []string // custom frames (nil = default braille spinner)\n\tStyle  Style    // styling\n}"
     },
     {
+      "name": "StreamWriter",
+      "doc": "StreamWriter provides a write interface for streaming items into a\nFilterList. Obtained from [FilterListC.Stream]. Each write appends\nto the source slice, updates the filter index, and signals a render.\nCall [StreamWriter.Close] when done to stop the spinner.\n",
+      "decl": "type StreamWriter[T any] struct {\n\t// contains filtered or unexported fields\n}",
+      "methods": [
+        {
+          "name": "Close",
+          "doc": "Close ends the stream. The spinner disappears and a final render is\nsignaled. Safe to call multiple times.\n",
+          "signature": "func (w *StreamWriter[T]) Close()",
+          "recv": "*StreamWriter[T]"
+        },
+        {
+          "name": "Write",
+          "doc": "Write appends a single item and triggers a filter + render update.\n",
+          "signature": "func (w *StreamWriter[T]) Write(item T)",
+          "recv": "*StreamWriter[T]"
+        },
+        {
+          "name": "WriteAll",
+          "doc": "WriteAll appends multiple items in one batch and triggers a single\nfilter + render update.\n",
+          "signature": "func (w *StreamWriter[T]) WriteAll(items []T)",
+          "recv": "*StreamWriter[T]"
+        }
+      ]
+    },
+    {
       "name": "StringValidator",
       "doc": "StringValidator validates a string value. Pass to Input().Validate().\nReturn nil for valid, non-nil error for the message to display.\n",
       "decl": "type StringValidator func(string) error",
@@ -4780,7 +4844,7 @@
           "signature": "func Build(ui any) *Template",
           "examples": [
             {
-              "doc": "Compile a template.\nBuild compiles a UI tree into a Template — the same step that SetView performs internally. Useful for rendering into a Layer or for headless testing.\n",
+              "doc": "Compile a template.\nBuild compiles a UI tree into a Template. This is the same step that SetView performs internally. Useful for rendering into a Layer or for headless testing.\n",
               "code": "tmpl := Build(VBox(\n\tText(\"hello\"),\n\tText(\"world\"),\n))\n\nbuf := NewBuffer(80, 24)\ntmpl.Execute(buf, 80, 24)"
             }
           ]
@@ -4808,7 +4872,7 @@
         {
           "name": "ScreenEffects",
           "doc": "ScreenEffects returns the post-processing passes collected from the tree\nduring the most recent Execute. The returned slice is reused between frames.\n",
-          "signature": "func (t *Template) ScreenEffects() []PostProcess",
+          "signature": "func (t *Template) ScreenEffects() []Effect",
           "recv": "*Template"
         },
         {
@@ -4847,6 +4911,12 @@
         }
       ],
       "methods": [
+        {
+          "name": "Align",
+          "doc": "Align sets the text alignment within its available width.\n",
+          "signature": "func (t TextC) Align(a Align) TextC",
+          "recv": "TextC"
+        },
         {
           "name": "BG",
           "doc": "BG sets the background color.\n",
@@ -5030,7 +5100,7 @@
     {
       "name": "Timings",
       "doc": "Timings holds timing data for the last frame.\n",
-      "decl": "type Timings struct {\n\tBuildUs  float64 // Build time in microseconds\n\tLayoutUs float64 // Layout time in microseconds\n\tRenderUs float64 // Render time in microseconds\n\tFlushUs  float64 // Flush time in microseconds\n}",
+      "decl": "type Timings struct {\n\tBuildUs  float64 // Build time in microseconds\n\tLayoutUs float64 // Layout time in microseconds\n\tRenderUs float64 // Render time in microseconds\n\tFlushUs  float64 // Flush time in microseconds\n\n\t// fine-grained post-processing breakdown (only valid when effects are active)\n\tEffectUs float64 // resolveColor16 + all Effect passes (pure Go)\n\tDiffUs   float64 // Flush(): diff comparison + escape-sequence building (pure Go)\n\tWriteUs  float64 // FlushBuffer(): Write() syscall — time spent waiting on terminal\n}",
       "constructors": [
         {
           "name": "GetTimings",
@@ -5135,6 +5205,12 @@
           "name": "MarginVH",
           "doc": "MarginVH sets vertical and horizontal margin.\n",
           "signature": "func (f VBoxFn) MarginVH(vertical, horizontal int16) VBoxFn",
+          "recv": "VBoxFn"
+        },
+        {
+          "name": "NodeRef",
+          "doc": "NodeRef attaches a reference that is populated with this node's rendered\nscreen bounds each frame. Use it in effects or anywhere that needs to know\nwhere a node actually rendered.\n",
+          "signature": "func (f VBoxFn) NodeRef(ref *NodeRef) VBoxFn",
           "recv": "VBoxFn"
         },
         {
@@ -5289,6 +5365,12 @@
           "name": "Char",
           "doc": "Char sets the display character.\n",
           "signature": "func (v VRuleC) Char(c rune) VRuleC",
+          "recv": "VRuleC"
+        },
+        {
+          "name": "Extend",
+          "doc": "Extend makes the VRule overdraw one row at each end to meet adjacent HRules or borders.\n",
+          "signature": "func (v VRuleC) Extend() VRuleC",
           "recv": "VRuleC"
         },
         {
@@ -5479,6 +5561,235 @@
       "name": "Meter",
       "doc": "Meter returns an analog-style meter: ├──●──────┤\n",
       "signature": "func Meter(value, max, width int) string"
+    },
+    {
+      "name": "SEBloom",
+      "doc": "SEBloom creates a coloured glow around bright cells.\nBleeds bright colours into both FG and BG of surrounding cells.\nDefault: radius 2, threshold 0.6, strength 0.3.\n",
+      "signature": "func SEBloom() bloomEffect",
+      "examples": [
+        {
+          "doc": "Bloom around bright cells.\n",
+          "code": "ScreenEffect(SEBloom().Threshold(0.6).Strength(0.3))"
+        },
+        {
+          "name": "focus",
+          "doc": "Bloom constrained to a panel.\n",
+          "code": "var panel NodeRef\nScreenEffect(SEBloom().Focus(\u0026panel))"
+        }
+      ]
+    },
+    {
+      "name": "SECRT",
+      "doc": "SECRT simulates a CRT monitor — scanlines, vignette, and warm phosphor tint.\nNo knobs: opinionated all-in-one retro pass.\n",
+      "signature": "func SECRT() crtEffect",
+      "examples": [
+        {
+          "doc": "CRT scanlines + vignette + phosphor warmth.\n",
+          "code": "ScreenEffect(SECRT())"
+        }
+      ]
+    },
+    {
+      "name": "SEContrast",
+      "doc": "SEContrast boosts contrast by pushing colour channels toward extremes.\nDefault strength 1.5 — noticeable punch without going stark.\n",
+      "signature": "func SEContrast() contrastEffect",
+      "examples": [
+        {
+          "doc": "Punch up contrast.\n",
+          "code": "ScreenEffect(SEContrast().Strength(2.0))"
+        },
+        {
+          "name": "dodge",
+          "doc": "Contrast that spares a panel.\n",
+          "code": "var panel NodeRef\nScreenEffect(SEContrast().Dodge(\u0026panel))"
+        }
+      ]
+    },
+    {
+      "name": "SEDesaturate",
+      "doc": "SEDesaturate removes colour saturation from all RGB cells.\nUses perceptual luminance weights (BT.601). Default strength 0.7.\n",
+      "signature": "func SEDesaturate() desaturateEffect",
+      "examples": [
+        {
+          "doc": "Wash out colour.\n",
+          "code": "ScreenEffect(SEDesaturate().Strength(0.8))"
+        },
+        {
+          "name": "dodge",
+          "doc": "Colour spotlight — grey world, one panel in colour.\n",
+          "code": "var panel NodeRef\nScreenEffect(SEDesaturate().Dodge(\u0026panel))"
+        }
+      ]
+    },
+    {
+      "name": "SEDissolve",
+      "doc": "",
+      "signature": "func SEDissolve(progress *float64) dissolveEffect"
+    },
+    {
+      "name": "SEDropShadow",
+      "doc": "SEDropShadow creates a radial glow/shadow emanating outward from a focus node.\nDefault: radius 8, strength 0.2, offset (-1,-1) for a subtle directional shadow.\nChain .Focus(\u0026ref) to set the source node, .Offset(x,y) to adjust direction.\n",
+      "signature": "func SEDropShadow() dropShadowEffect",
+      "examples": [
+        {
+          "doc": "Directional drop shadow behind a panel.\n",
+          "code": "var panel NodeRef\nScreenEffect(SEDropShadow().Focus(\u0026panel))"
+        },
+        {
+          "name": "glow",
+          "doc": "Symmetric glow — offset(0,0) centres the shadow source on the panel.\n",
+          "code": "var panel NodeRef\nScreenEffect(SEDropShadow().Focus(\u0026panel).Offset(0, 0).Strength(0.4).Radius(12))"
+        }
+      ]
+    },
+    {
+      "name": "SEFadeRows",
+      "doc": "SEFadeRows fades the top and bottom rows toward a target colour.\ntopRows and bottomRows set how many rows fade on each edge.\nPass Color{Mode: ColorRGB} (black) or any RGB colour as the fade target.\n",
+      "signature": "func SEFadeRows(topRows, bottomRows int, target Color) fadeRowsEffect",
+      "examples": [
+        {
+          "doc": "Fade top and bottom rows toward black.\n",
+          "code": "ScreenEffect(SEFadeRows(5, 5, Color{Mode: ColorRGB}))"
+        }
+      ]
+    },
+    {
+      "name": "SEFire",
+      "doc": "",
+      "signature": "func SEFire() *fireEffect"
+    },
+    {
+      "name": "SEFocusDim",
+      "doc": "SEFocusDim dims everything outside the bounds of a NodeRef.\nThe ref is populated each frame after layout, so it tracks the node automatically.\n",
+      "signature": "func SEFocusDim(ref *NodeRef) focusDimEffect",
+      "examples": [
+        {
+          "doc": "Dim everything outside a node.\n",
+          "code": "var panel NodeRef\nScreenEffect(SEFocusDim(\u0026panel))"
+        }
+      ]
+    },
+    {
+      "name": "SEFrost",
+      "doc": "SEFrost replaces characters with shade blocks and tints toward a frosted\nwhite. Simulates frosted glass, ideal behind modals and overlays.\nDefault strength 0.8.\n",
+      "signature": "func SEFrost() frostEffect",
+      "examples": [
+        {
+          "doc": "Frosted glass behind a modal.\n",
+          "code": "var modal NodeRef\nScreenEffect(SEFrost().Dodge(\u0026modal))"
+        },
+        {
+          "name": "focus",
+          "doc": "Frost only a specific region.\n",
+          "code": "var sidebar NodeRef\nScreenEffect(SEFrost().Focus(\u0026sidebar))"
+        }
+      ]
+    },
+    {
+      "name": "SEGlow",
+      "doc": "SEGlow creates a colour-sampling glow that reads the focus node's edge pixels\nand spills a brightened version of those colours into the surrounding area.\nDefault: radius 8, strength 0.5, brightness 1.4.\n",
+      "signature": "func SEGlow() glowEffect",
+      "examples": [
+        {
+          "doc": "Colour-sampling glow that reads the panel's edge colours and spills them outward.\n",
+          "code": "var panel NodeRef\nScreenEffect(SEGlow().Focus(\u0026panel))"
+        }
+      ]
+    },
+    {
+      "name": "SEGradientMap",
+      "doc": "SEGradientMap remaps all colour luminance through a three-stop gradient.\nDark shades map to the first colour, midtones to the second, highlights to the third.\n",
+      "signature": "func SEGradientMap(dark, mid, bright Color) gradientMapEffect",
+      "examples": [
+        {
+          "doc": "Remap colours through a three-stop gradient.\n",
+          "code": "ScreenEffect(SEGradientMap(\n\tRGB(0, 0, 50),\n\tRGB(0, 128, 128),\n\tRGB(200, 255, 200),\n))"
+        }
+      ]
+    },
+    {
+      "name": "SEMonochrome",
+      "doc": "SEMonochrome converts all colours to a single-tint monochrome.\nPass RGB(0, 255, 0) for green phosphor, RGB(255, 180, 0) for amber.\n",
+      "signature": "func SEMonochrome(tint Color) monochromeEffect",
+      "examples": [
+        {
+          "doc": "Green phosphor monochrome.\n",
+          "code": "ScreenEffect(SEMonochrome(RGB(0, 255, 80)))"
+        },
+        {
+          "name": "dodge",
+          "doc": "Monochrome with a colour spotlight.\n",
+          "code": "var panel NodeRef\nScreenEffect(SEMonochrome(RGB(0, 255, 80)).Dodge(\u0026panel))"
+        }
+      ]
+    },
+    {
+      "name": "SEPlasma",
+      "doc": "",
+      "signature": "func SEPlasma() plasmaEffect"
+    },
+    {
+      "name": "SEPulse",
+      "doc": "",
+      "signature": "func SEPulse() pulseEffect"
+    },
+    {
+      "name": "SEQuantize",
+      "doc": "SEQuantize snaps all RGB channels to the nearest multiple of step.\nUse step=32 to cut animation bytes per frame by ~40% with negligible banding.\nPrefer WithQuantize to wrap another effect rather than using this standalone.\n",
+      "signature": "func SEQuantize(step uint8) quantizeEffect",
+      "examples": [
+        {
+          "doc": "Snap colours to 32-level steps.\nReduces escape output for animated effects with negligible visible banding.\n",
+          "code": "ScreenEffect(SEQuantize(32))"
+        }
+      ]
+    },
+    {
+      "name": "SEScreenShake",
+      "doc": "",
+      "signature": "func SEScreenShake(amplitude float64) screenShakeEffect"
+    },
+    {
+      "name": "SETint",
+      "doc": "SETint shifts all RGB colours toward a target colour.\nThink colour grading: warm/cool/moody tones in one line.\nDefault strength 0.15 — tasteful tint out of the box.\n",
+      "signature": "func SETint(color Color) tintEffect",
+      "examples": [
+        {
+          "doc": "Warm colour grade.\n",
+          "code": "ScreenEffect(SETint(Hex(0xFF6600)).Strength(0.15))"
+        },
+        {
+          "name": "dodge",
+          "doc": "Tint that spares a focused panel.\n",
+          "code": "var panel NodeRef\nScreenEffect(SETint(Hex(0x0066FF)).Strength(0.3).Dodge(\u0026panel))"
+        }
+      ]
+    },
+    {
+      "name": "SEVignette",
+      "doc": "SEVignette darkens cells near the screen edges.\nQuadratic falloff for a natural cinematic feel. Default strength 0.8.\n",
+      "signature": "func SEVignette() vignetteEffect",
+      "examples": [
+        {
+          "doc": "Cinematic edge darkening.\n",
+          "code": "ScreenEffect(SEVignette().Strength(0.7))"
+        },
+        {
+          "name": "dodge",
+          "doc": "Vignette that skips a panel.\n",
+          "code": "var panel NodeRef\nScreenEffect(SEVignette().Dodge(\u0026panel))"
+        },
+        {
+          "name": "focus",
+          "doc": "Vignette centred on a panel.\n",
+          "code": "var panel NodeRef\nScreenEffect(SEVignette().Focus(\u0026panel))"
+        },
+        {
+          "name": "smooth",
+          "doc": "Smooth vignette without quantization.\n",
+          "code": "ScreenEffect(SEVignette().Smooth().Strength(0.6))"
+        }
+      ]
     },
     {
       "name": "Styled",

@@ -1179,6 +1179,7 @@
       <li><a href="/concepts.html" class="active">Concepts</a></li>
       <li><a href="/api.html">API</a></li>
       <li><a href="https://github.com/kungfusheep/glyph" style="display:flex;align-items:center" aria-label="GitHub"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a></li>
+      <li><a href="https://discord.gg/34T2kTsZ" style="display:flex;align-items:center" aria-label="Discord"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg></a></li>
       <li><button class="nav-search" onclick="window.openOmni?.()" aria-label="Search API"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button></li>
     </ul>
   </div>
@@ -1193,6 +1194,7 @@
   <a href="#jump" class="sidenav-link">Jump Labels</a>
   <a href="#routing" class="sidenav-link">Routing & Views</a>
   <a href="#layers" class="sidenav-link">Layers & Scrolling</a>
+  <a href="#effects" class="sidenav-link">Screen Effects</a>
 </nav>
 
 <nav class="topnav">
@@ -1205,6 +1207,7 @@
   <a href="#jump" class="topnav-link">Jump</a>
   <a href="#routing" class="topnav-link">Routing</a>
   <a href="#layers" class="topnav-link">Layers</a>
+  <a href="#effects" class="topnav-link">Effects</a>
 </nav>
 
 <main id="main-content">
@@ -1237,7 +1240,7 @@
       <div class="flow-node-detail">declarative tree in</div>
     </div>
     <div class="flow-arrow">→</div>
-    <div class="flow-node accent">
+    <div class="flow-node">
       <div class="flow-node-label">Compile</div>
       <div class="flow-node-name">compile()</div>
       <div class="flow-node-detail">type switch (~50 cases), reflection</div>
@@ -1249,7 +1252,7 @@
       <div class="flow-node-detail">flat arrays, pointer offsets</div>
     </div>
     <div class="flow-arrow">→</div>
-    <div class="flow-node">
+    <div class="flow-node accent">
       <div class="flow-node-label">Each update</div>
       <div class="flow-node-name">Execute()</div>
       <div class="flow-node-detail">deref pointers → buffer</div>
@@ -1264,7 +1267,7 @@
 
   <div class="concept-prose">
     The composable API surface, <code>VBox.Gap(2).Border(BorderRounded)</code>, is purely
-    a build-time convenience. At runtime, the template is just a flat array walk with pointer reads.
+    a build-time convenience. At runtime, the template is a flat array walk with pointer reads.
     Values exist in three variants. <strong>Static</strong> (embedded literal),
     <strong>pointer</strong> (dereferenced each update), and <strong>offset</strong>
     (ForEach element base + unsafe.Pointer arithmetic).
@@ -1562,6 +1565,7 @@ title = "World"               // next render shows "World"</div>
     Nothing stops you building reactive patterns on top. An observer that calls <code>RequestRender()</code> when a channel
     fires is often just a few lines of code.
   </div>
+
 </div>
 
 <!-- ============================================================
@@ -1758,7 +1762,7 @@ app.Pop()</div>
   <div class="flow">
     <div class="flow-node accent">
       <div class="flow-node-label">Trigger</div>
-      <div class="flow-node-name">JumpKey("space")</div>
+      <div class="flow-node-name">JumpKey("&lt;Space&gt;")</div>
       <div class="flow-node-detail">enter jump mode</div>
     </div>
     <div class="flow-arrow">→</div>
@@ -1780,7 +1784,7 @@ app.Pop()</div>
     label assignment and positioning during the render pass.
   </div>
 
-  <div class="code code-raw">app.JumpKey("space")
+  <div class="code code-raw">app.JumpKey("&lt;Space&gt;")
 
 app.SetView(
     VBox.Gap(1)(
@@ -1964,6 +1968,137 @@ layer.Render = func() {
 app.SetView(VBox(LayerView(layer).Grow(1)))</div>
 </div>
 
+<!-- ============================================================
+     10. SCREEN EFFECTS
+     ============================================================ -->
+<div class="concept" id="effects">
+  <div class="section-head">
+    <div class="section-num">10</div>
+    <div class="section-meta">
+      <div class="section-label">Post-Processing</div>
+      <div class="section-title">Screen Effects</div>
+    </div>
+  </div>
+
+  <div class="concept-prose">
+    <code>ScreenEffect</code> declares full-screen post-processing passes. Place it anywhere in the
+    view tree. It takes zero layout space. After all content renders into the cell buffer, each
+    effect runs in declaration order, mutating cells in-place before the diff flush.
+  </div>
+
+  <div class="flow">
+    <div class="flow-node">
+      <div class="flow-node-label">Execute</div>
+      <div class="flow-node-name">tree renders</div>
+      <div class="flow-node-detail">content → cell buffer</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <div class="flow-node-label">Collect</div>
+      <div class="flow-node-name">ScreenEffect nodes</div>
+      <div class="flow-node-detail">gathered during tree walk</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node accent">
+      <div class="flow-node-label">Apply</div>
+      <div class="flow-node-name">effects run in order</div>
+      <div class="flow-node-detail">mutate cells in-place</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <div class="flow-node-label">Flush</div>
+      <div class="flow-node-name">diff + write</div>
+      <div class="flow-node-detail">only changed cells</div>
+    </div>
+  </div>
+
+  <div class="concept-prose">
+    Each effect receives the full cell buffer and a <code>PostContext</code> containing terminal
+    dimensions and the terminal's detected foreground/background colours.
+  </div>
+
+  <div class="code code-raw">// subtle colour grade + edge darkening
+ScreenEffect(
+    SETint(Hex(0xFF6600)).Strength(0.1),
+    SEVignette().Strength(0.5),
+)</div>
+
+  <div class="concept-prose">
+    Multiple effects compose by chaining in a single node or across separate <code>ScreenEffect</code>
+    nodes. They apply left-to-right, top-to-bottom.
+  </div>
+
+  <div class="concept-prose">
+    <strong>Built-in effects</strong> fall into two categories. Polish effects add ambient character:
+    <code>SEVignette</code> darkens edges with quadratic falloff, <code>SETint</code> colour-grades
+    toward a target hue, <code>SEDesaturate</code> strips saturation, <code>SEContrast</code> boosts
+    contrast, and <code>SEBloom</code> bleeds bright cells into neighbours. Modal effects draw
+    attention: <code>SEFocusDim</code> dims everything outside a referenced node,
+    <code>SEDropShadow</code> radiates darkening outward from a focus region, and
+    <code>SEGlow</code> samples and spills colour outward.
+  </div>
+
+  <div class="concept-prose">
+    <strong>Focus and Dodge.</strong> Most effects accept <code>.Focus(&amp;ref)</code> and
+    <code>.Dodge(&amp;ref)</code> to target or exclude a specific node. Bind a
+    <code>NodeRef</code> to any component, then pass its pointer. Focus constrains the effect to
+    radiate from that node. Dodge leaves it untouched while the rest of the screen is affected.
+  </div>
+
+  <div class="code code-raw">var modal NodeRef
+
+VBox(
+    Text("background content"),
+    Overlay(
+        VBox.NodeRef(&modal).Border(BorderRounded)(
+            Text("modal dialog"),
+        ),
+    ),
+)
+
+// dim + frost the background, shadow around the modal
+ScreenEffect(
+    SEFocusDim(&modal).Strength(0.6),
+    SEDropShadow().Focus(&modal),
+)</div>
+
+  <div class="concept-prose">
+    <strong>Custom per-cell transforms.</strong> <code>EachCell</code> is a per-cell callback that
+    receives coordinates, the cell, and the post-processing context. It runs in parallel across quadrants of
+    the buffer. This is the fragment-shader equivalent for terminal cells.
+  </div>
+
+  <div class="code code-raw">ScreenEffect(EachCell(func(x, y int, c Cell, ctx PostContext) Cell {
+    if y%2 == 0 {
+        c.Style.Attr = c.Style.Attr.With(AttrDim)
+    }
+    return c
+}))</div>
+
+  <div class="concept-prose">
+    <strong>Blend modes</strong> wrap any effect with compositing:
+    <code>WithBlend(BlendScreen, effect)</code> applies Photoshop-style blending (Multiply, Screen,
+    Overlay, Add, SoftLight, ColorDodge, ColorBurn). <code>WithQuantize</code> snaps RGB values
+    to step-size buckets, reducing unique colours and shrinking diff output.
+  </div>
+
+  <div class="concept-prose">
+    Effects toggle conditionally with <code>If()</code>. When the condition is false, the
+    <code>ScreenEffect</code> node is skipped during tree execution and contributes nothing.
+  </div>
+
+  <div class="code code-raw">dimmed := false
+
+app.SetView(
+    VBox(
+        Text("content"),
+        If(&dimmed).Then(ScreenEffect(SEDesaturate(), SEDimAll())),
+    ),
+)
+
+app.Handle("d", func() { dimmed = !dimmed })</div>
+</div>
+
 </div><!-- .page -->
 
 <div class="page">
@@ -1996,6 +2131,7 @@ app.SetView(VBox(LayerView(layer).Grow(1)))</div>
     <a href="https://github.com/kungfusheep/glyph">Source</a>
     <a href="https://github.com/kungfusheep/glyph/issues">Issues</a>
     <a href="https://github.com/kungfusheep/glyph/blob/main/CONTRIBUTING.md">Contributing</a>
+    <a href="https://discord.gg/34T2kTsZ">Discord</a>
   </div>
 </footer>
 
