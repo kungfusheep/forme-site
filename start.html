@@ -386,6 +386,7 @@
       <li><a href="/concepts.html">Concepts</a></li>
       <li><a href="/api.html">API</a></li>
       <li><a href="https://github.com/kungfusheep/glyph" style="display:flex;align-items:center" aria-label="GitHub"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="color:#555"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a></li>
+      <li><a href="https://discord.gg/34T2kTsZ" style="display:flex;align-items:center" aria-label="Discord"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg></a></li>
       <li><button class="nav-search" onclick="window.openOmni?.()" aria-label="Search API"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button></li>
     </ul>
   </div>
@@ -457,9 +458,8 @@ import . "github.com/kungfusheep/glyph"</div>
   </div>
 
   <div class="concept-prose">
-    glyph fits around the code you already have. State lives in plain Go variables. Any type, any structure.
+    State lives in plain Go variables. Any type, any structure.
     Pass a pointer and the framework reads current values on each update. Keyboard handlers are plain functions.
-    The sections below walk through the full cycle: declaring a view, wiring state, and handling keys.
   </div>
 
 <div class="code code-raw">package main
@@ -483,8 +483,8 @@ func main() {
 		),
 	)
 
-	app.Handle("up", func() { count++ })
-	app.Handle("down", func() { count-- })
+	app.Handle("&lt;Up&gt;", func() { count++ })
+	app.Handle("&lt;Down&gt;", func() { count-- })
 	app.Handle("q", app.Stop)
 	app.Run()
 }</div>
@@ -497,13 +497,12 @@ func main() {
   </div>
 
   <div class="concept-prose">
-    <strong><code>Text(&count)</code></strong> takes a pointer. When <code>count</code> changes,
-    the next frame dereferences it and the display updates.
+    <strong><code>Text(&count)</code></strong> takes a pointer. glyph dereferences it on every frame.
   </div>
 
   <div class="concept-prose">
     <strong><code>Handle(key, fn)</code></strong> registers a global key binding.
-    Plain characters (<code>"q"</code>), special names (<code>"up"</code>, <code>"down"</code>, <code>"enter"</code>, <code>"esc"</code>),
+    Plain characters (<code>"q"</code>), special keys (<code>"&lt;Up&gt;"</code>, <code>"&lt;Esc&gt;"</code>, <code>"&lt;Enter&gt;"</code>),
     modifiers (<code>"&lt;C-c&gt;"</code>). The callback runs on keypress and glyph re-renders.
   </div>
 </div>
@@ -522,8 +521,8 @@ func main() {
 
   <div class="concept-prose">
     <strong>List</strong> takes a pointer to a slice and a <code>.Render()</code> callback
-    describing how each item looks. Each callback argument is a pointer to the element,
-    so mutations to the slice are reflected on the next frame without any manual update calls.
+    describing how each item looks. Each callback argument is a pointer to the element;
+    glyph dereferences it on the next frame.
   </div>
 
 <div class="code code-raw">package main
@@ -567,7 +566,7 @@ func main() {
 }</div>
 
   <div class="concept-prose">
-    <strong><code>.BindVimNav()</code></strong> adds j/k navigation and g/G for start/end.
+    <strong><code>.BindVimNav()</code></strong> adds j/k navigation, <code>&lt;C-d&gt;</code>/<code>&lt;C-u&gt;</code> to page, and g/G for start/end.
   </div>
 
   <div class="concept-prose">
@@ -618,7 +617,7 @@ func main() {
     Built-in styles are <code>BorderRounded</code>, <code>BorderSingle</code>, and <code>BorderDouble</code>.
     <strong><code>.Title(s)</code></strong> labels the top edge.
     <strong><code>.Gap(n)</code></strong> adds spacing between children.
-    <strong><code>Space()</code></strong> expands to fill remaining space, useful for pushing siblings to opposite ends.
+    <strong><code>Space()</code></strong> expands to fill remaining space; use it to push siblings to opposite ends.
   </div>
 
 <div class="code code-raw">HBox.Gap(2)(
@@ -629,7 +628,7 @@ func main() {
 )</div>
 
   <div class="concept-prose">
-    A split-pane task manager. Selecting an item updates the detail panel on the right.
+    Selecting an item writes to <code>detail</code>; glyph reads it on the next frame.
   </div>
 
 <div class="code code-raw">package main
@@ -728,7 +727,7 @@ app.Handle("&lt;C-s&gt;", func() { /* save */ })</div>
 }).BindVimNav()</div>
 
   <div class="concept-prose">
-    <strong><code>.BindVimNav()</code></strong> wires j/k/g/G in a single call.
+    <strong><code>.BindVimNav()</code></strong> wires j/k, <code>&lt;C-d&gt;</code>/<code>&lt;C-u&gt;</code>, and g/G in a single call.
     For custom keys, or for components like <strong>AutoTable</strong> that support page-level jumps,
     use <code>.BindNav(down, up)</code> and <code>.BindPageNav(down, up)</code>.
   </div>
@@ -778,7 +777,7 @@ Text("custom").BG(RGB(20, 20, 40))</div>
 
   <div class="concept-prose">
     <strong><code>.CascadeStyle()</code></strong> propagates a base style to all children.
-    Set the palette at the container level and every nested widget inherits it.
+    Set it on a container; glyph applies it to every nested widget on each render pass.
     Three built-in themes are provided (<code>ThemeDark</code>, <code>ThemeLight</code>, <code>ThemeMonochrome</code>),
     each with <code>Base</code>, <code>Muted</code>, <code>Accent</code>, <code>Error</code>, and <code>Border</code> slots.
   </div>
@@ -856,6 +855,7 @@ VBox.CascadeStyle(&theme.Base).Border(BorderRounded).BorderFG(theme.Border.FG)(
     <a href="https://github.com/kungfusheep/glyph">Source</a>
     <a href="https://github.com/kungfusheep/glyph/issues">Issues</a>
     <a href="https://github.com/kungfusheep/glyph/blob/main/CONTRIBUTING.md">Contributing</a>
+    <a href="https://discord.gg/34T2kTsZ">Discord</a>
   </div>
 </footer>
 
