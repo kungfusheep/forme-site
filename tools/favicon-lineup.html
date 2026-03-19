@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  @font-face {
+    font-family: 'Berkeley Mono';
+    src: url('../BerkeleyMonoVariable.woff2') format('woff2');
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #2a2a28;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding: 40px;
+  }
+  .row {
+    display: flex;
+    gap: 40px;
+    align-items: start;
+  }
+  .smalls {
+    display: flex;
+    gap: 24px;
+    align-items: end;
+    padding: 40px;
+  }
+  .small-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .small-option .label { font-size: 11px; }
+  .preview {
+    image-rendering: auto;
+    border: 1px solid #444;
+  }
+  .option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .label {
+    font-family: system-ui;
+    font-size: 14px;
+    color: #888;
+  }
+  .icon {
+    position: relative;
+    width: 512px;
+    height: 512px;
+    background: #131311;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .box {
+    position: relative;
+    width: 340px;
+    height: 340px;
+    border-radius: 28px;
+    background: #131311;
+  }
+  .box::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 31px;
+    padding: 3px;
+    background: conic-gradient(from 210deg, #da5050, #f86868, #a04050, #6c3058, #f86868, #da5050);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+  .glow {
+    position: absolute;
+    inset: 70px;
+    border-radius: 44px;
+    background: conic-gradient(from 210deg, #c44040, #e85050, #983848, #682850, #e85050, #c44040);
+    filter: blur(28px);
+    opacity: 0.7;
+  }
+  .g {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 240px;
+    background: conic-gradient(from 210deg, #da5050, #f86868, #a04050, #6c3058, #f86868, #da5050);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+    padding-top: 16px;
+  }
+
+  /* font variations */
+  .din-300 .g { font-family: 'din-2014-rounded-variable', sans-serif; font-weight: 300; }
+  .din-500 .g { font-family: 'din-2014-rounded-variable', sans-serif; font-weight: 500; }
+  .din-700 .g { font-family: 'din-2014-rounded-variable', sans-serif; font-weight: 700; }
+  .berkeley .g { font-family: 'Berkeley Mono', monospace; font-weight: 400; font-size: 220px; }
+  .akz .g { font-family: 'akzidenz-grotesk-next-pro', sans-serif; font-weight: 700; font-size: 250px; }
+</style>
+<link rel="stylesheet" href="https://use.typekit.net/rgt4idh.css">
+</head>
+<body>
+  <!-- full size -->
+  <div class="row">
+    <div class="option">
+      <div class="label">DIN Rounded 300</div>
+      <div class="icon"><div class="glow"></div><div class="box din-300"><div class="g">g</div></div></div>
+    </div>
+    <div class="option">
+      <div class="label">DIN Rounded 500</div>
+      <div class="icon"><div class="glow"></div><div class="box din-500"><div class="g">g</div></div></div>
+    </div>
+    <div class="option">
+      <div class="label">DIN Rounded 700</div>
+      <div class="icon"><div class="glow"></div><div class="box din-700"><div class="g">g</div></div></div>
+    </div>
+    <div class="option">
+      <div class="label">Berkeley Mono</div>
+      <div class="icon"><div class="glow"></div><div class="box berkeley"><div class="g">g</div></div></div>
+    </div>
+    <div class="option">
+      <div class="label">Akzidenz Grotesk</div>
+      <div class="icon"><div class="glow"></div><div class="box akz"><div class="g">g</div></div></div>
+    </div>
+  </div>
+
+  <!-- simpler alternatives row -->
+  <div class="row">
+    <div class="option">
+      <div class="label">Just the box (no g)</div>
+      <div class="icon"><div class="glow"></div><div class="box"></div></div>
+    </div>
+    <div class="option">
+      <div class="label">White g, no box</div>
+      <div class="icon din-500"><div class="g" style="-webkit-text-fill-color: #e8e4d8; background: none; font-family: 'din-2014-rounded-variable'; font-weight: 500; font-size: 320px; position: relative;">g</div></div>
+    </div>
+    <div class="option">
+      <div class="label">Gradient g, no box</div>
+      <div class="icon"><div class="g" style="font-family: 'din-2014-rounded-variable'; font-weight: 500; font-size: 320px; position: relative;">g</div></div>
+    </div>
+    <div class="option">
+      <div class="label">Block cursor</div>
+      <div class="icon"><div class="glow"></div><div class="box"><div class="g" style="font-family: monospace; font-weight: 400; font-size: 280px; padding-top: 0;">▊</div></div></div>
+    </div>
+    <div class="option">
+      <div class="label">Just glow</div>
+      <div class="icon"><div class="glow" style="inset: 100px; filter: blur(50px); opacity: 0.9;"></div></div>
+    </div>
+  </div>
+</body>
+</html>

@@ -905,20 +905,22 @@
 import . "github.com/kungfusheep/glyph"
 
 func main() {
-	app, _ := NewApp()
 	count := 0
 
+	app := NewInlineApp()
 	app.SetView(
 		VBox(
 			Text(&count),
-			Text("↑/↓ to count, q to quit"),
+			Text("↑/↓ to count, enter to quit"),
 		),
-	)
+	).
+		Handle("&lt;Up&gt;", func() { count++ }).
+		Handle("&lt;Down&gt;", func() { count-- }).
+		Handle("&lt;Enter&gt;", app.Stop).
+		ClearOnExit(true).
+		Run()
 
-	app.Handle("&lt;Up&gt;", func() { count++ })
-	app.Handle("&lt;Down&gt;", func() { count-- })
-	app.Handle("q", app.Stop)
-	app.Run()
+	println("You selected", count)
 }</div>
         <div class="show-text">
           <div class="show-aside">
@@ -985,6 +987,7 @@ func main() {
 		TextView(&preview).Grow(1),
 	),
 )</div>
+
         </div>
 
         <div class="feature-card">
@@ -1002,6 +1005,7 @@ func main() {
 	),
 	AutoTable(&procs).Sortable().Scrollable(20).BindVimNav(),
 )</div>
+
         </div>
 
         <div class="feature-card">
@@ -1021,6 +1025,7 @@ func main() {
 	Log(output).Grow(1).MaxLines(500),
 	If(&done).Then(Text(&result).Bold().FG(Green)),
 )</div>
+
         </div>
 
         <div class="feature-card">
@@ -1038,6 +1043,7 @@ func main() {
 			Text(&p.Desc).FG(BrightBlack),
 		)
 	}).MaxVisible(15).Border(BorderRounded).Title("packages")</div>
+
         </div>
 
         <div class="feature-card">
@@ -1061,6 +1067,7 @@ func main() {
 	),
 	Log(events).Grow(1).MaxLines(200),
 )</div>
+
         </div>
 
         <div class="feature-card">
@@ -1077,6 +1084,7 @@ func main() {
 	Field("Role", Radio(&role, "Admin", "User", "Guest")),
 	Field("Terms", Checkbox(&agree, "I accept").Validate(VTrue, VOnSubmit)),
 )</div>
+
         </div>
 
         <div class="feature-card">
@@ -1090,7 +1098,7 @@ func main() {
           <div class="code code-raw">var modal NodeRef
 
 ScreenEffect(
-	SEFocusDim(&modal).Strength(0.6),
+	SEFocusDim(&modal),
 	SEDropShadow().Focus(&modal),
 )
 
@@ -1098,11 +1106,12 @@ Overlay(
 	VBox.NodeRef(&modal).Border(BorderRounded)(
 		Text("confirm delete?"),
 		HBox.Gap(2)(
-			Button("yes", onConfirm),
-			Button("no", onCancel),
+			Jump(Text("yes").Bold(), onConfirm),
+			Jump(Text("no"), onCancel),
 		),
 	),
 )</div>
+
         </div>
       </div>
     </div>

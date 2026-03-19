@@ -1100,7 +1100,7 @@
     </div>
 
     <div class="section-desc">
-      Each component is a builder. Configure with method chains, then call with children to compose. Data enters through pointers, read fresh on every render pass. All examples are compiler-verified.
+      Each component is a builder. Configure with method chains, then call with children to compose. Data enters through pointers, read fresh on every render pass.
     </div>
 
     <div class="api-showcase">
@@ -1116,7 +1116,7 @@
         return Text(item)
     }).BindNav("j", "k"),
 )</div>
-      <div class="api-showcase-note">VBox nests HBox, List pulls from a slice, Text binds a string. The tree compiles once; pointers dereference each frame.</div>
+      <div class="api-showcase-note">VBox nests HBox, List pulls from a slice, Text binds a *string. The tree compiles once; pointers dereference each frame.</div>
     </div>
 
     <div id="api-content">

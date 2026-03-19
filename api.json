@@ -26,6 +26,46 @@
       ]
     },
     {
+      "name": "AnimateFn",
+      "doc": "AnimateFn configures and creates tweens. Methods return new AnimateFn values,\nso animation styles can be defined once and reused across properties:\n\n\tsmooth := Animate.Duration(200 * time.Millisecond).Ease(EaseOutCubic)\n\tVBox.Height(smooth(\u0026targetHeight))\n\tVBox.Width(smooth(\u0026targetWidth))\n\tSparkline(data).Height(smooth(If(\u0026expanded).Then(int16(26)).Else(int16(1))))\n",
+      "decl": "type AnimateFn func(target any) *tween",
+      "methods": [
+        {
+          "name": "Duration",
+          "doc": "Duration sets the animation duration. Returns a new AnimateFn.\n",
+          "signature": "func (f AnimateFn) Duration(d any) AnimateFn",
+          "recv": "AnimateFn"
+        },
+        {
+          "name": "Ease",
+          "doc": "Ease sets the easing function. Receives t in [0,1], returns eased t in [0,1].\nReturns a new AnimateFn.\n",
+          "signature": "func (f AnimateFn) Ease(fn func(float64) float64) AnimateFn",
+          "recv": "AnimateFn"
+        },
+        {
+          "name": "From",
+          "doc": "From sets the initial value before animation starts.\nThe tween immediately begins interpolating from this value toward the target.\nReturns a new AnimateFn.\n\n\tSEVignette().Strength(Animate.Duration(1*time.Second).From(0.0)(0.88))\n",
+          "signature": "func (f AnimateFn) From(v any) AnimateFn",
+          "recv": "AnimateFn"
+        },
+        {
+          "name": "OnComplete",
+          "doc": "OnComplete sets a callback that fires once when the animation reaches its target.\n",
+          "signature": "func (f AnimateFn) OnComplete(fn func()) AnimateFn",
+          "recv": "AnimateFn"
+        }
+      ],
+      "vars": [
+        {
+          "doc": "Animate creates a tween that watches a target value and interpolates toward it.\ntarget can be a pointer (*int16, *float32, etc.), a conditionNode, or any\nvalue the property compiler can resolve to a typed pointer.\n\n\t// simple — uses defaults (200ms linear)\n\tVBox.Height(Animate(\u0026targetHeight))\n\n\t// configured up-front, applied to target\n\tAnimate.Duration(300 * time.Millisecond).Ease(EaseOutCubic)(\u0026targetHeight)\n",
+          "names": [
+            "Animate"
+          ],
+          "decl": "var Animate AnimateFn = func(target any) *tween {\n\treturn \u0026tween{\n\t\ttarget:   target,\n\t\tduration: 200 * time.Millisecond,\n\t}\n}"
+        }
+      ]
+    },
+    {
       "name": "App",
       "doc": "App is a TUI application with integrated input handling via riffkey.\n",
       "decl": "type App struct {\n\t// contains filtered or unexported fields\n}",
@@ -33,22 +73,22 @@
         {
           "name": "NewApp",
           "doc": "NewApp creates a new TUI application (fullscreen, alternate buffer).\n",
-          "signature": "func NewApp() (*App, error)",
+          "signature": "func NewApp() *App",
           "examples": [
             {
               "doc": "Full-screen app.\nSetView compiles the tree once, Handle binds keys, Run blocks until Stop is called.\n",
-              "code": "app, _ := NewApp()\n\ncounter := 0\napp.SetView(\n\tVBox(\n\t\tText(\u0026counter),\n\t\tText(\"press q to quit\"),\n\t),\n)\napp.Handle(\"q\", func() { app.Stop() })\napp.Run()"
+              "code": "app := NewApp()\n\ncounter := 0\napp.SetView(\n\tVBox(\n\t\tText(\u0026counter),\n\t\tText(\"press q to quit\"),\n\t),\n)\napp.Handle(\"q\", func() { app.Stop() })\napp.Run()"
             }
           ]
         },
         {
           "name": "NewInlineApp",
           "doc": "NewInlineApp creates a new inline TUI application.\nInline apps render at the current cursor position without taking over the screen.\nUse this for progress bars, selection menus, spinners, etc.\n",
-          "signature": "func NewInlineApp() (*App, error)",
+          "signature": "func NewInlineApp() *App",
           "examples": [
             {
               "doc": "Inline app.\nRenders within the terminal flow instead of taking over the screen. Height sets the visible rows.\n",
-              "code": "app, _ := NewInlineApp()\n\nstatus := \"loading...\"\napp.SetView(Text(\u0026status))\napp.Height(3).ClearOnExit(true)\napp.Run()"
+              "code": "app := NewInlineApp()\n\nstatus := \"loading...\"\napp.SetView(Text(\u0026status))\napp.Height(3).ClearOnExit(true)\napp.Run()"
             }
           ]
         }
@@ -353,12 +393,12 @@
         {
           "name": "goroutine",
           "doc": "Goroutine updates.\nMutate the value behind the pointer from any goroutine, then call RequestRender to trigger a redraw.\n",
-          "code": "app, _ := NewApp()\n\nstatus := \"waiting...\"\napp.SetView(Text(\u0026status))\napp.Handle(\"q\", func() { app.Stop() })\n\ntime.AfterFunc(2*time.Second, func() {\n\tstatus = \"done!\"\n\tapp.RequestRender()\n})\n\napp.Run()"
+          "code": "app := NewApp()\n\nstatus := \"waiting...\"\napp.SetView(Text(\u0026status))\napp.Handle(\"q\", func() { app.Stop() })\n\ntime.AfterFunc(2*time.Second, func() {\n\tstatus = \"done!\"\n\tapp.RequestRender()\n})\n\napp.Run()"
         },
         {
           "name": "multiView",
           "doc": "Multi-view routing.\nNamed views with per-view key bindings. Go switches between views; each view is compiled independently.\n",
-          "code": "app, _ := NewApp()\n\napp.View(\"home\", VBox(\n\tText(\"Welcome\"),\n\tText(\"press n for next\"),\n)).Handle(\"n\", func() { app.Go(\"detail\") })\n\napp.View(\"detail\", VBox(\n\tText(\"Detail view\"),\n\tText(\"press b for back\"),\n)).Handle(\"b\", func() { app.Go(\"home\") })\n\napp.RunFrom(\"home\")"
+          "code": "app := NewApp()\n\napp.View(\"home\", VBox(\n\tText(\"Welcome\"),\n\tText(\"press n for next\"),\n)).Handle(\"n\", func() { app.Go(\"detail\") })\n\napp.View(\"detail\", VBox(\n\tText(\"Detail view\"),\n\tText(\"press b for back\"),\n)).Handle(\"b\", func() { app.Go(\"home\") })\n\napp.RunFrom(\"home\")"
         }
       ]
     },
@@ -470,8 +510,8 @@
         },
         {
           "name": "Gap",
-          "doc": "Gap sets the spacing between columns.\n",
-          "signature": "func (t AutoTableC) Gap(g int8) AutoTableC",
+          "doc": "Gap sets the spacing between columns. Accepts int8, int, or *int8 for dynamic values.\n",
+          "signature": "func (t AutoTableC) Gap(g any) AutoTableC",
           "recv": "AutoTableC"
         },
         {
@@ -812,6 +852,12 @@
           "recv": "*Buffer"
         },
         {
+          "name": "WriteSparklineMulti",
+          "doc": "WriteSparklineMulti writes a multi-row sparkline chart.\ntotal vertical resolution is height * 8 levels.\nrenders bottom-up: full blocks for saturated rows, fractional block for the top cell, space above.\n",
+          "signature": "func (b *Buffer) WriteSparklineMulti(x, y int, values []float64, width, height int, min, max float64, style Style)",
+          "recv": "*Buffer"
+        },
+        {
           "name": "WriteString",
           "doc": "WriteString writes a string at the given coordinates with the given style.\nReturns the number of cells written.\n",
           "signature": "func (b *Buffer) WriteString(x, y int, s string, style Style) int",
@@ -998,8 +1044,8 @@
         },
         {
           "name": "Gap",
-          "doc": "Gap sets the spacing between children.\n",
-          "signature": "func (c *CheckListC[T]) Gap(g int8) *CheckListC[T]",
+          "doc": "Gap sets the spacing between children. Accepts int8, int, or *int8 for dynamic values.\n",
+          "signature": "func (c *CheckListC[T]) Gap(g any) *CheckListC[T]",
           "recv": "*CheckListC[T]"
         },
         {
@@ -1552,37 +1598,20 @@
           "examples": [
             {
               "doc": "Blend mode wrapper.\nSnapshots the buffer, runs the effect, then blends the result back using a Photoshop-style mode.\n",
-              "code": "ScreenEffect(WithBlend(BlendScreen, SEFire()))"
-            },
-            {
-              "name": "quantized",
-              "doc": "Plasma through overlay blend.\nCombine blend modes with quantization for efficient animated effects.\n",
-              "code": "ScreenEffect(WithQuantize(32, WithBlend(BlendOverlay, SEPlasma())))"
+              "code": "ScreenEffect(WithBlend(BlendScreen, SEBloom()))"
             }
           ]
         },
         {
           "name": "WithQuantize",
-          "doc": "WithQuantize wraps a Effect with output quantization.\nRuns pp first, then snaps all resulting RGB values to the nearest multiple of step.\nUse step=32 for animated effects like SEPlasma — reduces bytes/frame by ~40-50%\nwith acceptable banding at typical terminal sizes.\n",
+          "doc": "WithQuantize wraps a Effect with output quantization.\nRuns pp first, then snaps all resulting RGB values to the nearest multiple of step.\nUse step=32 to reduce bytes/frame by ~40-50% with acceptable banding at typical terminal sizes.\n",
           "signature": "func WithQuantize(step uint8, pp Effect) Effect",
           "examples": [
             {
-              "doc": "Quantize wrapper.\nSnap colours to step-size buckets after an effect runs. Use step=32 to cut animation bytes ~40%.\n",
-              "code": "ScreenEffect(WithQuantize(32, SEPlasma()))"
+              "doc": "Quantize wrapper.\nSnap colours to step-size buckets after an effect runs. Use step=32 to cut output size.\n",
+              "code": "ScreenEffect(WithQuantize(32, SEBloom()))"
             }
           ]
-        }
-      ]
-    },
-    {
-      "name": "ElseNode",
-      "doc": "ElseNode renders when preceding If was false.\n",
-      "decl": "type ElseNode struct {\n\tThen any\n}",
-      "constructors": [
-        {
-          "name": "Else",
-          "doc": "Else creates an else branch.\n",
-          "signature": "func Else(then any) ElseNode"
         }
       ]
     },
@@ -1892,8 +1921,8 @@
         },
         {
           "name": "Grow",
-          "doc": "Grow sets the flex grow factor.\n",
-          "signature": "func (fl *FilterLogC) Grow(g float32) *FilterLogC",
+          "doc": "Grow sets the flex grow factor. Accepts float32, float64, int, or *float32 for dynamic values.\n",
+          "signature": "func (fl *FilterLogC) Grow(g any) *FilterLogC",
           "recv": "*FilterLogC"
         },
         {
@@ -2091,11 +2120,6 @@
       ]
     },
     {
-      "name": "ForEachNode",
-      "doc": "ForEachNode iterates over a slice.\n",
-      "decl": "type ForEachNode struct {\n\tItems  any // *[]T\n\tRender any // func(*T) any\n}"
-    },
-    {
       "name": "FormC",
       "doc": "",
       "decl": "type FormC struct {\n\t// contains filtered or unexported fields\n}",
@@ -2133,14 +2157,14 @@
       "methods": [
         {
           "name": "Gap",
-          "doc": "Gap sets the vertical gap between fields.\n",
-          "signature": "func (f FormFn) Gap(g int8) FormFn",
+          "doc": "Gap sets the vertical gap between fields. Accepts int8, int, or *int8 for dynamic values.\n",
+          "signature": "func (f FormFn) Gap(g any) FormFn",
           "recv": "FormFn"
         },
         {
           "name": "Grow",
-          "doc": "Grow sets the flex grow factor.\n",
-          "signature": "func (f FormFn) Grow(g float32) FormFn",
+          "doc": "Grow sets the flex grow factor. Accepts float32, float64, int, or *float32 for dynamic values.\n",
+          "signature": "func (f FormFn) Grow(g any) FormFn",
           "recv": "FormFn"
         },
         {
@@ -2286,7 +2310,7 @@
         {
           "name": "BorderFG",
           "doc": "BorderFG sets the border foreground color.\n",
-          "signature": "func (f HBoxFn) BorderFG(c Color) HBoxFn",
+          "signature": "func (f HBoxFn) BorderFG(c any) HBoxFn",
           "recv": "HBoxFn"
         },
         {
@@ -2297,8 +2321,8 @@
         },
         {
           "name": "Fill",
-          "doc": "Fill sets the background fill color.\n",
-          "signature": "func (f HBoxFn) Fill(c Color) HBoxFn",
+          "doc": "Fill sets the background fill color. Accepts Color, *Color, conditionNode, or tweenNode.\n",
+          "signature": "func (f HBoxFn) Fill(c any) HBoxFn",
           "recv": "HBoxFn"
         },
         {
@@ -2309,20 +2333,20 @@
         },
         {
           "name": "Gap",
-          "doc": "Gap sets the spacing between children.\n",
-          "signature": "func (f HBoxFn) Gap(g int8) HBoxFn",
+          "doc": "Gap sets the spacing between children. Accepts int8, int, or *int8 for dynamic values.\n",
+          "signature": "func (f HBoxFn) Gap(g any) HBoxFn",
           "recv": "HBoxFn"
         },
         {
           "name": "Grow",
-          "doc": "Grow sets the flex grow factor.\n",
-          "signature": "func (f HBoxFn) Grow(g float32) HBoxFn",
+          "doc": "Grow sets the flex grow factor. Accepts float32, float64, int, or *float32 for dynamic values.\n",
+          "signature": "func (f HBoxFn) Grow(g any) HBoxFn",
           "recv": "HBoxFn"
         },
         {
           "name": "Height",
-          "doc": "Height sets a fixed height.\n",
-          "signature": "func (f HBoxFn) Height(h int16) HBoxFn",
+          "doc": "Height sets a fixed height. Accepts int, int16, or *int16 for dynamic values.\n",
+          "signature": "func (f HBoxFn) Height(h any) HBoxFn",
           "recv": "HBoxFn"
         },
         {
@@ -2350,9 +2374,21 @@
           "recv": "HBoxFn"
         },
         {
+          "name": "Opacity",
+          "doc": "Opacity sets the container's opacity (0.0 = invisible, 1.0 = fully visible).\nAccepts float64, *float64, conditionNode, or tweenNode.\n",
+          "signature": "func (f HBoxFn) Opacity(o any) HBoxFn",
+          "recv": "HBoxFn"
+        },
+        {
           "name": "Size",
           "doc": "Size sets a fixed width and height.\n",
           "signature": "func (f HBoxFn) Size(w, h int16) HBoxFn",
+          "recv": "HBoxFn"
+        },
+        {
+          "name": "Style",
+          "doc": "Style sets a local style for this container (does not cascade to children).\nAccepts Style, *Style, conditionNode, or tweenNode.\n",
+          "signature": "func (f HBoxFn) Style(s any) HBoxFn",
           "recv": "HBoxFn"
         },
         {
@@ -2363,14 +2399,14 @@
         },
         {
           "name": "Width",
-          "doc": "Width sets a fixed width.\n",
-          "signature": "func (f HBoxFn) Width(w int16) HBoxFn",
+          "doc": "Width sets a fixed width. Accepts int, int16, or *int16 for dynamic values.\n",
+          "signature": "func (f HBoxFn) Width(w any) HBoxFn",
           "recv": "HBoxFn"
         },
         {
           "name": "WidthPct",
-          "doc": "WidthPct sets width as a percentage of the parent (0.0-1.0).\n",
-          "signature": "func (f HBoxFn) WidthPct(pct float32) HBoxFn",
+          "doc": "WidthPct sets width as a percentage of the parent (0.0-1.0). Accepts float32, float64, or *float32 for dynamic values.\n",
+          "signature": "func (f HBoxFn) WidthPct(pct any) HBoxFn",
           "recv": "HBoxFn"
         }
       ],
@@ -2396,73 +2432,6 @@
       ]
     },
     {
-      "name": "HBoxNode",
-      "doc": "HBoxNode arranges children horizontally.\n",
-      "decl": "type HBoxNode struct {\n\tChildren     []any\n\tTitle        string // title for bordered containers\n\tGap          int8\n\tCascadeStyle *Style // style inherited by children (pointer for dynamic themes)\n\t// contains filtered or unexported fields\n}",
-      "methods": [
-        {
-          "name": "Border",
-          "doc": "Border sets the border style.\n",
-          "signature": "func (r HBoxNode) Border(b BorderStyle) HBoxNode",
-          "recv": "HBoxNode"
-        },
-        {
-          "name": "BorderBG",
-          "doc": "BorderBG sets the border background color.\n",
-          "signature": "func (r HBoxNode) BorderBG(c Color) HBoxNode",
-          "recv": "HBoxNode"
-        },
-        {
-          "name": "BorderFG",
-          "doc": "BorderFG sets the border foreground color.\n",
-          "signature": "func (r HBoxNode) BorderFG(c Color) HBoxNode",
-          "recv": "HBoxNode"
-        },
-        {
-          "name": "Grow",
-          "doc": "Grow sets flex grow factor.\n",
-          "signature": "func (r HBoxNode) Grow(g float32) HBoxNode",
-          "recv": "HBoxNode"
-        },
-        {
-          "name": "Height",
-          "doc": "Height sets explicit height in lines.\n",
-          "signature": "func (r HBoxNode) Height(h int16) HBoxNode",
-          "recv": "HBoxNode"
-        },
-        {
-          "name": "Margin",
-          "doc": "Margin sets uniform margin on all sides.\n",
-          "signature": "func (r HBoxNode) Margin(all int16) HBoxNode",
-          "recv": "HBoxNode"
-        },
-        {
-          "name": "MarginTRBL",
-          "doc": "MarginTRBL sets individual margins for each side.\n",
-          "signature": "func (r HBoxNode) MarginTRBL(top, right, bottom, left int16) HBoxNode",
-          "recv": "HBoxNode"
-        },
-        {
-          "name": "MarginVH",
-          "doc": "MarginVH sets vertical and horizontal margin.\n",
-          "signature": "func (r HBoxNode) MarginVH(vertical, horizontal int16) HBoxNode",
-          "recv": "HBoxNode"
-        },
-        {
-          "name": "Width",
-          "doc": "Width sets explicit width in characters.\n",
-          "signature": "func (r HBoxNode) Width(w int16) HBoxNode",
-          "recv": "HBoxNode"
-        },
-        {
-          "name": "WidthPct",
-          "doc": "WidthPct sets width as percentage of parent (0.5 = 50%).\n",
-          "signature": "func (r HBoxNode) WidthPct(pct float32) HBoxNode",
-          "recv": "HBoxNode"
-        }
-      ]
-    },
-    {
       "name": "HRuleC",
       "doc": "",
       "decl": "type HRuleC struct {\n\t// contains filtered or unexported fields\n}",
@@ -2482,8 +2451,8 @@
       "methods": [
         {
           "name": "BG",
-          "doc": "BG sets the background color.\n",
-          "signature": "func (h HRuleC) BG(c Color) HRuleC",
+          "doc": "BG sets the background color. Accepts Color, *Color, conditionNode, or tweenNode.\n",
+          "signature": "func (h HRuleC) BG(c any) HRuleC",
           "recv": "HRuleC"
         },
         {
@@ -2506,8 +2475,8 @@
         },
         {
           "name": "FG",
-          "doc": "FG sets the foreground color.\n",
-          "signature": "func (h HRuleC) FG(c Color) HRuleC",
+          "doc": "FG sets the foreground color. Accepts Color, *Color, conditionNode, or tweenNode.\n",
+          "signature": "func (h HRuleC) FG(c any) HRuleC",
           "recv": "HRuleC"
         },
         {
@@ -2530,21 +2499,11 @@
         },
         {
           "name": "Style",
-          "doc": "Style sets the component style.\n",
-          "signature": "func (h HRuleC) Style(s Style) HRuleC",
+          "doc": "Style sets the component style. Accepts Style, *Style, conditionNode, or tweenNode.\n",
+          "signature": "func (h HRuleC) Style(s any) HRuleC",
           "recv": "HRuleC"
         }
       ]
-    },
-    {
-      "name": "HRuleNode",
-      "doc": "HRuleNode draws a horizontal line that fills available width.\nDefault character is '─' (box drawing light horizontal).\n",
-      "decl": "type HRuleNode struct {\n\tChar  rune  // line character (0 = '─')\n\tStyle Style // styling\n}"
-    },
-    {
-      "name": "IfNode",
-      "doc": "IfNode conditionally renders content.\n",
-      "decl": "type IfNode struct {\n\tCond any // *bool\n\tThen any\n}"
     },
     {
       "name": "InputC",
@@ -2667,8 +2626,8 @@
         },
         {
           "name": "Width",
-          "doc": "Width sets the input width.\n",
-          "signature": "func (i *InputC) Width(w int16) *InputC",
+          "doc": "Width sets the input width. Accepts int16, int, or *int16 for dynamic values.\n",
+          "signature": "func (i *InputC) Width(w any) *InputC",
           "recv": "*InputC"
         }
       ]
@@ -2731,7 +2690,7 @@
         {
           "name": "app",
           "doc": "App-level jump mode.\nPress the jump key to enter jump mode, then type a target label to select it.\n",
-          "code": "app, _ := NewApp()\n\nitems := []string{\"Save\", \"Load\", \"Quit\"}\napp.SetView(VBox(\n\tJump(Text(\u0026items[0]), func() {}),\n\tJump(Text(\u0026items[1]), func() {}),\n\tJump(Text(\u0026items[2]), func() { app.Stop() }),\n))\n\napp.JumpKey(\"f\")\napp.Run()"
+          "code": "app := NewApp()\n\nitems := []string{\"Save\", \"Load\", \"Quit\"}\napp.SetView(VBox(\n\tJump(Text(\u0026items[0]), func() {}),\n\tJump(Text(\u0026items[1]), func() {}),\n\tJump(Text(\u0026items[2]), func() { app.Stop() }),\n))\n\napp.JumpKey(\"f\")\napp.Run()"
         }
       ]
     },
@@ -2771,11 +2730,6 @@
           "recv": "*JumpMode"
         }
       ]
-    },
-    {
-      "name": "JumpNode",
-      "doc": "JumpNode wraps a component to make it a jump target.\nWhen jump mode is active, a label is displayed at this component's position.\nWhen the user types the label, OnSelect is called.\n",
-      "decl": "type JumpNode struct {\n\tChild    any    // The wrapped component\n\tOnSelect func() // Called when this target is selected\n\tStyle    Style  // Optional: per-target label style override\n}"
     },
     {
       "name": "JumpStyle",
@@ -3001,8 +2955,8 @@
       "methods": [
         {
           "name": "Grow",
-          "doc": "Grow sets the flex grow factor.\n",
-          "signature": "func (l LayerViewC) Grow(g float32) LayerViewC",
+          "doc": "Grow sets the flex grow factor. Accepts float32, float64, int, or *float32 for dynamic values.\n",
+          "signature": "func (l LayerViewC) Grow(g any) LayerViewC",
           "recv": "LayerViewC"
         },
         {
@@ -3044,19 +2998,6 @@
       ]
     },
     {
-      "name": "LayerViewNode",
-      "doc": "LayerViewNode displays a scrollable layer.\nThe Layer is pre-rendered content that gets blitted to screen.\n",
-      "decl": "type LayerViewNode struct {\n\tFlex\n\tLayer      *Layer // the pre-rendered layer\n\tViewHeight int16  // viewport height (0 = fill available, distinct from Flex.Height)\n\tViewWidth  int16  // viewport width (0 = fill available, distinct from Flex.Width)\n}",
-      "methods": [
-        {
-          "name": "Grow",
-          "doc": "Grow sets the flex grow factor for this layer.\n",
-          "signature": "func (l LayerViewNode) Grow(factor float32) LayerViewNode",
-          "recv": "LayerViewNode"
-        }
-      ]
-    },
-    {
       "name": "LayoutFunc",
       "doc": "LayoutFunc positions children given their sizes and available space.\n",
       "decl": "type LayoutFunc func(children []ChildSize, availW, availH int) []Rect"
@@ -3081,8 +3022,8 @@
       "methods": [
         {
           "name": "BG",
-          "doc": "BG sets the background color.\n",
-          "signature": "func (l LeaderC) BG(c Color) LeaderC",
+          "doc": "BG sets the background color. Accepts Color, *Color, conditionNode, or tweenNode.\n",
+          "signature": "func (l LeaderC) BG(c any) LeaderC",
           "recv": "LeaderC"
         },
         {
@@ -3093,8 +3034,8 @@
         },
         {
           "name": "FG",
-          "doc": "FG sets the foreground color.\n",
-          "signature": "func (l LeaderC) FG(c Color) LeaderC",
+          "doc": "FG sets the foreground color. Accepts Color, *Color, conditionNode, or tweenNode.\n",
+          "signature": "func (l LeaderC) FG(c any) LeaderC",
           "recv": "LeaderC"
         },
         {
@@ -3123,22 +3064,17 @@
         },
         {
           "name": "Style",
-          "doc": "Style sets the component style.\n",
-          "signature": "func (l LeaderC) Style(s Style) LeaderC",
+          "doc": "Style sets the component style. Accepts Style, *Style, conditionNode, or tweenNode.\n",
+          "signature": "func (l LeaderC) Style(s any) LeaderC",
           "recv": "LeaderC"
         },
         {
           "name": "Width",
-          "doc": "Width sets a fixed width.\n",
-          "signature": "func (l LeaderC) Width(w int16) LeaderC",
+          "doc": "Width sets a fixed width. Accepts int16, int, or *int16 for dynamic values.\n",
+          "signature": "func (l LeaderC) Width(w any) LeaderC",
           "recv": "LeaderC"
         }
       ]
-    },
-    {
-      "name": "LeaderNode",
-      "doc": "LeaderNode displays \"Label.....Value\" with dots filling the space.\nSupports pointer bindings for dynamic updates.\n",
-      "decl": "type LeaderNode struct {\n\tLabel any   // string or *string\n\tValue any   // string or *string\n\tWidth int16 // total width (0 = fill available from parent)\n\tFill  rune  // fill character (0 = '.')\n\tStyle Style // styling (use Attr for bold, dim, etc.)\n}"
     },
     {
       "name": "ListC",
@@ -3353,6 +3289,12 @@
           "recv": "*LogC"
         },
         {
+          "name": "BG",
+          "doc": "",
+          "signature": "func (lv *LogC) BG(c any) *LogC",
+          "recv": "*LogC"
+        },
+        {
           "name": "BindFirstLast",
           "doc": "BindFirstLast registers key bindings for jumping to top/bottom.\n",
           "signature": "func (lv *LogC) BindFirstLast(first, last string) *LogC",
@@ -3377,9 +3319,21 @@
           "recv": "*LogC"
         },
         {
+          "name": "Colorize",
+          "doc": "Colorize sets a function that transforms each line into styled spans.\nWhen set, lines are rendered with WriteSpans instead of WriteStringFast.\n",
+          "signature": "func (lv *LogC) Colorize(fn func(string) []Span) *LogC",
+          "recv": "*LogC"
+        },
+        {
+          "name": "FG",
+          "doc": "",
+          "signature": "func (lv *LogC) FG(c any) *LogC",
+          "recv": "*LogC"
+        },
+        {
           "name": "Grow",
-          "doc": "Grow sets the flex grow factor.\n",
-          "signature": "func (lv *LogC) Grow(g float32) *LogC",
+          "doc": "Grow sets the flex grow factor. Accepts float32, float64, int, or *float32 for dynamic values.\n",
+          "signature": "func (lv *LogC) Grow(g any) *LogC",
           "recv": "*LogC"
         },
         {
@@ -3429,6 +3383,12 @@
           "doc": "Ref calls f with this LogC and returns it for chaining.\n",
           "signature": "func (lv *LogC) Ref(f func(*LogC)) *LogC",
           "recv": "*LogC"
+        },
+        {
+          "name": "Refresh",
+          "doc": "Refresh re-renders all buffered lines to the layer.\nCall this when external state used by the Colorize callback changes (e.g. theme switch).\n",
+          "signature": "func (lv *LogC) Refresh()",
+          "recv": "*LogC"
         }
       ],
       "examples": [
@@ -3451,7 +3411,12 @@
     {
       "name": "Op",
       "doc": "Op represents a single compiled template instruction.\nThe template compiler produces a flat array of these; Execute walks them to render.\n",
-      "decl": "type Op struct {\n\tKind   OpKind\n\tDepth  int8  // tree depth (root children = 0)\n\tParent int16 // parent op index, -1 for root children\n\n\t// Value access - one used based on Kind\n\tStaticStr string\n\tStrPtr    *string\n\tStrOff    uintptr       // offset from element base (for ForEach)\n\tStrFn     func() string // called each frame\n\tTextStyle Style         // style for text rendering\n\n\tStaticInt int\n\tIntPtr    *int\n\tIntOff    uintptr\n\n\t// Layout hints\n\tWidth        int16   // explicit width\n\tHeight       int16   // explicit height\n\tPercentWidth float32 // 0.0-1.0\n\tFlexGrow     float32 // share of remaining space\n\tGap          int8    // gap between children\n\tContentSized bool    // has fixed-width children (don't implicit flex)\n\tFitContent   bool    // size to content instead of filling available space\n\n\t// Container\n\tIsRow        bool        // true=HBox, false=VBox\n\tBorder       BorderStyle // border style\n\tBorderFG     *Color      // border foreground color\n\tBorderBG     *Color      // border background color\n\tTitle        string      // border title\n\tChildStart   int16       // first child op index\n\tChildEnd     int16       // last child op index (exclusive)\n\tCascadeStyle *Style      // style inherited by children (pointer for dynamic themes)\n\tFill         Color       // container fill color (fills entire area)\n\tMargin       [4]int16    // outer margin: top, right, bottom, left\n\tNodeRef      *NodeRef    // if set, populated with rendered screen bounds each frame\n\n\t// Control flow\n\tCondPtr  *bool         // for If (simple bool pointer)\n\tCondNode conditionNode // for If (builder-style conditions)\n\tThenTmpl *Template     // for If\n\tElseTmpl *Template     // for If/Else\n\tIterTmpl *Template     // for ForEach\n\tSlicePtr unsafe.Pointer\n\tElemSize uintptr\n\n\t// Switch\n\tSwitchNode  switchNodeInterface\n\tSwitchCases []*Template\n\tSwitchDef   *Template\n\n\t// Custom renderer\n\tCustomRenderer Renderer\n\n\t// Custom layout\n\tCustomLayout LayoutFunc\n\n\t// Layer\n\tLayerPtr    *Layer // pointer to Layer\n\tLayerWidth  int16  // viewport width (0 = fill available)\n\tLayerHeight int16  // viewport height (0 = fill available)\n\n\t// RichText\n\tStaticSpans []Span    // for static spans\n\tSpansPtr    *[]Span   // for pointer to spans\n\tSpansOff    uintptr   // for ForEach offset\n\tSpanStrOffs []uintptr // per-span *string offsets for Textf (^0 = static)\n\n\t// SelectionList\n\tSelectionListPtr *SelectionList // pointer to the list for len/offset updates\n\tSelectedPtr      *int           // pointer to selected index\n\tMarker           string         // selection marker (e.g., \"\u003e \")\n\tMarkerWidth      int16          // cached rune count of marker\n\tMarkerSpaces     string         // pre-computed spaces matching marker width\n\n\t// Leader\n\tLeaderLabel    string   // static label\n\tLeaderValue    string   // static value (OpLeader)\n\tLeaderValuePtr *string  // pointer value (OpLeaderPtr)\n\tLeaderIntPtr   *int     // pointer to int (OpLeaderIntPtr)\n\tLeaderFloatPtr *float64 // pointer to float64 (OpLeaderFloatPtr)\n\tLeaderFill     rune     // fill character (default '.')\n\tLeaderStyle    Style    // styling\n\n\t// Counter\n\tCounterCurrentPtr   *int   // pointer to current count\n\tCounterTotalPtr     *int   // pointer to total count\n\tCounterPrefix       string // prefix string (e.g. \"  \")\n\tCounterStreamingPtr *bool  // when non-nil and true, show spinner\n\tCounterFramePtr     *int32 // spinner frame counter, accessed atomically\n\n\t// Table\n\tTableColumns     []TableColumn // column definitions\n\tTableRowsPtr     *[][]string   // pointer to row data\n\tTableShowHeader  bool          // show header row\n\tTableHeaderStyle Style         // style for header\n\tTableRowStyle    Style         // style for rows\n\tTableAltStyle    Style         // alternating row style\n\n\t// AutoTable (reactive pointer-backed)\n\tAutoTableSlicePtr any                 // *[]T -- pointer to slice of structs\n\tAutoTableFields   []int               // field indices into the struct\n\tAutoTableHeaders  []string            // header labels\n\tAutoTableHdrStyle Style               // header style\n\tAutoTableRowStyle Style               // row style\n\tAutoTableAltStyle *Style              // alternating row style\n\tAutoTableGap      int8                // gap between columns\n\tAutoTableFill     Color               // row fill for alt rows\n\tAutoTableColCfgs  []*ColumnConfig     // per-column config (parallel to Fields, nil = no config)\n\tAutoTableSort     *autoTableSortState // nil unless sorting enabled\n\tAutoTableScroll   *autoTableScroll    // nil unless scrolling enabled\n\n\t// Sparkline\n\tSparkValues    []float64  // static values\n\tSparkValuesPtr *[]float64 // pointer values\n\tSparkMin       float64    // min value (0 = auto)\n\tSparkMax       float64    // max value (0 = auto)\n\tSparkStyle     Style      // styling\n\n\t// HRule/VRule\n\tRuleChar        rune  // line character\n\tRuleStyle       Style // styling\n\tRuleExtend      bool  // extend to meet an adjacent rule (annotated at layout time)\n\tRuleVRuleX      int16 // signed X delta from HRule absX to nearest left/right VRule (set by HBox)\n\tRuleVRuleX2     int16 // signed X delta to the second adjacent VRule (when flanked on both sides)\n\tRuleExtendTop   bool  // extend VRule up 1 row to meet sibling HRule or border (set by VBox)\n\tRuleExtendBot   bool  // extend VRule down 1 row to meet sibling HRule or border (set by VBox)\n\tRuleExtendLeft  int16 // extend HRule left N cols to meet parent border (set by HBox annotation)\n\tRuleExtendRight int16 // extend HRule right N cols to meet parent border (set by HBox annotation)\n\n\t// Spinner\n\tSpinnerFramePtr *int     // pointer to frame index\n\tSpinnerFrames   []string // animation frames\n\tSpinnerStyle    Style    // styling\n\n\t// Scrollbar\n\tScrollContentSize int   // total content size\n\tScrollViewSize    int   // visible viewport size\n\tScrollPosPtr      *int  // pointer to scroll position\n\tScrollHorizontal  bool  // true for horizontal scrollbar\n\tScrollTrackChar   rune  // track character\n\tScrollThumbChar   rune  // thumb character\n\tScrollTrackStyle  Style // track styling\n\tScrollThumbStyle  Style // thumb styling\n\n\t// Tabs\n\tTabsLabels        []string  // tab labels\n\tTabsSelectedPtr   *int      // pointer to selected tab index\n\tTabsStyleType     TabsStyle // visual style\n\tTabsGap           int       // gap between tabs\n\tTabsActiveStyle   Style     // style for active tab\n\tTabsInactiveStyle Style     // style for inactive tabs\n\n\t// TreeView\n\tTreeRoot          *TreeNode // root node\n\tTreeShowRoot      bool      // whether to display root\n\tTreeIndent        int       // indentation per level\n\tTreeShowLines     bool      // show connecting lines\n\tTreeExpandedChar  rune      // expanded indicator\n\tTreeCollapsedChar rune      // collapsed indicator\n\tTreeLeafChar      rune      // leaf indicator\n\tTreeStyle         Style     // styling\n\n\t// Jump (jump target wrapper) - just marks a position, child is inline\n\tJumpOnSelect func() // callback when target is selected\n\tJumpStyle    Style  // label style override (zero = use app default)\n\n\t// TextInput\n\tTextInputFieldPtr       *InputState // Field-based API (bundles Value+Cursor)\n\tTextInputFocusGroupPtr  *FocusGroup // shared focus tracker\n\tTextInputFocusIndex     int         // this field's index in focus group\n\tTextInputValuePtr       *string     // bound text value (legacy)\n\tTextInputCursorPtr      *int        // bound cursor position (legacy)\n\tTextInputFocusedPtr     *bool       // show cursor only when true (legacy)\n\tTextInputPlaceholder    string      // placeholder text\n\tTextInputMask           rune        // password mask (0 = none)\n\tTextInputStyle          Style       // text style\n\tTextInputPlaceholderSty Style       // placeholder style\n\tTextInputCursorStyle    Style       // cursor style\n\n\t// Overlay\n\tOverlayCentered    bool      // center on screen\n\tOverlayX, OverlayY int16     // explicit position\n\tOverlayBackdrop    bool      // draw backdrop\n\tOverlayBackdropFG  Color     // backdrop color\n\tOverlayBG          Color     // background fill for overlay content area\n\tOverlayChildTmpl   *Template // compiled child content\n\n\t// ScreenEffect\n\tScreenEffectFns []Effect // full-screen post-process functions\n\t// contains filtered or unexported fields\n}"
+      "decl": "type Op struct {\n\tKind   OpKind\n\tDepth  int8  // tree depth (root children = 0)\n\tParent int16 // parent op index, -1 for root children\n\n\t// Layout hints\n\tWidth        int16   // explicit width\n\tHeight       int16   // explicit height\n\tPercentWidth float32 // 0.0-1.0\n\tFlexGrow     float32 // share of remaining space\n\tGap          int8    // gap between children\n\tContentSized bool    // has fixed-width children (don't implicit flex)\n\tFitContent   bool    // size to content instead of filling available space\n\n\t// Container\n\tIsRow        bool        // true=HBox, false=VBox\n\tBorder       BorderStyle // border style\n\tBorderFG     *Color      // border foreground color\n\tBorderBG     *Color      // border background color\n\tTitle        string      // border title\n\tChildStart   int16       // first child op index\n\tChildEnd     int16       // last child op index (exclusive)\n\tCascadeStyle *Style      // style inherited by children (pointer for dynamic themes)\n\tLocalStyle   *Style      // style for this container only (not inherited)\n\tFill         Color       // container fill color (fills entire area)\n\tMargin       [4]int16    // outer margin: top, right, bottom, left\n\tNodeRef      *NodeRef    // if set, populated with rendered screen bounds each frame\n\n\t// kind-specific data — type-assert based on Kind.\n\t// we use a Kind switch + type assertion instead of interface dispatch because\n\t// concrete method calls after assertion are inlinable. interface calls are not,\n\t// and cause parameters to escape to heap. verified via go build -gcflags='-m -m'.\n\tExt any\n\n\t// dynamic layout property overrides — nil for static ops\n\tDyn *OpDyn\n}"
+    },
+    {
+      "name": "OpDyn",
+      "doc": "OpDyn holds pointer overrides for shared layout properties.\nonly allocated for ops that use dynamic values (e.g. Height(\u0026h)).\n",
+      "decl": "type OpDyn struct {\n\tHeight       *int16\n\tWidth        *int16\n\tFlexGrow     *float32\n\tPercentWidth *float32\n\tGap          *int8\n\tFill         *Color\n\tOpacity      *float64\n\tOpacityArmed *bool // set true by render to signal From tween activation\n}"
     },
     {
       "name": "OpKind",
@@ -3462,12 +3427,10 @@
           "doc": "",
           "names": [
             "OpText",
-            "OpTextPtr",
-            "OpTextOff",
-            "OpTextFn",
             "OpProgress",
-            "OpProgressPtr",
-            "OpProgressOff",
+            "OpRichText",
+            "OpLeader",
+            "OpCounter",
             "OpContainer",
             "OpIf",
             "OpForEach",
@@ -3475,19 +3438,10 @@
             "OpCustom",
             "OpLayout",
             "OpLayer",
-            "OpRichText",
-            "OpRichTextPtr",
-            "OpRichTextOff",
             "OpSelectionList",
-            "OpLeader",
-            "OpLeaderPtr",
-            "OpLeaderIntPtr",
-            "OpLeaderFloatPtr",
-            "OpCounter",
             "OpTable",
             "OpAutoTable",
             "OpSparkline",
-            "OpSparklinePtr",
             "OpHRule",
             "OpVRule",
             "OpSpacer",
@@ -3500,7 +3454,7 @@
             "OpOverlay",
             "OpScreenEffect"
           ],
-          "decl": "const (\n\tOpText OpKind = iota\n\tOpTextPtr\n\tOpTextOff\n\tOpTextFn\n\n\tOpProgress\n\tOpProgressPtr\n\tOpProgressOff\n\n\tOpContainer // VBox or HBox (determined by IsRow)\n\n\tOpIf\n\tOpForEach\n\tOpSwitch\n\n\tOpCustom // Custom renderer\n\tOpLayout // Custom layout\n\tOpLayer  // LayerView (scrollable off-screen buffer)\n\n\tOpRichText    // RichText with static spans\n\tOpRichTextPtr // RichText with pointer to spans\n\tOpRichTextOff // RichText with offset (ForEach)\n\n\tOpSelectionList // SelectionList with marker and windowing\n\n\tOpLeader         // Leader with static label and value\n\tOpLeaderPtr      // Leader with pointer value\n\tOpLeaderIntPtr   // Leader with int pointer value\n\tOpLeaderFloatPtr // Leader with float64 pointer value\n\n\tOpCounter // Counter with current/total int pointers\n\n\tOpTable     // Table with columns and rows\n\tOpAutoTable // AutoTable with pointer to slice of structs (reactive)\n\n\tOpSparkline    // Sparkline with static values\n\tOpSparklinePtr // Sparkline with pointer values\n\n\tOpHRule        // Horizontal line\n\tOpVRule        // Vertical line\n\tOpSpacer       // Empty space\n\tOpSpinner      // Animated spinner\n\tOpScrollbar    // Scroll indicator\n\tOpTabs         // Tab headers\n\tOpTreeView     // Hierarchical tree\n\tOpJump         // Jump target wrapper\n\tOpTextInput    // Single-line text input\n\tOpOverlay      // Floating overlay/modal\n\tOpScreenEffect // Full-screen post-processing effect\n)"
+          "decl": "const (\n\tOpText     OpKind = iota // Text (data in Ext)\n\tOpProgress               // Progress bar (data in Ext)\n\tOpRichText               // RichText (data in Ext)\n\tOpLeader                 // Leader dots (data in Ext)\n\tOpCounter                // Counter (data in Ext)\n\n\tOpContainer // VBox or HBox (determined by IsRow)\n\n\tOpIf\n\tOpForEach\n\tOpSwitch\n\n\tOpCustom // Custom renderer\n\tOpLayout // Custom layout\n\tOpLayer  // LayerView (data in Ext)\n\n\tOpSelectionList // SelectionList (data in Ext)\n\n\tOpTable     // Table (data in Ext)\n\tOpAutoTable // AutoTable (data in Ext)\n\n\tOpSparkline // Sparkline (data in Ext)\n\n\tOpHRule        // Horizontal line (data in Ext)\n\tOpVRule        // Vertical line (data in Ext)\n\tOpSpacer       // Empty space (data in Ext)\n\tOpSpinner      // Animated spinner (data in Ext)\n\tOpScrollbar    // Scroll indicator (data in Ext)\n\tOpTabs         // Tab headers (data in Ext)\n\tOpTreeView     // Hierarchical tree (data in Ext)\n\tOpJump         // Jump target wrapper (data in Ext)\n\tOpTextInput    // Single-line text input (data in Ext)\n\tOpOverlay      // Floating overlay/modal (data in Ext)\n\tOpScreenEffect // Full-screen post-processing effect (data in Ext)\n)"
         }
       ]
     },
@@ -3677,8 +3631,8 @@
       "methods": [
         {
           "name": "BG",
-          "doc": "BG sets the background color.\n",
-          "signature": "func (p ProgressC) BG(c Color) ProgressC",
+          "doc": "BG sets the background color. Accepts Color, *Color, conditionNode, or tweenNode.\n",
+          "signature": "func (p ProgressC) BG(c any) ProgressC",
           "recv": "ProgressC"
         },
         {
@@ -3689,8 +3643,8 @@
         },
         {
           "name": "FG",
-          "doc": "FG sets the foreground color.\n",
-          "signature": "func (p ProgressC) FG(c Color) ProgressC",
+          "doc": "FG sets the foreground color. Accepts Color, *Color, conditionNode, or tweenNode.\n",
+          "signature": "func (p ProgressC) FG(c any) ProgressC",
           "recv": "ProgressC"
         },
         {
@@ -3713,22 +3667,17 @@
         },
         {
           "name": "Style",
-          "doc": "Style sets the component style.\n",
-          "signature": "func (p ProgressC) Style(s Style) ProgressC",
+          "doc": "Style sets the component style. Accepts Style, *Style, conditionNode, or tweenNode.\n",
+          "signature": "func (p ProgressC) Style(s any) ProgressC",
           "recv": "ProgressC"
         },
         {
           "name": "Width",
-          "doc": "Width sets a fixed width.\n",
-          "signature": "func (p ProgressC) Width(w int16) ProgressC",
+          "doc": "Width sets a fixed width. Accepts int16, int, or *int16 for dynamic values.\n",
+          "signature": "func (p ProgressC) Width(w any) ProgressC",
           "recv": "ProgressC"
         }
       ]
-    },
-    {
-      "name": "ProgressNode",
-      "doc": "ProgressNode displays a progress bar.\n",
-      "decl": "type ProgressNode struct {\n\tFlex\n\tValue    any   // *int (0-100)\n\tBarWidth int16 // width of the bar in characters (distinct from Flex.Width layout width)\n}"
     },
     {
       "name": "RadioC",
@@ -3767,8 +3716,8 @@
         },
         {
           "name": "Gap",
-          "doc": "Gap sets the spacing between children.\n",
-          "signature": "func (r *RadioC) Gap(g int8) *RadioC",
+          "doc": "Gap sets the spacing between children. Accepts int8, int, or *int8 for dynamic values.\n",
+          "signature": "func (r *RadioC) Gap(g any) *RadioC",
           "recv": "*RadioC"
         },
         {
@@ -3947,7 +3896,7 @@
         {
           "name": "NewScreen",
           "doc": "NewScreen creates a new screen writing to the given writer.\nPass nil to use os.Stdout.\n",
-          "signature": "func NewScreen(w io.Writer) (*Screen, error)"
+          "signature": "func NewScreen(w io.Writer) *Screen"
         }
       ],
       "methods": [
@@ -4188,11 +4137,6 @@
       ]
     },
     {
-      "name": "ScrollbarNode",
-      "doc": "ScrollbarNode displays a visual scroll indicator.\nVertical by default; set Horizontal to true for horizontal scrollbar.\n",
-      "decl": "type ScrollbarNode struct {\n\tContentSize int   // total content size\n\tViewSize    int   // visible viewport size\n\tPosition    *int  // pointer to current scroll position\n\tLength      int16 // scrollbar length (0 = fill available)\n\tHorizontal  bool  // true for horizontal scrollbar\n\tTrackChar   rune  // track character (default: '│' or '─')\n\tThumbChar   rune  // thumb character (default: '█')\n\tTrackStyle  Style // track styling\n\tThumbStyle  Style // thumb styling\n}"
-    },
-    {
       "name": "SelectionList",
       "doc": "SelectionList displays a list of items with selection marker.\nItems must be a pointer to a slice (*[]T).\nSelected must be a pointer to an int (*int) tracking the selected index.\nRender is optional - if nil, items are rendered using fmt.Sprintf(\"%v\", item).\nMarker defaults to \"\u003e \" if not specified.\n",
       "decl": "type SelectionList struct {\n\tItems         any    // *[]T - pointer to slice of items\n\tSelected      *int   // pointer to selected index\n\tMarker        string // selection marker (default \"\u003e \", use \" \" for no visible marker)\n\tMarkerStyle   Style  // style for marker text (merged with SelectedStyle.BG for selected rows)\n\tRender        any    // func(*T) any - optional, renders each item\n\tMaxVisible    int    // max items to show (0 = all)\n\tStyle         Style  // default style for non-selected rows (e.g., background)\n\tSelectedStyle Style  // style for selected row (e.g., background color)\n\t// contains filtered or unexported fields\n}",
@@ -4288,14 +4232,14 @@
         },
         {
           "name": "Grow",
-          "doc": "Grow sets the flex grow factor.\n",
-          "signature": "func (s SpacerC) Grow(g float32) SpacerC",
+          "doc": "Grow sets the flex grow factor. Accepts float32, float64, int, or *float32 for dynamic values.\n",
+          "signature": "func (s SpacerC) Grow(g any) SpacerC",
           "recv": "SpacerC"
         },
         {
           "name": "Height",
-          "doc": "Height sets a fixed height.\n",
-          "signature": "func (s SpacerC) Height(h int16) SpacerC",
+          "doc": "Height sets a fixed height. Accepts int16, int, or *int16 for dynamic values.\n",
+          "signature": "func (s SpacerC) Height(h any) SpacerC",
           "recv": "SpacerC"
         },
         {
@@ -4324,28 +4268,9 @@
         },
         {
           "name": "Width",
-          "doc": "Width sets a fixed width.\n",
-          "signature": "func (s SpacerC) Width(w int16) SpacerC",
+          "doc": "Width sets a fixed width. Accepts int16, int, or *int16 for dynamic values.\n",
+          "signature": "func (s SpacerC) Width(w any) SpacerC",
           "recv": "SpacerC"
-        }
-      ]
-    },
-    {
-      "name": "SpacerNode",
-      "doc": "SpacerNode creates empty space with specified dimensions.\nIf no dimensions are set, Spacer grows to fill available space (implicit Grow(1)).\nWith explicit Width/Height, it becomes a fixed-size spacer.\n\nExamples:\n  - Spacer{}              → fills available space (grows)\n  - Spacer{Height: 1}     → fixed 1-line vertical gap\n  - Spacer{Width: 10}     → fixed 10-char horizontal gap\n  - Spacer{}.Grow(2)      → grows with weight 2\n  - Spacer{Char: '.'}     → dotted leader (fills with dots)\n",
-      "decl": "type SpacerNode struct {\n\tWidth  int16 // fixed width (0 = grow to fill)\n\tHeight int16 // fixed height (0 = grow to fill, but defaults to 1 in VBox if not growing)\n\tChar   rune  // fill character (0 = empty space)\n\tStyle  Style // style for fill character\n\t// contains filtered or unexported fields\n}",
-      "methods": [
-        {
-          "name": "FG",
-          "doc": "FG sets the foreground color for the fill character.\n",
-          "signature": "func (s SpacerNode) FG(c Color) SpacerNode",
-          "recv": "SpacerNode"
-        },
-        {
-          "name": "Grow",
-          "doc": "Grow sets flex grow factor for Spacer.\n",
-          "signature": "func (s SpacerNode) Grow(g float32) SpacerNode",
-          "recv": "SpacerNode"
         }
       ]
     },
@@ -4380,8 +4305,8 @@
       "methods": [
         {
           "name": "BG",
-          "doc": "BG sets the background color.\n",
-          "signature": "func (s SparklineC) BG(c Color) SparklineC",
+          "doc": "BG sets the background color. Accepts Color, *Color, conditionNode, or tweenNode.\n",
+          "signature": "func (s SparklineC) BG(c any) SparklineC",
           "recv": "SparklineC"
         },
         {
@@ -4392,8 +4317,14 @@
         },
         {
           "name": "FG",
-          "doc": "FG sets the foreground color.\n",
-          "signature": "func (s SparklineC) FG(c Color) SparklineC",
+          "doc": "FG sets the foreground color. Accepts Color, *Color, conditionNode, or tweenNode.\n",
+          "signature": "func (s SparklineC) FG(c any) SparklineC",
+          "recv": "SparklineC"
+        },
+        {
+          "name": "Height",
+          "doc": "Height sets the vertical height in rows. Default is 1.\nEach row adds 8 levels of vertical resolution.\nAccepts int16, int, or *int16 for dynamic values.\n",
+          "signature": "func (s SparklineC) Height(h any) SparklineC",
           "recv": "SparklineC"
         },
         {
@@ -4422,22 +4353,17 @@
         },
         {
           "name": "Style",
-          "doc": "Style sets the component style.\n",
-          "signature": "func (s SparklineC) Style(st Style) SparklineC",
+          "doc": "Style sets the component style. Accepts Style, *Style, conditionNode, or tweenNode.\n",
+          "signature": "func (s SparklineC) Style(st any) SparklineC",
           "recv": "SparklineC"
         },
         {
           "name": "Width",
-          "doc": "Width sets a fixed width.\n",
-          "signature": "func (s SparklineC) Width(w int16) SparklineC",
+          "doc": "Width sets a fixed width. Accepts int16, int, or *int16 for dynamic values.\n",
+          "signature": "func (s SparklineC) Width(w any) SparklineC",
           "recv": "SparklineC"
         }
       ]
-    },
-    {
-      "name": "SparklineNode",
-      "doc": "SparklineNode displays a mini chart using Unicode block characters.\nValues are normalized to fit within the available height (1 character).\nUses: ▁▂▃▄▅▆▇█\n",
-      "decl": "type SparklineNode struct {\n\tValues any     // []float64 or *[]float64\n\tWidth  int16   // width (0 = auto from data length)\n\tMin    float64 // minimum value (0 = auto-detect)\n\tMax    float64 // maximum value (0 = auto-detect)\n\tStyle  Style   // styling\n}"
     },
     {
       "name": "SpinnerC",
@@ -4459,8 +4385,8 @@
       "methods": [
         {
           "name": "BG",
-          "doc": "BG sets the background color.\n",
-          "signature": "func (s SpinnerC) BG(c Color) SpinnerC",
+          "doc": "BG sets the background color. Accepts Color, *Color, conditionNode, or tweenNode.\n",
+          "signature": "func (s SpinnerC) BG(c any) SpinnerC",
           "recv": "SpinnerC"
         },
         {
@@ -4471,8 +4397,8 @@
         },
         {
           "name": "FG",
-          "doc": "FG sets the foreground color.\n",
-          "signature": "func (s SpinnerC) FG(c Color) SpinnerC",
+          "doc": "FG sets the foreground color. Accepts Color, *Color, conditionNode, or tweenNode.\n",
+          "signature": "func (s SpinnerC) FG(c any) SpinnerC",
           "recv": "SpinnerC"
         },
         {
@@ -4501,16 +4427,11 @@
         },
         {
           "name": "Style",
-          "doc": "Style sets the component style.\n",
-          "signature": "func (s SpinnerC) Style(st Style) SpinnerC",
+          "doc": "Style sets the component style. Accepts Style, *Style, conditionNode, or tweenNode.\n",
+          "signature": "func (s SpinnerC) Style(st any) SpinnerC",
           "recv": "SpinnerC"
         }
       ]
-    },
-    {
-      "name": "SpinnerNode",
-      "doc": "SpinnerNode displays an animated loading indicator.\nThe Frame pointer controls which animation frame to show.\nIncrement Frame and re-render to animate.\n",
-      "decl": "type SpinnerNode struct {\n\tFrame  *int     // pointer to current frame index\n\tFrames []string // custom frames (nil = default braille spinner)\n\tStyle  Style    // styling\n}"
     },
     {
       "name": "StreamWriter",
@@ -4770,8 +4691,8 @@
         },
         {
           "name": "Gap",
-          "doc": "Gap sets the spacing between children.\n",
-          "signature": "func (t TabsC) Gap(g int8) TabsC",
+          "doc": "Gap sets the spacing between children. Accepts int8, int, or *int8 for dynamic values.\n",
+          "signature": "func (t TabsC) Gap(g any) TabsC",
           "recv": "TabsC"
         },
         {
@@ -4852,6 +4773,12 @@
       ],
       "methods": [
         {
+          "name": "Animating",
+          "doc": "Animating returns true if any tween is currently in progress.\ncheck this after Execute to determine if another frame is needed.\n",
+          "signature": "func (t *Template) Animating() bool",
+          "recv": "*Template"
+        },
+        {
           "name": "DebugDump",
           "doc": "DebugDump prints the template's op tree for debugging layout issues.\n",
           "signature": "func (t *Template) DebugDump(prefix string)",
@@ -4919,8 +4846,8 @@
         },
         {
           "name": "BG",
-          "doc": "BG sets the background color.\n",
-          "signature": "func (t TextC) BG(c Color) TextC",
+          "doc": "BG sets the background color. Accepts Color, *Color, conditionNode, or tweenNode.\n",
+          "signature": "func (t TextC) BG(c any) TextC",
           "recv": "TextC"
         },
         {
@@ -4937,8 +4864,8 @@
         },
         {
           "name": "FG",
-          "doc": "FG sets the foreground color.\n",
-          "signature": "func (t TextC) FG(c Color) TextC",
+          "doc": "FG sets the foreground color. Accepts Color, *Color, conditionNode, or tweenNode.\n",
+          "signature": "func (t TextC) FG(c any) TextC",
           "recv": "TextC"
         },
         {
@@ -4979,8 +4906,8 @@
         },
         {
           "name": "Style",
-          "doc": "Style sets the component style.\n",
-          "signature": "func (t TextC) Style(s Style) TextC",
+          "doc": "Style sets the component style. Accepts Style, *Style, conditionNode, or tweenNode.\n",
+          "signature": "func (t TextC) Style(s any) TextC",
           "recv": "TextC"
         },
         {
@@ -4991,8 +4918,8 @@
         },
         {
           "name": "Width",
-          "doc": "Width sets a fixed width.\n",
-          "signature": "func (t TextC) Width(w int16) TextC",
+          "doc": "Width sets a fixed width. Accepts int16, int, or *int16 for dynamic values.\n",
+          "signature": "func (t TextC) Width(w any) TextC",
           "recv": "TextC"
         }
       ]
@@ -5001,11 +4928,6 @@
       "name": "TextInput",
       "doc": "TextInput is a single-line text input field.\nWire up input handling via riffkey.NewTextHandler or riffkey.NewFieldHandler.\n\nExample with InputState + FocusGroup (recommended for forms):\n\n\tname := tui.InputState{}\n\tfocus := tui.FocusGroup{}\n\ttui.TextInput{Field: \u0026name, FocusGroup: \u0026focus, FocusIndex: 0}\n\nExample with separate pointers (for single fields):\n\n\ttui.TextInput{Value: \u0026query, Cursor: \u0026cursor, Placeholder: \"Search...\"}\n",
       "decl": "type TextInput struct {\n\t// Field-based API (recommended for forms)\n\tField      *InputState // Bundles Value + Cursor in one struct\n\tFocusGroup *FocusGroup // Shared focus tracker - cursor shows when FocusGroup.Current == FocusIndex\n\tFocusIndex int         // This field's index in the focus group\n\n\t// Pointer-based API (for single fields)\n\tValue   *string // Bound text value (ignored if Field is set)\n\tCursor  *int    // Cursor position (ignored if Field is set)\n\tFocused *bool   // Show cursor only when true (ignored if FocusGroup is set)\n\n\t// Common options\n\tPlaceholder      string // Shown when value is empty\n\tWidth            int    // Field width (0 = fill available)\n\tMask             rune   // Password mask character (0 = none)\n\tStyle            Style  // Text style\n\tPlaceholderStyle Style  // Placeholder style (zero = dim text)\n\tCursorStyle      Style  // Cursor style (zero = reverse video)\n}"
-    },
-    {
-      "name": "TextNode",
-      "doc": "TextNode displays text content.\n",
-      "decl": "type TextNode struct {\n\tFlex\n\tContent any   // string or *string\n\tStyle   Style // styling (use Attr for bold, dim, etc.)\n}"
     },
     {
       "name": "TextTransform",
@@ -5056,8 +4978,8 @@
         },
         {
           "name": "Grow",
-          "doc": "Grow sets the flex grow factor so the view expands to fill available space.\n",
-          "signature": "func (tv *TextViewC) Grow(g float32) *TextViewC",
+          "doc": "Grow sets the flex grow factor so the view expands to fill available space.\nAccepts float32, float64, int, or *float32 for dynamic values.\n",
+          "signature": "func (tv *TextViewC) Grow(g any) *TextViewC",
           "recv": "*TextViewC"
         },
         {
@@ -5150,7 +5072,7 @@
         {
           "name": "BorderFG",
           "doc": "BorderFG sets the border foreground color.\n",
-          "signature": "func (f VBoxFn) BorderFG(c Color) VBoxFn",
+          "signature": "func (f VBoxFn) BorderFG(c any) VBoxFn",
           "recv": "VBoxFn"
         },
         {
@@ -5161,8 +5083,8 @@
         },
         {
           "name": "Fill",
-          "doc": "Fill sets the background fill color.\n",
-          "signature": "func (f VBoxFn) Fill(c Color) VBoxFn",
+          "doc": "Fill sets the background fill color. Accepts Color, *Color, conditionNode, or tweenNode.\n",
+          "signature": "func (f VBoxFn) Fill(c any) VBoxFn",
           "recv": "VBoxFn"
         },
         {
@@ -5173,20 +5095,20 @@
         },
         {
           "name": "Gap",
-          "doc": "Gap sets the spacing between children.\n",
-          "signature": "func (f VBoxFn) Gap(g int8) VBoxFn",
+          "doc": "Gap sets the spacing between children. Accepts int8, int, or *int8 for dynamic values.\n",
+          "signature": "func (f VBoxFn) Gap(g any) VBoxFn",
           "recv": "VBoxFn"
         },
         {
           "name": "Grow",
-          "doc": "Grow sets the flex grow factor.\n",
-          "signature": "func (f VBoxFn) Grow(g float32) VBoxFn",
+          "doc": "Grow sets the flex grow factor. Accepts float32, float64, int, or *float32 for dynamic values.\n",
+          "signature": "func (f VBoxFn) Grow(g any) VBoxFn",
           "recv": "VBoxFn"
         },
         {
           "name": "Height",
-          "doc": "Height sets a fixed height.\n",
-          "signature": "func (f VBoxFn) Height(h int16) VBoxFn",
+          "doc": "Height sets a fixed height. Accepts int, int16, or *int16 for dynamic values.\n",
+          "signature": "func (f VBoxFn) Height(h any) VBoxFn",
           "recv": "VBoxFn"
         },
         {
@@ -5214,9 +5136,21 @@
           "recv": "VBoxFn"
         },
         {
+          "name": "Opacity",
+          "doc": "Opacity sets the container's opacity (0.0 = invisible, 1.0 = fully visible).\nAccepts float64, *float64, conditionNode, or tweenNode.\n",
+          "signature": "func (f VBoxFn) Opacity(o any) VBoxFn",
+          "recv": "VBoxFn"
+        },
+        {
           "name": "Size",
           "doc": "Size sets a fixed width and height.\n",
           "signature": "func (f VBoxFn) Size(w, h int16) VBoxFn",
+          "recv": "VBoxFn"
+        },
+        {
+          "name": "Style",
+          "doc": "Style sets a local style for this container (does not cascade to children).\nAccepts Style, *Style, conditionNode, or tweenNode.\n",
+          "signature": "func (f VBoxFn) Style(s any) VBoxFn",
           "recv": "VBoxFn"
         },
         {
@@ -5227,14 +5161,14 @@
         },
         {
           "name": "Width",
-          "doc": "Width sets a fixed width.\n",
-          "signature": "func (f VBoxFn) Width(w int16) VBoxFn",
+          "doc": "Width sets a fixed width. Accepts int, int16, or *int16 for dynamic values.\n",
+          "signature": "func (f VBoxFn) Width(w any) VBoxFn",
           "recv": "VBoxFn"
         },
         {
           "name": "WidthPct",
-          "doc": "WidthPct sets width as a percentage of the parent (0.0-1.0).\n",
-          "signature": "func (f VBoxFn) WidthPct(pct float32) VBoxFn",
+          "doc": "WidthPct sets width as a percentage of the parent (0.0-1.0). Accepts float32, float64, or *float32 for dynamic values.\n",
+          "signature": "func (f VBoxFn) WidthPct(pct any) VBoxFn",
           "recv": "VBoxFn"
         }
       ],
@@ -5265,73 +5199,6 @@
       ]
     },
     {
-      "name": "VBoxNode",
-      "doc": "VBoxNode arranges children vertically.\n",
-      "decl": "type VBoxNode struct {\n\tChildren     []any\n\tTitle        string // title for bordered containers\n\tGap          int8\n\tCascadeStyle *Style // style inherited by children (pointer for dynamic themes)\n\t// contains filtered or unexported fields\n}",
-      "methods": [
-        {
-          "name": "Border",
-          "doc": "Border sets the border style.\n",
-          "signature": "func (c VBoxNode) Border(b BorderStyle) VBoxNode",
-          "recv": "VBoxNode"
-        },
-        {
-          "name": "BorderBG",
-          "doc": "BorderBG sets the border background color.\n",
-          "signature": "func (c VBoxNode) BorderBG(bg Color) VBoxNode",
-          "recv": "VBoxNode"
-        },
-        {
-          "name": "BorderFG",
-          "doc": "BorderFG sets the border foreground color.\n",
-          "signature": "func (c VBoxNode) BorderFG(fg Color) VBoxNode",
-          "recv": "VBoxNode"
-        },
-        {
-          "name": "Grow",
-          "doc": "Grow sets flex grow factor.\n",
-          "signature": "func (c VBoxNode) Grow(g float32) VBoxNode",
-          "recv": "VBoxNode"
-        },
-        {
-          "name": "Height",
-          "doc": "Height sets explicit height in lines.\n",
-          "signature": "func (c VBoxNode) Height(h int16) VBoxNode",
-          "recv": "VBoxNode"
-        },
-        {
-          "name": "Margin",
-          "doc": "Margin sets uniform margin on all sides.\n",
-          "signature": "func (c VBoxNode) Margin(all int16) VBoxNode",
-          "recv": "VBoxNode"
-        },
-        {
-          "name": "MarginTRBL",
-          "doc": "MarginTRBL sets individual margins for each side.\n",
-          "signature": "func (c VBoxNode) MarginTRBL(top, right, bottom, left int16) VBoxNode",
-          "recv": "VBoxNode"
-        },
-        {
-          "name": "MarginVH",
-          "doc": "MarginVH sets vertical and horizontal margin.\n",
-          "signature": "func (c VBoxNode) MarginVH(vertical, horizontal int16) VBoxNode",
-          "recv": "VBoxNode"
-        },
-        {
-          "name": "Width",
-          "doc": "Width sets explicit width in characters.\n",
-          "signature": "func (c VBoxNode) Width(w int16) VBoxNode",
-          "recv": "VBoxNode"
-        },
-        {
-          "name": "WidthPct",
-          "doc": "WidthPct sets width as percentage of parent (0.5 = 50%).\n",
-          "signature": "func (c VBoxNode) WidthPct(pct float32) VBoxNode",
-          "recv": "VBoxNode"
-        }
-      ]
-    },
-    {
       "name": "VRuleC",
       "doc": "",
       "decl": "type VRuleC struct {\n\t// contains filtered or unexported fields\n}",
@@ -5351,8 +5218,8 @@
       "methods": [
         {
           "name": "BG",
-          "doc": "BG sets the background color.\n",
-          "signature": "func (v VRuleC) BG(c Color) VRuleC",
+          "doc": "BG sets the background color. Accepts Color, *Color, conditionNode, or tweenNode.\n",
+          "signature": "func (v VRuleC) BG(c any) VRuleC",
           "recv": "VRuleC"
         },
         {
@@ -5375,14 +5242,14 @@
         },
         {
           "name": "FG",
-          "doc": "FG sets the foreground color.\n",
-          "signature": "func (v VRuleC) FG(c Color) VRuleC",
+          "doc": "FG sets the foreground color. Accepts Color, *Color, conditionNode, or tweenNode.\n",
+          "signature": "func (v VRuleC) FG(c any) VRuleC",
           "recv": "VRuleC"
         },
         {
           "name": "Height",
-          "doc": "Height sets a fixed height.\n",
-          "signature": "func (v VRuleC) Height(h int16) VRuleC",
+          "doc": "Height sets a fixed height. Accepts int16, int, or *int16 for dynamic values.\n",
+          "signature": "func (v VRuleC) Height(h any) VRuleC",
           "recv": "VRuleC"
         },
         {
@@ -5405,16 +5272,11 @@
         },
         {
           "name": "Style",
-          "doc": "Style sets the component style.\n",
-          "signature": "func (v VRuleC) Style(s Style) VRuleC",
+          "doc": "Style sets the component style. Accepts Style, *Style, conditionNode, or tweenNode.\n",
+          "signature": "func (v VRuleC) Style(s any) VRuleC",
           "recv": "VRuleC"
         }
       ]
-    },
-    {
-      "name": "VRuleNode",
-      "doc": "VRuleNode draws a vertical line that fills available height.\nDefault character is '│' (box drawing light vertical).\n",
-      "decl": "type VRuleNode struct {\n\tChar  rune  // line character (0 = '│')\n\tStyle Style // styling\n}"
     },
     {
       "name": "ValidateOn",
@@ -5459,7 +5321,7 @@
       "examples": [
         {
           "doc": "Views with text input.\nNoCounts disables vim-style count prefixes, preventing number keys from being swallowed before reaching an input.\n",
-          "code": "app, _ := NewApp()\n\nvar name string\napp.View(\"editor\",\n\tVBox(\n\t\tText(\"Editor\"),\n\t\tInput().Placeholder(\"type here...\"),\n\t),\n).NoCounts().Handle(\"\u003cC-s\u003e\", func() {\n\tname = name + \" saved\"\n}).Handle(\"escape\", func() {\n\tapp.Go(\"home\")\n})"
+          "code": "app := NewApp()\n\nvar name string\napp.View(\"editor\",\n\tVBox(\n\t\tText(\"Editor\"),\n\t\tInput().Placeholder(\"type here...\"),\n\t),\n).NoCounts().Handle(\"\u003cC-s\u003e\", func() {\n\tname = name + \" saved\"\n}).Handle(\"escape\", func() {\n\tapp.Go(\"home\")\n})"
         }
       ]
     }
@@ -5511,6 +5373,141 @@
       "name": "Dim",
       "doc": "Dim creates a dim styled part.\nAccepts string or *string. Returns Span for string, TextC for *string.\n",
       "signature": "func Dim(text any) any"
+    },
+    {
+      "name": "EaseInBack",
+      "doc": "",
+      "signature": "func EaseInBack(t float64) float64"
+    },
+    {
+      "name": "EaseInBounce",
+      "doc": "",
+      "signature": "func EaseInBounce(t float64) float64"
+    },
+    {
+      "name": "EaseInCirc",
+      "doc": "",
+      "signature": "func EaseInCirc(t float64) float64"
+    },
+    {
+      "name": "EaseInCubic",
+      "doc": "",
+      "signature": "func EaseInCubic(t float64) float64"
+    },
+    {
+      "name": "EaseInExpo",
+      "doc": "",
+      "signature": "func EaseInExpo(t float64) float64"
+    },
+    {
+      "name": "EaseInOutBack",
+      "doc": "",
+      "signature": "func EaseInOutBack(t float64) float64"
+    },
+    {
+      "name": "EaseInOutBounce",
+      "doc": "",
+      "signature": "func EaseInOutBounce(t float64) float64"
+    },
+    {
+      "name": "EaseInOutCirc",
+      "doc": "",
+      "signature": "func EaseInOutCirc(t float64) float64"
+    },
+    {
+      "name": "EaseInOutCubic",
+      "doc": "",
+      "signature": "func EaseInOutCubic(t float64) float64"
+    },
+    {
+      "name": "EaseInOutExpo",
+      "doc": "",
+      "signature": "func EaseInOutExpo(t float64) float64"
+    },
+    {
+      "name": "EaseInOutQuad",
+      "doc": "",
+      "signature": "func EaseInOutQuad(t float64) float64"
+    },
+    {
+      "name": "EaseInOutQuart",
+      "doc": "",
+      "signature": "func EaseInOutQuart(t float64) float64"
+    },
+    {
+      "name": "EaseInOutQuint",
+      "doc": "",
+      "signature": "func EaseInOutQuint(t float64) float64"
+    },
+    {
+      "name": "EaseInOutSine",
+      "doc": "",
+      "signature": "func EaseInOutSine(t float64) float64"
+    },
+    {
+      "name": "EaseInQuad",
+      "doc": "",
+      "signature": "func EaseInQuad(t float64) float64"
+    },
+    {
+      "name": "EaseInQuart",
+      "doc": "",
+      "signature": "func EaseInQuart(t float64) float64"
+    },
+    {
+      "name": "EaseInQuint",
+      "doc": "",
+      "signature": "func EaseInQuint(t float64) float64"
+    },
+    {
+      "name": "EaseInSine",
+      "doc": "",
+      "signature": "func EaseInSine(t float64) float64"
+    },
+    {
+      "name": "EaseOutBack",
+      "doc": "",
+      "signature": "func EaseOutBack(t float64) float64"
+    },
+    {
+      "name": "EaseOutBounce",
+      "doc": "",
+      "signature": "func EaseOutBounce(t float64) float64"
+    },
+    {
+      "name": "EaseOutCirc",
+      "doc": "",
+      "signature": "func EaseOutCirc(t float64) float64"
+    },
+    {
+      "name": "EaseOutCubic",
+      "doc": "",
+      "signature": "func EaseOutCubic(t float64) float64"
+    },
+    {
+      "name": "EaseOutExpo",
+      "doc": "",
+      "signature": "func EaseOutExpo(t float64) float64"
+    },
+    {
+      "name": "EaseOutQuad",
+      "doc": "",
+      "signature": "func EaseOutQuad(t float64) float64"
+    },
+    {
+      "name": "EaseOutQuart",
+      "doc": "",
+      "signature": "func EaseOutQuart(t float64) float64"
+    },
+    {
+      "name": "EaseOutQuint",
+      "doc": "",
+      "signature": "func EaseOutQuint(t float64) float64"
+    },
+    {
+      "name": "EaseOutSine",
+      "doc": "",
+      "signature": "func EaseOutSine(t float64) float64"
     },
     {
       "name": "FG",
@@ -5579,17 +5576,6 @@
       ]
     },
     {
-      "name": "SECRT",
-      "doc": "SECRT simulates a CRT monitor — scanlines, vignette, and warm phosphor tint.\nNo knobs: opinionated all-in-one retro pass.\n",
-      "signature": "func SECRT() crtEffect",
-      "examples": [
-        {
-          "doc": "CRT scanlines + vignette + phosphor warmth.\n",
-          "code": "ScreenEffect(SECRT())"
-        }
-      ]
-    },
-    {
       "name": "SEContrast",
       "doc": "SEContrast boosts contrast by pushing colour channels toward extremes.\nDefault strength 1.5 — noticeable punch without going stark.\n",
       "signature": "func SEContrast() contrastEffect",
@@ -5643,22 +5629,6 @@
       ]
     },
     {
-      "name": "SEFadeRows",
-      "doc": "SEFadeRows fades the top and bottom rows toward a target colour.\ntopRows and bottomRows set how many rows fade on each edge.\nPass Color{Mode: ColorRGB} (black) or any RGB colour as the fade target.\n",
-      "signature": "func SEFadeRows(topRows, bottomRows int, target Color) fadeRowsEffect",
-      "examples": [
-        {
-          "doc": "Fade top and bottom rows toward black.\n",
-          "code": "ScreenEffect(SEFadeRows(5, 5, Color{Mode: ColorRGB}))"
-        }
-      ]
-    },
-    {
-      "name": "SEFire",
-      "doc": "",
-      "signature": "func SEFire() *fireEffect"
-    },
-    {
       "name": "SEFocusDim",
       "doc": "SEFocusDim dims everything outside the bounds of a NodeRef.\nThe ref is populated each frame after layout, so it tracks the node automatically.\n",
       "signature": "func SEFocusDim(ref *NodeRef) focusDimEffect",
@@ -5666,22 +5636,6 @@
         {
           "doc": "Dim everything outside a node.\n",
           "code": "var panel NodeRef\nScreenEffect(SEFocusDim(\u0026panel))"
-        }
-      ]
-    },
-    {
-      "name": "SEFrost",
-      "doc": "SEFrost replaces characters with shade blocks and tints toward a frosted\nwhite. Simulates frosted glass, ideal behind modals and overlays.\nDefault strength 0.8.\n",
-      "signature": "func SEFrost() frostEffect",
-      "examples": [
-        {
-          "doc": "Frosted glass behind a modal.\n",
-          "code": "var modal NodeRef\nScreenEffect(SEFrost().Dodge(\u0026modal))"
-        },
-        {
-          "name": "focus",
-          "doc": "Frost only a specific region.\n",
-          "code": "var sidebar NodeRef\nScreenEffect(SEFrost().Focus(\u0026sidebar))"
         }
       ]
     },
@@ -5722,11 +5676,6 @@
           "code": "var panel NodeRef\nScreenEffect(SEMonochrome(RGB(0, 255, 80)).Dodge(\u0026panel))"
         }
       ]
-    },
-    {
-      "name": "SEPlasma",
-      "doc": "",
-      "signature": "func SEPlasma() plasmaEffect"
     },
     {
       "name": "SEPulse",

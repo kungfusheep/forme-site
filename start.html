@@ -473,33 +473,29 @@ import . "github.com/kungfusheep/glyph"</div>
 
 <div class="code code-raw">package main
 
-import (
-	"log"
-	. "github.com/kungfusheep/glyph"
-)
+import . "github.com/kungfusheep/glyph"
 
 func main() {
-	app, err := NewApp()
-	if err != nil {
-		log.Fatal(err)
-	}
 	count := 0
 
+	app := NewInlineApp()
 	app.SetView(
 		VBox(
 			Text(&count),
-			Text("up/down to count, q to quit"),
+			Text("↑/↓ to count, enter to quit"),
 		),
-	)
+	).
+		Handle("&lt;Up&gt;", func() { count++ }).
+		Handle("&lt;Down&gt;", func() { count-- }).
+		Handle("&lt;Enter&gt;", app.Stop).
+		ClearOnExit(true).
+		Run()
 
-	app.Handle("&lt;Up&gt;", func() { count++ })
-	app.Handle("&lt;Down&gt;", func() { count-- })
-	app.Handle("q", app.Stop)
-	app.Run()
+	println("You selected", count)
 }</div>
 
   <div class="concept-prose">
-    <strong><code>NewApp()</code></strong> enters the alternate screen and starts the render loop.
+    <strong><code>NewInlineApp()</code></strong> renders at the cursor position without taking over the screen.
     <strong><code>SetView()</code></strong> compiles the declarative tree once into a flat list of operations.
     At runtime, glyph walks that list and dereferences pointers to read current state.
     The frame cost is proportional to what's visible, not to what changed.
@@ -536,10 +532,7 @@ func main() {
 
 <div class="code code-raw">package main
 
-import (
-	"log"
-	. "github.com/kungfusheep/glyph"
-)
+import . "github.com/kungfusheep/glyph"
 
 type Task struct {
 	Title string
@@ -547,10 +540,7 @@ type Task struct {
 }
 
 func main() {
-	app, err := NewApp()
-	if err != nil {
-		log.Fatal(err)
-	}
+	app := NewApp()
 
 	tasks := []Task{
 		{"Write tutorial", false},
@@ -644,7 +634,6 @@ func main() {
 
 import (
 	"fmt"
-	"log"
 	. "github.com/kungfusheep/glyph"
 )
 
@@ -655,10 +644,7 @@ type Task struct {
 }
 
 func main() {
-	app, err := NewApp()
-	if err != nil {
-		log.Fatal(err)
-	}
+	app := NewApp()
 
 	tasks := []Task{
 		{"Write tutorial", false, 1},

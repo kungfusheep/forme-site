@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logotype Audition</title>
+<link rel="preload" href="BerkeleyMonoVariable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="https://use.typekit.net/rgt4idh.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Serif+Display&family=Libre+Bodoni:wght@400;700&family=Cormorant+Garamond:wght@300;400;600&family=Instrument+Serif&family=Fraunces:opsz,wght@9..144,300;9..144,400&display=swap">
+<style>
+  @font-face {
+    font-family: 'Berkeley Mono';
+    src: url('BerkeleyMonoVariable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: swap;
+  }
+
+  /* PP Editorial New — uncomment when you have the file */
+  /*
+  @font-face {
+    font-family: 'PP Editorial New';
+    src: url('PPEditorialNew-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'PP Editorial New';
+    src: url('PPEditorialNew-Ultralight.woff2') format('woff2');
+    font-weight: 200;
+    font-display: swap;
+  }
+  */
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--fg);
+    padding: 60px 40px;
+  }
+
+  h2 {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--fg3);
+    margin-bottom: 12px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .card {
+    padding: 40px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .card-light {
+    background: var(--bg);
+    border: 1px solid var(--rule);
+  }
+
+  .card-dark {
+    background: var(--bg-dark);
+    border: 1px solid var(--rule-dk);
+  }
+
+  .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--fg3);
+  }
+
+  .card-dark .label { color: var(--dk-5); }
+
+  .logotype {
+    font-size: 72px;
+    line-height: 1;
+    color: var(--fg0);
+    letter-spacing: -0.01em;
+  }
+
+  .card-dark .logotype { color: var(--dk-hi); }
+
+  .logotype-sm {
+    font-size: 18px;
+    line-height: 1;
+    color: var(--fg);
+    letter-spacing: 0;
+  }
+
+  .card-dark .logotype-sm { color: var(--dk); }
+
+  .desc {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg3);
+    line-height: 1.5;
+  }
+
+  .card-dark .desc { color: var(--dk-5); }
+
+  .section-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--fg3);
+    margin: 60px auto 24px;
+    max-width: 1200px;
+  }
+
+  /* font families */
+  .f-din        { font-family: var(--din-r); font-variation-settings: 'wght' 300; }
+  .f-din-nav    { font-family: var(--din-r); font-variation-settings: 'wght' 400; }
+  .f-playfair   { font-family: 'Playfair Display', serif; font-weight: 400; }
+  .f-dmserif    { font-family: 'DM Serif Display', serif; font-weight: 400; }
+  .f-bodoni     { font-family: 'Libre Bodoni', serif; font-weight: 400; }
+  .f-cormorant  { font-family: 'Cormorant Garamond', serif; font-weight: 300; }
+  .f-instrument { font-family: 'Instrument Serif', serif; font-weight: 400; }
+  .f-fraunces   { font-family: 'Fraunces', serif; font-weight: 300; }
+  .f-editorial  { font-family: 'PP Editorial New', serif; font-weight: 200; }
+
+  .hero-sim {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 48px 0;
+    text-align: center;
+  }
+
+  .hero-sim .logotype { font-size: 96px; }
+  .hero-sim .subtitle {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--fg2);
+    max-width: 500px;
+  }
+  .card-dark .hero-sim .subtitle { color: var(--dk-4); }
+</style>
+</head>
+<body>
+
+<div class="section-title">Current — DIN 2014 Rounded</div>
+<div class="grid">
+  <div class="card card-light">
+    <div class="label">Light context</div>
+    <div class="hero-sim">
+      <div class="logotype f-din">glyph</div>
+      <div class="subtitle">Batteries-included terminal UI framework for Go.</div>
+    </div>
+    <div class="logotype-sm f-din-nav">glyph</div>
+  </div>
+  <div class="card card-dark">
+    <div class="label">Dark context</div>
+    <div class="hero-sim">
+      <div class="logotype f-din">glyph</div>
+      <div class="subtitle">Batteries-included terminal UI framework for Go.</div>
+    </div>
+    <div class="logotype-sm f-din-nav">glyph</div>
+  </div>
+</div>
+
+<div class="section-title">Playfair Display — high-contrast editorial serif</div>
+<div class="grid">
+  <div class="card card-light">
+    <div class="hero-sim">
+      <div class="logotype f-playfair">glyph</div>
+      <div class="subtitle">Batteries-included terminal UI framework for Go.</div>
+    </div>
+    <div class="logotype-sm f-playfair">glyph</div>
+  </div>
+  <div class="card card-dark">
+    <div class="hero-sim">
+      <div class="logotype f-playfair">glyph</div>
+      <div class="subtitle">Batteries-included terminal UI framework for Go.</div>
+    </div>
+    <div class="logotype-sm f-playfair">glyph</div>
+  </div>
+</div>
+
+<div class="section-title">DM Serif Display — sharp, compact editorial</div>
+<div class="grid">
+  <div class="card card-light">
+    <div class="hero-sim">
+      <div class="logotype f-dmserif">glyph</div>
+      <div class="subtitle">Batteries-included terminal UI framework for Go.</div>
+    </div>
+    <div class="logotype-sm f-dmserif">glyph</div>
+  </div>
+  <div class="card card-dark">
+    <div class="hero-sim">
+      <div class="logotype f-dmserif">glyph</div>
+      <div class="subtitle">Batteries-included terminal UI framework for Go.</div>
+    </div>
+    <div class="logotype-sm f-dmserif">glyph</div>
+  </div>
+</div>
+
+<div class="section-title">Libre Bodoni — classic magazine feel</div>
+<div class="grid">
+  <div class="card card-light">
+    <div class="hero-sim">
+      <div class="logotype f-bodoni">glyph</div>
+      <div class="subtitle">Batteries-included terminal UI framework for Go.</div>
+    </div>
+    <div class="logotype-sm f-bodoni">glyph</div>
+  </div>
+  <div class="card card-dark">
+    <div class="hero-sim">
+      <div class="logotype f-bodoni">glyph</div>
+      <div class="subtitle">Batteries-included terminal UI framework for Go.</div>
+    </div>
+    <div class="logotype-sm f-bodoni">glyph</div>
+  </div>
+</div>
+
+<div class="section-title">Cormorant Garamond — elegant, light weight</div>
+<div class="grid">
+  <div class="card card-light">
+    <div class="hero-sim">
+      <div class="logotype f-cormorant">glyph</div>
+      <div class="subtitle">Batteries-included terminal UI framework for Go.</div>
+    </div>
+    <div class="logotype-sm f-cormorant">glyph</div>
+  </div>
+  <div class="card card-dark">
+    <div class="hero-sim">
+      <div class="logotype f-cormorant">glyph</div>
+      <div class="subtitle">Batteries-included terminal UI framework for Go.</div>
+    </div>
+    <div class="logotype-sm f-cormorant">glyph</div>
+  </div>
+</div>
+
+<div class="section-title">Instrument Serif — Google's editorial answer</div>
+<div class="grid">
+  <div class="card card-light">
+    <div class="hero-sim">
+      <div class="logotype f-instrument">glyph</div>
+      <div class="subtitle">Batteries-included terminal UI framework for Go.</div>
+    </div>
+    <div class="logotype-sm f-instrument">glyph</div>
+  </div>
+  <div class="card card-dark">
+    <div class="hero-sim">
+      <div class="logotype f-instrument">glyph</div>
+      <div class="subtitle">Batteries-included terminal UI framework for Go.</div>
+    </div>
+    <div class="logotype-sm f-instrument">glyph</div>
+  </div>
+</div>
+
+<div class="section-title">Fraunces — quirky variable optical size</div>
+<div class="grid">
+  <div class="card card-light">
+    <div class="hero-sim">
+      <div class="logotype f-fraunces">glyph</div>
+      <div class="subtitle">Batteries-included terminal UI framework for Go.</div>
+    </div>
+    <div class="logotype-sm f-fraunces">glyph</div>
+  </div>
+  <div class="card card-dark">
+    <div class="hero-sim">
+      <div class="logotype f-fraunces">glyph</div>
+      <div class="subtitle">Batteries-included terminal UI framework for Go.</div>
+    </div>
+    <div class="logotype-sm f-fraunces">glyph</div>
+  </div>
+</div>
+
+<div class="section-title">PP Editorial New — uncomment @font-face when you have the file</div>
+<div class="grid">
+  <div class="card card-light">
+    <div class="hero-sim">
+      <div class="logotype f-editorial">glyph</div>
+      <div class="subtitle">Batteries-included terminal UI framework for Go.</div>
+    </div>
+    <div class="logotype-sm f-editorial">glyph</div>
+    <div class="desc">Drop PPEditorialNew-*.woff2 into the site root and uncomment the @font-face block at the top of this file.</div>
+  </div>
+  <div class="card card-dark">
+    <div class="hero-sim">
+      <div class="logotype f-editorial">glyph</div>
+      <div class="subtitle">Batteries-included terminal UI framework for Go.</div>
+    </div>
+    <div class="logotype-sm f-editorial">glyph</div>
+  </div>
+</div>
+
+</body>
+</html>

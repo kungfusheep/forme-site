@@ -1907,7 +1907,7 @@ app.RunFrom("list")</div>
         <div class="buffer-row visible">line 1: import . "glyph"</div>
         <div class="buffer-row visible">line 2:</div>
         <div class="buffer-row visible">line 3: func main() {</div>
-        <div class="buffer-row">line 4:     app, _ := NewApp()</div>
+        <div class="buffer-row">line 4:     app := NewApp()</div>
         <div class="buffer-row">line 5:     app.SetView(</div>
         <div class="buffer-row">line 6:         VBox(</div>
         <div class="buffer-row">line 7:             Text("hello"),</div>
@@ -2303,7 +2303,7 @@ function copyInstall(el) {
     'import . "glyph"',
     '',
     'func main() {',
-    '    app, _ := NewApp()',
+    '    app := NewApp()',
     '    app.SetView(',
     '        VBox(',
     '            Text("hello"),',

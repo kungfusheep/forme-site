@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logotype Treatments</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="https://use.typekit.net/rgt4idh.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--fg);
+    padding: 60px 40px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .card {
+    padding: 48px 40px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .card-light {
+    background: var(--bg);
+    border: 1px solid var(--rule);
+  }
+
+  .card-dark {
+    background: var(--bg-dark);
+    border: 1px solid var(--rule-dk);
+  }
+
+  .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--fg3);
+    text-align: center;
+  }
+  .card-dark .label { color: var(--dk-5); }
+
+  .desc {
+    font-size: 11px;
+    color: var(--fg3);
+    text-align: center;
+    line-height: 1.5;
+    max-width: 340px;
+  }
+  .card-dark .desc { color: var(--dk-5); }
+
+  .section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--fg3);
+    margin: 48px auto 20px;
+    max-width: 1100px;
+  }
+  .section-title:first-of-type { margin-top: 0; }
+
+  svg { display: block; }
+</style>
+</head>
+<body>
+
+<div class="section-title">0. Current — DIN 2014 Rounded, default kerning</div>
+<div class="grid">
+  <div class="card card-light">
+    <svg width="280" height="80" viewBox="0 0 280 80">
+      <text x="0" y="60" font-family="din-2014-rounded-variable, sans-serif" font-size="72" font-variation-settings="'wght' 300" fill="#131311" letter-spacing="-0.5">glyph</text>
+    </svg>
+  </div>
+  <div class="card card-dark">
+    <svg width="280" height="80" viewBox="0 0 280 80">
+      <text x="0" y="60" font-family="din-2014-rounded-variable, sans-serif" font-size="72" font-variation-settings="'wght' 300" fill="#e8e4d8" letter-spacing="-0.5">glyph</text>
+    </svg>
+  </div>
+</div>
+
+<div class="section-title">1. Tight optical kerning — pulled pairs, more cohesive word shape</div>
+<div class="grid">
+  <div class="card card-light">
+    <svg width="260" height="80" viewBox="0 0 260 80">
+      <text y="60" font-family="din-2014-rounded-variable, sans-serif" font-size="72" font-variation-settings="'wght' 300" fill="#131311">
+        <tspan x="0">g</tspan><tspan dx="-3">l</tspan><tspan dx="-2">y</tspan><tspan dx="-3">p</tspan><tspan dx="-2">h</tspan>
+      </text>
+    </svg>
+    <div class="desc">gl, yp, ph pairs tightened. More monolithic.</div>
+  </div>
+  <div class="card card-dark">
+    <svg width="260" height="80" viewBox="0 0 260 80">
+      <text y="60" font-family="din-2014-rounded-variable, sans-serif" font-size="72" font-variation-settings="'wght' 300" fill="#e8e4d8">
+        <tspan x="0">g</tspan><tspan dx="-3">l</tspan><tspan dx="-2">y</tspan><tspan dx="-3">p</tspan><tspan dx="-2">h</tspan>
+      </text>
+    </svg>
+  </div>
+</div>
+
+<div class="section-title">2. Weight contrast — light body, slightly heavier g and h anchors</div>
+<div class="grid">
+  <div class="card card-light">
+    <svg width="280" height="80" viewBox="0 0 280 80">
+      <text y="60" font-family="din-2014-rounded-variable, sans-serif" font-size="72" fill="#131311" letter-spacing="-1">
+        <tspan font-variation-settings="'wght' 400">g</tspan><tspan font-variation-settings="'wght' 250">lyp</tspan><tspan font-variation-settings="'wght' 400">h</tspan>
+      </text>
+    </svg>
+    <div class="desc">Heavier g + h bookend the word. Gives it visual anchoring.</div>
+  </div>
+  <div class="card card-dark">
+    <svg width="280" height="80" viewBox="0 0 280 80">
+      <text y="60" font-family="din-2014-rounded-variable, sans-serif" font-size="72" fill="#e8e4d8" letter-spacing="-1">
+        <tspan font-variation-settings="'wght' 400">g</tspan><tspan font-variation-settings="'wght' 250">lyp</tspan><tspan font-variation-settings="'wght' 400">h</tspan>
+      </text>
+    </svg>
+  </div>
+</div>
+
+<div class="section-title">3. y-descender flourish — extended tail as underline element</div>
+<div class="grid">
+  <div class="card card-light">
+    <svg width="300" height="95" viewBox="0 0 300 95">
+      <text y="60" font-family="din-2014-rounded-variable, sans-serif" font-size="72" font-variation-settings="'wght' 300" fill="#131311" letter-spacing="-1">glyph</text>
+      <!-- extended y-tail underline sweeping under ph -->
+      <path d="M 125 75 Q 135 90 155 88 Q 200 82 260 82" stroke="#131311" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    </svg>
+    <div class="desc">The y's descender extends as a sweep under ph. Connects the word visually.</div>
+  </div>
+  <div class="card card-dark">
+    <svg width="300" height="95" viewBox="0 0 300 95">
+      <text y="60" font-family="din-2014-rounded-variable, sans-serif" font-size="72" font-variation-settings="'wght' 300" fill="#e8e4d8" letter-spacing="-1">glyph</text>
+      <path d="M 125 75 Q 135 90 155 88 Q 200 82 260 82" stroke="#e8e4d8" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+</div>
+
+<div class="section-title">4. Accent dot — the g's counter as a coloured accent</div>
+<div class="grid">
+  <div class="card card-light">
+    <svg width="280" height="80" viewBox="0 0 280 80">
+      <text y="60" font-family="din-2014-rounded-variable, sans-serif" font-size="72" font-variation-settings="'wght' 300" fill="#131311" letter-spacing="-1">glyph</text>
+      <circle cx="22" cy="44" r="4" fill="#c44040"/>
+    </svg>
+    <div class="desc">Accent dot inside the g's counter. Subtle brand mark that works at any size.</div>
+  </div>
+  <div class="card card-dark">
+    <svg width="280" height="80" viewBox="0 0 280 80">
+      <text y="60" font-family="din-2014-rounded-variable, sans-serif" font-size="72" font-variation-settings="'wght' 300" fill="#e8e4d8" letter-spacing="-1">glyph</text>
+      <circle cx="22" cy="44" r="4" fill="#c44040"/>
+    </svg>
+  </div>
+</div>
+
+<div class="section-title">5. Shifted baseline — y drops below, adds rhythm</div>
+<div class="grid">
+  <div class="card card-light">
+    <svg width="280" height="90" viewBox="0 0 280 90">
+      <text font-family="din-2014-rounded-variable, sans-serif" font-size="72" font-variation-settings="'wght' 300" fill="#131311">
+        <tspan x="0" y="60">gl</tspan><tspan dx="-2" dy="4">y</tspan><tspan dx="-3" dy="-4">ph</tspan>
+      </text>
+    </svg>
+    <div class="desc">The y sits slightly lower, creating a dip in the word rhythm. Playful, distinctive.</div>
+  </div>
+  <div class="card card-dark">
+    <svg width="280" height="90" viewBox="0 0 280 90">
+      <text font-family="din-2014-rounded-variable, sans-serif" font-size="72" font-variation-settings="'wght' 300" fill="#e8e4d8">
+        <tspan x="0" y="60">gl</tspan><tspan dx="-2" dy="4">y</tspan><tspan dx="-3" dy="-4">ph</tspan>
+      </text>
+    </svg>
+  </div>
+</div>
+
+<div class="section-title">6. Combined — tight kern + weight contrast + accent dot</div>
+<div class="grid">
+  <div class="card card-light">
+    <svg width="270" height="80" viewBox="0 0 270 80">
+      <text y="60" font-family="din-2014-rounded-variable, sans-serif" font-size="72" fill="#131311">
+        <tspan x="0" font-variation-settings="'wght' 380">g</tspan><tspan dx="-3" font-variation-settings="'wght' 260">l</tspan><tspan dx="-2" font-variation-settings="'wght' 260">y</tspan><tspan dx="-3" font-variation-settings="'wght' 260">p</tspan><tspan dx="-2" font-variation-settings="'wght' 380">h</tspan>
+      </text>
+      <circle cx="22" cy="44" r="3.5" fill="#c44040"/>
+    </svg>
+    <div class="desc">Everything together: bookend weights, tight kerning, accent dot.</div>
+  </div>
+  <div class="card card-dark">
+    <svg width="270" height="80" viewBox="0 0 270 80">
+      <text y="60" font-family="din-2014-rounded-variable, sans-serif" font-size="72" fill="#e8e4d8">
+        <tspan x="0" font-variation-settings="'wght' 380">g</tspan><tspan dx="-3" font-variation-settings="'wght' 260">l</tspan><tspan dx="-2" font-variation-settings="'wght' 260">y</tspan><tspan dx="-3" font-variation-settings="'wght' 260">p</tspan><tspan dx="-2" font-variation-settings="'wght' 380">h</tspan>
+      </text>
+      <circle cx="22" cy="44" r="3.5" fill="#c44040"/>
+    </svg>
+  </div>
+</div>
+
+<div class="section-title">7. Combined — tight kern + y-flourish + accent dot</div>
+<div class="grid">
+  <div class="card card-light">
+    <svg width="300" height="95" viewBox="0 0 300 95">
+      <text y="60" font-family="din-2014-rounded-variable, sans-serif" font-size="72" font-variation-settings="'wght' 300" fill="#131311">
+        <tspan x="0">g</tspan><tspan dx="-3">l</tspan><tspan dx="-2">y</tspan><tspan dx="-3">p</tspan><tspan dx="-2">h</tspan>
+      </text>
+      <circle cx="22" cy="44" r="3.5" fill="#c44040"/>
+      <path d="M 120 75 Q 130 90 150 88 Q 195 82 250 82" stroke="#131311" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </svg>
+    <div class="desc">Tight kerning, accent dot, y-tail flourish. The full package.</div>
+  </div>
+  <div class="card card-dark">
+    <svg width="300" height="95" viewBox="0 0 300 95">
+      <text y="60" font-family="din-2014-rounded-variable, sans-serif" font-size="72" font-variation-settings="'wght' 300" fill="#e8e4d8">
+        <tspan x="0">g</tspan><tspan dx="-3">l</tspan><tspan dx="-2">y</tspan><tspan dx="-3">p</tspan><tspan dx="-2">h</tspan>
+      </text>
+      <circle cx="22" cy="44" r="3.5" fill="#c44040"/>
+      <path d="M 120 75 Q 130 90 150 88 Q 195 82 250 82" stroke="#e8e4d8" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+</div>
+
+</body>
+</html>

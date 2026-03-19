@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#131311"/>
+
+  <!-- actual CSS conic gradient via foreignObject -->
+  <foreignObject x="0" y="0" width="512" height="512">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="
+      width: 340px;
+      height: 340px;
+      margin: 86px;
+      border-radius: 28px;
+      background: conic-gradient(from 210deg, #c44040, #e85050, #983848, #682850, #e85050, #c44040);
+      filter: blur(40px);
+    "></div>
+  </foreignObject>
+</svg>

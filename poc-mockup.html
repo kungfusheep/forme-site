@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PoC 1 — CSS Terminal Mockup</title>
+<link rel="preload" href="BerkeleyMonoVariable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="tokens.css">
+<style>
+  @font-face {
+    font-family: 'Berkeley Mono';
+    src: url('BerkeleyMonoVariable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: swap;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px;
+  }
+
+  .term {
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--dk);
+    background: var(--bg-dark2);
+    border: 1px solid var(--dk-border);
+    border-radius: 10px;
+    width: 100%;
+    max-width: 860px;
+    overflow: hidden;
+  }
+
+  /* window chrome */
+  .term-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: var(--bg-dark3);
+    border-bottom: 1px solid var(--dk-border);
+  }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot-r { background: #c44040; }
+  .dot-y { background: #c4a040; }
+  .dot-g { background: #6a9a50; }
+  .term-title {
+    flex: 1;
+    text-align: center;
+    color: var(--dk-5);
+    font-size: 11px;
+  }
+  .dot-spacer { width: 60px; }
+
+  /* terminal body */
+  .term-body {
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* header */
+  .hdr {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 4px;
+  }
+  .hdr-brand { color: var(--accent); font-weight: 600; }
+  .hdr-meta { color: var(--dk-5); }
+
+  .rule {
+    border: none;
+    border-top: 1px solid var(--dk-border);
+    margin: 2px 0;
+  }
+  .rule-double {
+    border-top: 1px double var(--dk-border);
+  }
+
+  /* sparkline panels */
+  .panels {
+    display: flex;
+    gap: 8px;
+  }
+  .panel {
+    flex: 1;
+    border: 1px solid var(--dk-border);
+    border-radius: 6px;
+    padding: 8px 10px;
+  }
+  .panel-title {
+    color: var(--dk-5);
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+  .spark {
+    display: flex;
+    align-items: flex-end;
+    gap: 1px;
+    height: 24px;
+    margin-bottom: 4px;
+  }
+  .spark-bar {
+    flex: 1;
+    border-radius: 1px 1px 0 0;
+    min-width: 2px;
+  }
+  .spark-healthy { background: #6a9a50; }
+  .spark-warn { background: var(--accent); }
+  .spark-latency { background: #c4a040; }
+  .panel-val { color: var(--dk-4); font-size: 11px; }
+
+  /* services table */
+  .svc-box {
+    border: 1px solid var(--dk-border);
+    border-radius: 6px;
+    padding: 8px 10px;
+  }
+  .svc-head {
+    display: flex;
+    gap: 12px;
+    color: var(--dk-5);
+    font-size: 10px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--dk-border);
+    margin-bottom: 4px;
+  }
+  .svc-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 2px 0;
+  }
+  .svc-dot { font-size: 10px; }
+  .svc-dot-ok { color: #6a9a50; }
+  .svc-dot-warn { color: #c4a040; }
+  .svc-name { flex: 1; color: var(--dk); }
+  .svc-name-active { color: var(--dk-hi); }
+  .svc-cpu { width: 50px; text-align: right; color: var(--dk-4); }
+  .svc-mem { width: 60px; text-align: right; color: var(--dk-4); }
+  .svc-status { width: 70px; }
+  .status-ok { color: var(--dk-5); }
+  .status-warn { color: #c4a040; }
+
+  /* log */
+  .log-box {
+    border: 1px solid var(--dk-border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    max-height: 100px;
+  }
+  .log-title {
+    color: var(--dk-5);
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+  .log-line { color: var(--dk-5); font-size: 11px; }
+  .log-line .code-ok { color: #6a9a50; }
+  .log-line .code-err { color: var(--accent); }
+
+  /* footer hint */
+  .hint { color: var(--dk-6); font-size: 11px; margin-top: 2px; }
+</style>
+</head>
+<body>
+<div class="term">
+  <div class="term-bar">
+    <div class="dot dot-r"></div>
+    <div class="dot dot-y"></div>
+    <div class="dot dot-g"></div>
+    <div class="term-title">glyph — control</div>
+    <div class="dot-spacer"></div>
+  </div>
+
+  <div class="term-body">
+    <div class="hdr">
+      <span class="hdr-brand">● glyph control</span>
+      <span class="hdr-meta">prod-us-east-1&nbsp;&nbsp;18:42:07</span>
+    </div>
+    <hr class="rule rule-double">
+
+    <div class="panels">
+      <div class="panel">
+        <div class="panel-title">requests/s</div>
+        <div class="spark" id="spark-req"></div>
+        <div class="panel-val">124 req/s</div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">p99 latency</div>
+        <div class="spark" id="spark-lat"></div>
+        <div class="panel-val">23ms</div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">error rate</div>
+        <div class="spark" id="spark-err"></div>
+        <div class="panel-val">0.8%</div>
+      </div>
+    </div>
+
+    <div class="svc-box">
+      <div class="svc-head">
+        <span style="width:14px"></span>
+        <span style="flex:1">SERVICE</span>
+        <span style="width:50px;text-align:right">CPU</span>
+        <span style="width:60px;text-align:right">MEM</span>
+        <span style="width:70px">STATUS</span>
+      </div>
+      <div class="svc-row">
+        <span class="svc-dot svc-dot-ok">●</span>
+        <span class="svc-name svc-name-active">api-gateway</span>
+        <span class="svc-cpu">7.2%</span>
+        <span class="svc-mem">240 MB</span>
+        <span class="svc-status status-ok">healthy</span>
+      </div>
+      <div class="svc-row">
+        <span class="svc-dot svc-dot-ok">●</span>
+        <span class="svc-name">postgres-primary</span>
+        <span class="svc-cpu">3.8%</span>
+        <span class="svc-mem">1.2 GB</span>
+        <span class="svc-status status-ok">healthy</span>
+      </div>
+      <div class="svc-row">
+        <span class="svc-dot svc-dot-warn">○</span>
+        <span class="svc-name">redis-cluster</span>
+        <span class="svc-cpu">19.5%</span>
+        <span class="svc-mem">380 MB</span>
+        <span class="svc-status status-warn">degraded</span>
+      </div>
+      <div class="svc-row">
+        <span class="svc-dot svc-dot-ok">●</span>
+        <span class="svc-name">worker-pool</span>
+        <span class="svc-cpu">4.9%</span>
+        <span class="svc-mem">190 MB</span>
+        <span class="svc-status status-ok">healthy</span>
+      </div>
+      <div class="svc-row">
+        <span class="svc-dot svc-dot-ok">●</span>
+        <span class="svc-name">cdn-edge</span>
+        <span class="svc-cpu">1.1%</span>
+        <span class="svc-mem">42 MB</span>
+        <span class="svc-status status-ok">healthy</span>
+      </div>
+      <div class="svc-row">
+        <span class="svc-dot svc-dot-ok">●</span>
+        <span class="svc-name">auth-service</span>
+        <span class="svc-cpu">5.4%</span>
+        <span class="svc-mem">128 MB</span>
+        <span class="svc-status status-ok">healthy</span>
+      </div>
+    </div>
+
+    <div class="log-box">
+      <div class="log-title">log</div>
+      <div class="log-line">18:42:05&nbsp;&nbsp;GET&nbsp;&nbsp;&nbsp;&nbsp;/api/cache/warm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-err">503</span>&nbsp;&nbsp;812ms</div>
+      <div class="log-line">18:42:05&nbsp;&nbsp;GET&nbsp;&nbsp;&nbsp;&nbsp;/api/users&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-ok">200</span>&nbsp;&nbsp;11ms</div>
+      <div class="log-line">18:42:06&nbsp;&nbsp;POST&nbsp;&nbsp;&nbsp;/api/sessions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-err">500</span>&nbsp;&nbsp;1.2s</div>
+      <div class="log-line">18:42:06&nbsp;&nbsp;GET&nbsp;&nbsp;&nbsp;&nbsp;/api/health&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-ok">200</span>&nbsp;&nbsp;4ms</div>
+    </div>
+
+    <hr class="rule rule-double">
+    <div class="hint">[enter] inspect&nbsp;&nbsp;[ctrl+s] sparklines&nbsp;&nbsp;[ctrl+l] log&nbsp;&nbsp;[ctrl+c] quit</div>
+  </div>
+</div>
+
+<script>
+// generate sparkline bars from data
+function fillSpark(id, data, cls) {
+  const el = document.getElementById(id);
+  const max = Math.max(...data);
+  data.forEach(v => {
+    const bar = document.createElement('div');
+    bar.className = 'spark-bar ' + cls;
+    bar.style.height = Math.max(2, (v / max) * 24) + 'px';
+    el.appendChild(bar);
+  });
+}
+
+// healthy sparkline data with slight wave
+const req = Array.from({length: 40}, (_, i) => 110 + Math.sin(i * 0.3) * 15 + Math.random() * 8);
+const lat = Array.from({length: 40}, (_, i) => 18 + Math.sin(i * 0.25) * 5 + Math.random() * 4);
+const err = Array.from({length: 40}, (_, i) => 0.5 + Math.sin(i * 0.2) * 0.3 + Math.random() * 0.2);
+
+fillSpark('spark-req', req, 'spark-healthy');
+fillSpark('spark-lat', lat, 'spark-latency');
+fillSpark('spark-err', err, 'spark-warn');
+</script>
+</body>
+</html>

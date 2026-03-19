@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PoC 2 — Animated Text Hero</title>
+<link rel="preload" href="BerkeleyMonoVariable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="tokens.css">
+<style>
+  @font-face {
+    font-family: 'Berkeley Mono';
+    src: url('BerkeleyMonoVariable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: swap;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px;
+  }
+
+  .hero-term {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--dk-5);
+    width: max-content;
+  }
+
+  pre {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  .b  { color: var(--dk-border); }
+  .m  { color: var(--dk-6); }
+  .s  { color: var(--dk-5); }
+  .d  { color: var(--dk-4); }
+  .t  { color: var(--dk); }
+  .hi { color: var(--dk-hi); font-weight: 700; }
+  .a  { color: var(--accent); font-weight: 700; }
+  .ac { color: var(--accent); }
+  .g  { color: #6a9a50; }
+  .y  { color: #c4a040; }
+
+  .line {
+    opacity: 0;
+    animation: fadeIn 0.3s ease forwards;
+  }
+  @keyframes fadeIn { to { opacity: 1; } }
+</style>
+</head>
+<body>
+<div class="hero-term">
+<pre id="term"></pre>
+</div>
+
+<script>
+// paint system: build a plain string, then apply colour regions
+// region = [start, end, cssClass]
+function paintLine(str, regions) {
+  // sort regions by start position
+  regions.sort((a, b) => a[0] - b[0]);
+  let result = '';
+  let pos = 0;
+  for (const [start, end, cls] of regions) {
+    if (start > pos) result += esc(str.slice(pos, start));
+    result += `<span class="${cls}">${esc(str.slice(start, end))}</span>`;
+    pos = end;
+  }
+  if (pos < str.length) result += esc(str.slice(pos));
+  return result;
+}
+
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+const W = 75;
+const HR1 = '├' + '─'.repeat(W - 2) + '┤';
+const HR2 = '╞' + '═'.repeat(W - 2) + '╡';
+const TOP = '╭' + '─'.repeat(W - 2) + '╮';
+const BOT = '╰' + '─'.repeat(W - 2) + '╯';
+
+function mkline(inner) {
+  // inner should be W-2 chars; we wrap with │
+  const padded = inner + ' '.repeat(Math.max(0, W - 2 - inner.length));
+  return '│' + padded + '│';
+}
+
+const blocks = ' ▁▂▃▄▅▆▇█';
+function sparkStr(data, max) {
+  return data.map(v => {
+    const idx = Math.round((v / max) * 8);
+    return blocks[Math.min(8, Math.max(1, idx))];
+  }).join('');
+}
+
+const reqData = Array.from({length: 18}, (_, i) => 110 + Math.sin(i * 0.4) * 15 + Math.random() * 8);
+const latData = Array.from({length: 18}, (_, i) => 18 + Math.sin(i * 0.35) * 6 + Math.random() * 3);
+const errData = Array.from({length: 18}, (_, i) => 0.5 + Math.sin(i * 0.3) * 0.3 + Math.random() * 0.2);
+
+function build() {
+  const rs = sparkStr(reqData, 140);
+  const ls = sparkStr(latData, 30);
+  const es = sparkStr(errData, 1.2);
+
+  const lines = [];
+
+  // top border
+  lines.push({ str: TOP, regions: [[0, W, 'b']] });
+
+  // header: │ ● glyph control                                 prod-us-east-1  18:42:07 │
+  {
+    const s = mkline(' ● glyph control                                 prod-us-east-1  18:42:07');
+    lines.push({ str: s, regions: [[0,1,'b'], [2,18,'a'], [49,73,'s'], [W-1,W,'b']] });
+  }
+
+  // double rule
+  lines.push({ str: HR2, regions: [[0, W, 'b']] });
+
+  // sparklines:  │ req/s ▁▂▃▄▅▆▇█▇▆▅▄  p99 ▁▂▃▄▅▆▇█▇▆▅▄  err ▁▂▃▄▅▆▇█▇▆▅▄ │
+  {
+    const s = mkline(` req/s ${rs}  p99 ${ls}  err ${es}`);
+    lines.push({ str: s, regions: [
+      [0,1,'b'], [2,7,'s'], [8,26,'g'], [28,32,'s'], [33,51,'y'], [53,57,'s'], [58,W-1,'ac'], [W-1,W,'b']
+    ], id: 'sparkline' });
+  }
+
+  // values row
+  {
+    const s = mkline('       124 req/s            23ms              0.8%');
+    lines.push({ str: s, regions: [[0,1,'b'], [2,W-1,'d'], [W-1,W,'b']] });
+  }
+
+  // rule
+  lines.push({ str: HR1, regions: [[0, W, 'b']] });
+
+  // services
+  const svcs = [
+    { dot: '●', dc: 'g', name: 'api-gateway',      cpu: '  7.2%', mem: ' 240 MB', status: 'healthy',  sc: 'm',  nc: 'hi' },
+    { dot: '●', dc: 'g', name: 'postgres-primary',  cpu: '  3.8%', mem: ' 1.2 GB', status: 'healthy',  sc: 'm',  nc: 't' },
+    { dot: '○', dc: 'y', name: 'redis-cluster',     cpu: ' 19.5%', mem: ' 380 MB', status: 'degraded', sc: 'y',  nc: 't' },
+    { dot: '●', dc: 'g', name: 'worker-pool',       cpu: '  4.9%', mem: ' 190 MB', status: 'healthy',  sc: 'm',  nc: 't' },
+    { dot: '●', dc: 'g', name: 'cdn-edge',          cpu: '  1.1%', mem: '  42 MB', status: 'healthy',  sc: 'm',  nc: 't' },
+    { dot: '●', dc: 'g', name: 'auth-service',      cpu: '  5.4%', mem: ' 128 MB', status: 'healthy',  sc: 'm',  nc: 't' },
+  ];
+
+  for (const svc of svcs) {
+    const n = svc.name + ' '.repeat(20 - svc.name.length);
+    const inner = ` ${svc.dot} ${n}${svc.cpu}${svc.mem}   ${svc.status}`;
+    const s = mkline(inner);
+    const dotStart = 2;
+    const nameStart = 4;
+    const nameEnd = 4 + 20;
+    const cpuStart = nameEnd;
+    const cpuEnd = cpuStart + 6;
+    const memEnd = cpuEnd + 7;
+    const statusStart = memEnd + 3;
+    const statusEnd = statusStart + svc.status.length;
+    lines.push({ str: s, regions: [
+      [0,1,'b'],
+      [dotStart, dotStart+1, svc.dc],
+      [nameStart, nameEnd, svc.nc],
+      [cpuStart, memEnd, 'd'],
+      [statusStart, statusEnd, svc.sc],
+      [W-1,W,'b'],
+    ]});
+  }
+
+  // rule
+  lines.push({ str: HR1, regions: [[0, W, 'b']] });
+
+  // log
+  const logs = [
+    { pre: '18:42:05  GET    /api/cache/warm         ', code: '503', cc: 'ac', post: '  812ms' },
+    { pre: '18:42:05  GET    /api/users              ', code: '200', cc: 'g',  post: '   11ms' },
+    { pre: '18:42:06  POST   /api/sessions           ', code: '500', cc: 'ac', post: '   1.2s' },
+  ];
+
+  for (const log of logs) {
+    const inner = ' ' + log.pre + log.code + log.post;
+    const s = mkline(inner);
+    const codeStart = 2 + log.pre.length;
+    const codeEnd = codeStart + 3;
+    lines.push({ str: s, regions: [
+      [0,1,'b'],
+      [2, codeStart, 'm'],
+      [codeStart, codeEnd, log.cc],
+      [codeEnd, codeEnd + log.post.length, 'm'],
+      [W-1,W,'b'],
+    ]});
+  }
+
+  // double rule
+  lines.push({ str: HR2, regions: [[0, W, 'b']] });
+
+  // footer
+  {
+    const s = mkline(' [enter] inspect  [ctrl+s] sparklines  [ctrl+l] log  [ctrl+c] quit');
+    lines.push({ str: s, regions: [[0,1,'b'], [2,W-1,'m'], [W-1,W,'b']] });
+  }
+
+  // bottom border
+  lines.push({ str: BOT, regions: [[0, W, 'b']] });
+
+  return lines;
+}
+
+const term = document.getElementById('term');
+
+function render() {
+  const lines = build();
+  term.innerHTML = lines.map((l, i) =>
+    `<span class="line" style="animation-delay:${(i * 0.04).toFixed(2)}s">${paintLine(l.str, l.regions)}\n</span>`
+  ).join('');
+}
+
+render();
+
+// animate sparklines only
+setInterval(() => {
+  reqData.push(110 + Math.sin(Date.now() * 0.002) * 15 + Math.random() * 8);
+  reqData.shift();
+  latData.push(18 + Math.sin(Date.now() * 0.0018) * 6 + Math.random() * 3);
+  latData.shift();
+  errData.push(0.5 + Math.sin(Date.now() * 0.0015) * 0.3 + Math.random() * 0.2);
+  errData.shift();
+
+  // find the sparkline line and re-render just that one
+  const rs = sparkStr(reqData, 140);
+  const ls = sparkStr(latData, 30);
+  const es = sparkStr(errData, 1.2);
+  const sparkInner = ` req/s ${rs}  p99 ${ls}  err ${es}`;
+  const s = mkline(sparkInner);
+  const regions = [
+    [0,1,'b'], [2,7,'s'], [8,26,'g'], [28,32,'s'], [33,51,'y'], [53,57,'s'], [58,W-1,'ac'], [W-1,W,'b']
+  ];
+  // line index 3 is the sparkline
+  const allSpans = term.querySelectorAll(':scope > .line');
+  if (allSpans[3]) {
+    allSpans[3].innerHTML = paintLine(s, regions) + '\n';
+    allSpans[3].style.opacity = '1';
+  }
+}, 500);
+</script>
+</body>
+</html>
