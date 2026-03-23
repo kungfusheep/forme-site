@@ -1571,6 +1571,44 @@ document.querySelectorAll('.code-raw').forEach(el => {
   resize()
   window.addEventListener('resize', resize)
 
+  // ── feature toggles ──
+  const features = {
+    ripple: false,             // secondary micro-waves overlaid on main waves
+    breathingWeight: false,    // line width pulses along the wave
+    dash: false,               // dashed waves with animated offset
+    echo: false,               // faint offset copies trailing each wave
+    glyphs: false,             // box-drawing characters scattered along waves
+  }
+
+  // ── gradient colours (used by gradientStroke and fillBetween) ──
+  const gradColors = {
+    dark: ['rgba(100,160,130,', 'rgba(150,100,180,', 'rgba(100,160,130,'],
+    hero: ['rgba(196,64,64,', 'rgba(152,56,72,', 'rgba(104,40,80,'],
+  }
+
+  // ── compute y for a wave at pixel x ──
+  function waveY(x, wave, baseY, t, n, i) {
+    return baseY +
+      Math.sin(x * wave.freq + t * wave.speed * 0.01 + n + i) * wave.amp * dpr +
+      Math.sin(x * wave.freq * 0.6 + t * wave.speed * 0.007 + n * 3 + i * 2) * wave.amp * 0.5 * dpr
+  }
+
+  // ── keyboard toggles ──
+  const keyMap = {
+    a: 'ripple',
+    s: 'breathingWeight',
+    d: 'dash',
+    f: 'echo',
+    g: 'glyphs',
+  }
+  document.addEventListener('keydown', (e) => {
+    const feat = keyMap[e.key]
+    if (feat && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      features[feat] = !features[feat]
+      console.log(Object.entries(features).map(([k,v]) => (v ? '●' : '○') + ' ' + k).join('  '))
+    }
+  })
+
   function draw(t) {
     for (let n = 0; n < instances.length; n++) {
       const inst = instances[n]
@@ -1578,24 +1616,138 @@ document.querySelectorAll('.code-raw').forEach(el => {
       const { ctx, canvas, waves } = inst
       const w = canvas.width
       const h = canvas.height
+      const isHero = !!inst.anchor
+      const palette = isHero ? gradColors.hero : gradColors.dark
       ctx.clearRect(0, 0, w, h)
 
+      // precompute all wave points for cross-feature use
+      const points = []
       for (let i = 0; i < waves.length; i++) {
         const wave = waves[i]
-        const centerY = h / 2
-        const baseY = centerY + (i - 1) * 18 * dpr
-        ctx.beginPath()
-        ctx.strokeStyle = wave.color
-        ctx.lineWidth = 1 * dpr
-
+        const baseY = h / 2 + (i - 1) * 18 * dpr
+        const pts = []
         for (let x = 0; x <= w; x += 2) {
-          const y = baseY +
-            Math.sin(x * wave.freq + t * wave.speed * 0.01 + n + i) * wave.amp * dpr +
-            Math.sin(x * wave.freq * 0.6 + t * wave.speed * 0.007 + n * 3 + i * 2) * wave.amp * 0.5 * dpr
-          if (x === 0) ctx.moveTo(x, y)
-          else ctx.lineTo(x, y)
+          pts.push({ x, y: waveY(x, wave, baseY, t, n, i) })
         }
-        ctx.stroke()
+        points.push(pts)
+      }
+
+      // ── ripple: high-frequency micro-waves overlaid on main waves ──
+      if (features.ripple) {
+        for (let i = 0; i < waves.length; i++) {
+          const wave = waves[i]
+          const baseY = h / 2 + (i - 1) * 18 * dpr
+          const color = isHero ? 'rgba(196,64,64,0.06)' : 'rgba(100,160,130,0.05)'
+          for (let r = -1; r <= 1; r += 2) {
+            ctx.beginPath()
+            ctx.strokeStyle = color
+            ctx.lineWidth = 0.5 * dpr
+            for (let x = 0; x <= w; x += 2) {
+              const mainY = waveY(x, wave, baseY, t, n, i)
+              const micro = Math.sin(x * 0.03 + t * 0.003 * r + i) * 3 * dpr * r
+              if (x === 0) ctx.moveTo(x, mainY + micro)
+              else ctx.lineTo(x, mainY + micro)
+            }
+            ctx.stroke()
+          }
+        }
+      }
+
+      // ── echo: faint offset copies trailing each wave ──
+      if (features.echo) {
+        for (let e = 1; e <= 3; e++) {
+          const offsetY = e * 4 * dpr
+          const alpha = (0.04 - e * 0.01)
+          for (let i = 0; i < waves.length; i++) {
+            const pts = points[i]
+            const color = isHero ? `rgba(196,64,64,${alpha})` : `rgba(100,160,130,${alpha})`
+            ctx.beginPath()
+            ctx.strokeStyle = color
+            ctx.lineWidth = 0.5 * dpr
+            for (let j = 0; j < pts.length; j++) {
+              if (j === 0) ctx.moveTo(pts[j].x, pts[j].y + offsetY)
+              else ctx.lineTo(pts[j].x, pts[j].y + offsetY)
+            }
+            ctx.stroke()
+          }
+        }
+      }
+
+      // ── draw main waves ──
+      for (let i = 0; i < waves.length; i++) {
+        const wave = waves[i]
+        const pts = points[i]
+
+        if (features.breathingWeight) {
+          const segLen = 4
+          for (let j = 0; j < pts.length - 1; j += segLen) {
+            const breath = 1 + 1.5 * Math.sin(j * 0.02 + t * 0.001 + i)
+            ctx.beginPath()
+            ctx.strokeStyle = wave.color
+            ctx.lineWidth = Math.max(0.5, breath) * dpr
+            if (features.dash) {
+              const dashLen = 6 * dpr
+              const dashOff = (t * 0.02 + i * 50) % (dashLen * 2)
+              ctx.setLineDash([dashLen, dashLen])
+              ctx.lineDashOffset = -dashOff
+            } else {
+              ctx.setLineDash([])
+            }
+            const end = Math.min(j + segLen + 1, pts.length)
+            ctx.moveTo(pts[j].x, pts[j].y)
+            for (let k = j + 1; k < end; k++) ctx.lineTo(pts[k].x, pts[k].y)
+            ctx.stroke()
+          }
+        } else {
+          ctx.beginPath()
+          ctx.strokeStyle = wave.color
+          ctx.lineWidth = 1 * dpr
+          if (features.dash) {
+            const dashLen = 6 * dpr
+            const dashOff = (t * 0.02 + i * 50) % (dashLen * 2)
+            ctx.setLineDash([dashLen, dashLen])
+            ctx.lineDashOffset = -dashOff
+          } else {
+            ctx.setLineDash([])
+          }
+          for (let j = 0; j < pts.length; j++) {
+            if (j === 0) ctx.moveTo(pts[j].x, pts[j].y)
+            else ctx.lineTo(pts[j].x, pts[j].y)
+          }
+          ctx.stroke()
+        }
+        ctx.setLineDash([])
+      }
+
+      // ── glyphs: box-drawing characters scattered along wave paths ──
+      if (features.glyphs) {
+        const chars = '╭╮╰╯│─┌┐└┘├┤┬┴═║▁▂▃▄▅▆▇█░▒▓●◆◇'.split('')
+        const spacing = Math.round(120 * dpr)
+        const fontSize = 10 * dpr
+        ctx.font = fontSize + 'px monospace'
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        for (let i = 0; i < waves.length; i++) {
+          const pts = points[i]
+          for (let j = 0; j < pts.length; j += spacing / 2) {
+            // deterministic pseudo-random from position + wave index
+            const seed = (j * 7 + i * 13 + n * 31) % chars.length
+            const ch = chars[seed]
+            const alpha = 0.06 + 0.03 * Math.sin(t * 0.0005 + j * 0.01 + i)
+            const color = isHero
+              ? `rgba(19,19,17,${alpha.toFixed(3)})`
+              : `rgba(140,170,150,${alpha.toFixed(3)})`
+            ctx.fillStyle = color
+            // slight rotation based on wave slope
+            const next = Math.min(j + 1, pts.length - 1)
+            const angle = Math.atan2(pts[next].y - pts[j].y, pts[next].x - pts[j].x) * 0.3
+            ctx.save()
+            ctx.translate(pts[j].x, pts[j].y)
+            ctx.rotate(angle)
+            ctx.fillText(ch, 0, 0)
+            ctx.restore()
+          }
+        }
       }
     }
     requestAnimationFrame(draw)
