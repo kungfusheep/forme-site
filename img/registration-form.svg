@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 369.2 232.0" font-size="14">
+<defs><style>
+text { font-family: 'Menlo', 'Consolas', 'SF Mono', 'JetBrains Mono', 'DejaVu Sans Mono', 'Liberation Mono', monospace; }
+</style></defs>
+<rect width="369.2" height="232.0" rx="10" fill="#131311"/>
+<rect width="369.2" height="40.0" rx="10" fill="#1a1a18"/>
+<rect y="30" width="369.2" height="10" fill="#1a1a18"/>
+<circle cx="20" cy="20" r="6" fill="#c44040"/>
+<circle cx="38" cy="20" r="6" fill="#c4a040"/>
+<circle cx="56" cy="20" r="6" fill="#6a9a50"/>
+<line x1="0" y1="40.0" x2="369.2" y2="40.0" stroke="#2a2a28" stroke-width="1"/>
+<text x="16.0" y="56.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">╭─</tspan><tspan fill="#c8c4b8"> register </tspan><tspan fill="#c8c4b8">───────────────────────────╮</tspan></text>
+<text x="16.0" y="72.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8">▸ </tspan><tspan fill="#c8c4b8" font-weight="bold">Name:</tspan><tspan fill="#c8c4b8"> Pete                          </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="88.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8"> </tspan><tspan fill="#c8c4b8" font-weight="bold">Email:</tspan><tspan fill="#c8c4b8"> pete@example.com              </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="104.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8">  </tspan><tspan fill="#c8c4b8" font-weight="bold">Role:</tspan><tspan fill="#c8c4b8"> ◉ Admin                       </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="120.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8">        ○ User                        </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="136.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8">        ○ Guest                       </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="152.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8"> </tspan><tspan fill="#c8c4b8" font-weight="bold">Terms:</tspan><tspan fill="#c8c4b8"> ☑ I accept                    </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="168.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8">                                      </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="184.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8">                                      </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="200.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">╰──────────────────────────────────────╯</tspan></text>
+</svg>

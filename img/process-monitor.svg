@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 537.8 232.0" font-size="14">
+<defs><style>
+text { font-family: 'Menlo', 'Consolas', 'SF Mono', 'JetBrains Mono', 'DejaVu Sans Mono', 'Liberation Mono', monospace; }
+</style></defs>
+<rect width="537.8" height="232.0" rx="10" fill="#131311"/>
+<rect width="537.8" height="40.0" rx="10" fill="#1a1a18"/>
+<rect y="30" width="537.8" height="10" fill="#1a1a18"/>
+<circle cx="20" cy="20" r="6" fill="#c44040"/>
+<circle cx="38" cy="20" r="6" fill="#c4a040"/>
+<circle cx="56" cy="20" r="6" fill="#6a9a50"/>
+<line x1="0" y1="40.0" x2="537.8" y2="40.0" stroke="#2a2a28" stroke-width="1"/>
+<rect x="193.0" y="56.0" width="8.4" height="16.0" fill="#3c3c3c"/>
+<rect x="201.5" y="56.0" width="8.4" height="16.0" fill="#3c3c3c"/>
+<rect x="209.9" y="56.0" width="8.4" height="16.0" fill="#3c3c3c"/>
+<rect x="218.3" y="56.0" width="8.4" height="16.0" fill="#3c3c3c"/>
+<rect x="226.8" y="56.0" width="8.4" height="16.0" fill="#3c3c3c"/>
+<rect x="235.2" y="56.0" width="8.4" height="16.0" fill="#3c3c3c"/>
+<rect x="412.2" y="56.0" width="8.4" height="16.0" fill="#3c3c3c"/>
+<rect x="420.6" y="56.0" width="8.4" height="16.0" fill="#3c3c3c"/>
+<rect x="429.1" y="56.0" width="8.4" height="16.0" fill="#3c3c3c"/>
+<rect x="437.5" y="56.0" width="8.4" height="16.0" fill="#3c3c3c"/>
+<rect x="445.9" y="56.0" width="8.4" height="16.0" fill="#3c3c3c"/>
+<rect x="454.4" y="56.0" width="8.4" height="16.0" fill="#3c3c3c"/>
+<rect x="462.8" y="56.0" width="8.4" height="16.0" fill="#3c3c3c"/>
+<rect x="471.2" y="56.0" width="8.4" height="16.0" fill="#3c3c3c"/>
+<rect x="479.6" y="56.0" width="8.4" height="16.0" fill="#3c3c3c"/>
+<rect x="488.1" y="56.0" width="8.4" height="16.0" fill="#3c3c3c"/>
+<rect x="496.5" y="56.0" width="8.4" height="16.0" fill="#3c3c3c"/>
+<text x="16.0" y="56.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">CPU    </tspan><tspan fill="#c8c4b8">██████████████▍</tspan><tspan fill="#c8c4b8">         Mem    </tspan><tspan fill="#c8c4b8">█████████</tspan><tspan fill="#c8c4b8">             </tspan></text>
+<text x="16.0" y="72.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8" font-weight="bold">       PID</tspan><tspan fill="#c8c4b8"> </tspan><tspan fill="#c8c4b8" font-weight="bold">Command                  </tspan><tspan fill="#c8c4b8"> </tspan><tspan fill="#c8c4b8" font-weight="bold">       CPU</tspan><tspan fill="#c8c4b8"> </tspan><tspan fill="#c8c4b8" font-weight="bold">       Mem</tspan><tspan fill="#c8c4b8">  </tspan></text>
+<text x="16.0" y="88.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">      1234 api-server                       7.2        240  </tspan></text>
+<text x="16.0" y="104.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">      1235 postgres                         3.8       1200  </tspan></text>
+<text x="16.0" y="120.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">      1236 redis                           19.5        380  </tspan></text>
+<text x="16.0" y="136.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">      1237 worker                           4.9        190  </tspan></text>
+<text x="16.0" y="152.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">      1238 nginx                            1.1         42  </tspan></text>
+</svg>

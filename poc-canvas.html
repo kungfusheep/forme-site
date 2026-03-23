@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canvas Terminal PoC</title>
+<link rel="preload" href="BerkeleyMonoVariable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="tokens.css">
+<style>
+  @font-face {
+    font-family: 'Berkeley Mono';
+    src: url('BerkeleyMonoVariable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: swap;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg-dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    padding: 60px 20px;
+    font-family: var(--mono);
+    color: var(--dk);
+  }
+  h1 {
+    font-family: var(--din-r);
+    font-variation-settings: 'wght' 300;
+    font-size: 36px;
+    color: var(--dk-hi);
+  }
+  .demo {
+    max-width: 640px;
+    width: 100%;
+  }
+  .demo canvas {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    filter: drop-shadow(0 4px 24px rgba(0,0,0,0.4));
+  }
+  .label {
+    font-size: 12px;
+    color: var(--dk-5);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+</style>
+</head>
+<body>
+  <h1>Canvas terminal renders</h1>
+
+  <div class="demo">
+    <div class="label">hero</div>
+    <canvas data-term="img/hero.json"></canvas>
+  </div>
+
+  <div class="demo">
+    <div class="label">file browser</div>
+    <canvas data-term="img/file-browser.json"></canvas>
+  </div>
+
+  <div class="demo">
+    <div class="label">process monitor</div>
+    <canvas data-term="img/process-monitor.json"></canvas>
+  </div>
+
+  <div class="demo">
+    <div class="label">deploy log</div>
+    <canvas data-term="img/deploy-log.json"></canvas>
+  </div>
+
+  <div class="demo">
+    <div class="label">fuzzy finder</div>
+    <canvas data-term="img/fuzzy-finder.json"></canvas>
+  </div>
+
+  <div class="demo">
+    <div class="label">live dashboard</div>
+    <canvas data-term="img/live-dashboard.json"></canvas>
+  </div>
+
+  <div class="demo">
+    <div class="label">registration form</div>
+    <canvas data-term="img/registration-form.json"></canvas>
+  </div>
+
+  <script src="termrender.js"></script>
+</body>
+</html>

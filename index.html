@@ -428,6 +428,15 @@
 
   .zone-dark .section-desc { color: var(--dk-4); border-color: var(--rule-dk); }
 
+  .section-intro {
+    font-size: 15px;
+    color: var(--fg2);
+    line-height: 1.6;
+    margin: 0 0 var(--s5);
+  }
+
+  .zone-dark .section-intro { color: var(--dk-3); }
+
   /* ============================================================
      CODE BLOCKS
      ============================================================ */
@@ -507,6 +516,19 @@
     border-radius: 0;
     border: none;
     background: rgba(0, 0, 0, 0.2);
+  }
+
+  .feature-preview {
+    grid-column: 1 / -1;
+    padding: var(--s3);
+    padding-bottom: 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .feature-preview canvas {
+    max-width: min(100%, 500px);
+    border-radius: 10px;
   }
 
   /* ============================================================
@@ -967,6 +989,8 @@ func main() {
         </div>
       </div>
 
+      <p class="section-intro">Components are themable and styleable, but they work out of the box with zero configuration.</p>
+
       <div class="features-stack">
         <div class="feature-card">
           <div class="feature-info">
@@ -987,6 +1011,9 @@ func main() {
 		TextView(&preview).Grow(1),
 	),
 )</div>
+          <div class="feature-preview">
+            <canvas data-term="img/file-browser.json"></canvas>
+          </div>
 
         </div>
 
@@ -1005,6 +1032,9 @@ func main() {
 	),
 	AutoTable(&procs).Sortable().Scrollable(20).BindVimNav(),
 )</div>
+          <div class="feature-preview">
+            <canvas data-term="img/process-monitor.json"></canvas>
+          </div>
 
         </div>
 
@@ -1025,6 +1055,9 @@ func main() {
 	Log(output).Grow(1).MaxLines(500),
 	If(&done).Then(Text(&result).Bold().FG(Green)),
 )</div>
+          <div class="feature-preview">
+            <canvas data-term="img/deploy-log.json"></canvas>
+          </div>
 
         </div>
 
@@ -1043,6 +1076,9 @@ func main() {
 			Text(&p.Desc).FG(BrightBlack),
 		)
 	}).MaxVisible(15).Border(BorderRounded).Title("packages")</div>
+          <div class="feature-preview">
+            <canvas data-term="img/fuzzy-finder.json"></canvas>
+          </div>
 
         </div>
 
@@ -1067,6 +1103,9 @@ func main() {
 	),
 	Log(events).Grow(1).MaxLines(200),
 )</div>
+          <div class="feature-preview">
+            <canvas data-term="img/live-dashboard.json"></canvas>
+          </div>
 
         </div>
 
@@ -1084,35 +1123,12 @@ func main() {
 	Field("Role", Radio(&role, "Admin", "User", "Guest")),
 	Field("Terms", Checkbox(&agree, "I accept").Validate(VTrue, VOnSubmit)),
 )</div>
-
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-info">
-            <div class="feature-title">Modal with screen effects</div>
-            <div class="feature-desc">
-              Full-screen post-processing passes declared in the view tree.
-              Focus and Dodge target or exclude specific nodes. Effects compose left-to-right.
-            </div>
+          <div class="feature-preview">
+            <canvas data-term="img/registration-form.json"></canvas>
           </div>
-          <div class="code code-raw">var modal NodeRef
-
-ScreenEffect(
-	SEFocusDim(&modal),
-	SEDropShadow().Focus(&modal),
-)
-
-Overlay(
-	VBox.NodeRef(&modal).Border(BorderRounded)(
-		Text("confirm delete?"),
-		HBox.Gap(2)(
-			Jump(Text("yes").Bold(), onConfirm),
-			Jump(Text("no"), onCancel),
-		),
-	),
-)</div>
 
         </div>
+
       </div>
     </div>
   </div>
@@ -1477,5 +1493,6 @@ document.querySelectorAll('.code-raw').forEach(el => {
 	}]
 }
 </script>
+<script src="termrender.js"></script>
 </body>
 </html>

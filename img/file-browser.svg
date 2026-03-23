@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 537.8 232.0" font-size="14">
+<defs><style>
+text { font-family: 'Menlo', 'Consolas', 'SF Mono', 'JetBrains Mono', 'DejaVu Sans Mono', 'Liberation Mono', monospace; }
+</style></defs>
+<rect width="537.8" height="232.0" rx="10" fill="#131311"/>
+<rect width="537.8" height="40.0" rx="10" fill="#1a1a18"/>
+<rect y="30" width="537.8" height="10" fill="#1a1a18"/>
+<circle cx="20" cy="20" r="6" fill="#c44040"/>
+<circle cx="38" cy="20" r="6" fill="#c4a040"/>
+<circle cx="56" cy="20" r="6" fill="#6a9a50"/>
+<line x1="0" y1="40.0" x2="537.8" y2="40.0" stroke="#2a2a28" stroke-width="1"/>
+<text x="16.0" y="56.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">╭──────────────────╮╭──────────────────────────────────────╮</tspan></text>
+<text x="16.0" y="72.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8">&gt; main.go         </tspan><tspan fill="#c8c4b8">││</tspan><tspan fill="#c8c4b8">package main                          </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="88.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8">  go.mod          </tspan><tspan fill="#c8c4b8">││</tspan><tspan fill="#c8c4b8">                                      </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="104.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8">  go.sum          </tspan><tspan fill="#c8c4b8">││</tspan><tspan fill="#c8c4b8">import (                              </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="120.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8">  README.md       </tspan><tspan fill="#c8c4b8">││</tspan><tspan fill="#c8c4b8">    &#34;fmt&#34;                             </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="136.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8">  config.toml     </tspan><tspan fill="#c8c4b8">││</tspan><tspan fill="#c8c4b8">)                                     </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="152.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8">  Makefile        </tspan><tspan fill="#c8c4b8">││</tspan><tspan fill="#c8c4b8">                                      </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="168.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8">                  </tspan><tspan fill="#c8c4b8">││</tspan><tspan fill="#c8c4b8">func main() {                         </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="184.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8">                  </tspan><tspan fill="#c8c4b8">││</tspan><tspan fill="#c8c4b8">    fmt.Println(&#34;hello&#34;)              </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="200.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">╰──────────────────╯╰──────────────────────────────────────╯</tspan></text>
+</svg>

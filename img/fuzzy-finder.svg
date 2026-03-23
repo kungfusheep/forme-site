@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 453.5 248.0" font-size="14">
+<defs><style>
+text { font-family: 'Menlo', 'Consolas', 'SF Mono', 'JetBrains Mono', 'DejaVu Sans Mono', 'Liberation Mono', monospace; }
+</style></defs>
+<rect width="453.5" height="248.0" rx="10" fill="#131311"/>
+<rect width="453.5" height="40.0" rx="10" fill="#1a1a18"/>
+<rect y="30" width="453.5" height="10" fill="#1a1a18"/>
+<circle cx="20" cy="20" r="6" fill="#c44040"/>
+<circle cx="38" cy="20" r="6" fill="#c4a040"/>
+<circle cx="56" cy="20" r="6" fill="#6a9a50"/>
+<line x1="0" y1="40.0" x2="453.5" y2="40.0" stroke="#2a2a28" stroke-width="1"/>
+<text x="16.0" y="56.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">╭─</tspan><tspan fill="#c8c4b8"> packages </tspan><tspan fill="#c8c4b8">─────────────────────────────────────╮</tspan></text>
+<text x="16.0" y="72.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8" font-weight="bold">&gt; </tspan><tspan fill="#c8c4b8">                                              </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="88.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8" opacity="0.5">  7/7</tspan><tspan fill="#c8c4b8">                                           </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="104.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8">&gt; </tspan><tspan fill="#c8c4b8" font-weight="bold">glyph</tspan><tspan fill="#c8c4b8">  </tspan><tspan fill="#444444">terminal UI framework</tspan><tspan fill="#c8c4b8">                  </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="120.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8">  </tspan><tspan fill="#c8c4b8" font-weight="bold">cobra</tspan><tspan fill="#c8c4b8">  </tspan><tspan fill="#444444">CLI command framework</tspan><tspan fill="#c8c4b8">                  </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="136.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8">  </tspan><tspan fill="#c8c4b8" font-weight="bold">viper</tspan><tspan fill="#c8c4b8">  </tspan><tspan fill="#444444">configuration management</tspan><tspan fill="#c8c4b8">               </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="152.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8">  </tspan><tspan fill="#c8c4b8" font-weight="bold">zap</tspan><tspan fill="#c8c4b8">  </tspan><tspan fill="#444444">structured logging</tspan><tspan fill="#c8c4b8">                       </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="168.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8">  </tspan><tspan fill="#c8c4b8" font-weight="bold">chi</tspan><tspan fill="#c8c4b8">  </tspan><tspan fill="#444444">HTTP router</tspan><tspan fill="#c8c4b8">                              </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="184.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8">  </tspan><tspan fill="#c8c4b8" font-weight="bold">sqlc</tspan><tspan fill="#c8c4b8">  </tspan><tspan fill="#444444">type-safe SQL</tspan><tspan fill="#c8c4b8">                           </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="200.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8">  </tspan><tspan fill="#c8c4b8" font-weight="bold">ent</tspan><tspan fill="#c8c4b8">  </tspan><tspan fill="#444444">entity framework</tspan><tspan fill="#c8c4b8">                         </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="216.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">╰────────────────────────────────────────────────╯</tspan></text>
+</svg>

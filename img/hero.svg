@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 453.5 248.0" font-size="14">
+<defs><style>
+text { font-family: 'Menlo', 'Consolas', 'SF Mono', 'JetBrains Mono', 'DejaVu Sans Mono', 'Liberation Mono', monospace; }
+</style></defs>
+<rect width="453.5" height="248.0" rx="10" fill="#131311"/>
+<rect width="453.5" height="40.0" rx="10" fill="#1a1a18"/>
+<rect y="30" width="453.5" height="10" fill="#1a1a18"/>
+<circle cx="20" cy="20" r="6" fill="#c44040"/>
+<circle cx="38" cy="20" r="6" fill="#c4a040"/>
+<circle cx="56" cy="20" r="6" fill="#6a9a50"/>
+<line x1="0" y1="40.0" x2="453.5" y2="40.0" stroke="#2a2a28" stroke-width="1"/>
+<text x="16.0" y="56.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">╭─</tspan><tspan fill="#c8c4b8"> glyph </tspan><tspan fill="#c8c4b8">────────────────────────────────────────╮</tspan></text>
+<text x="16.0" y="72.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│╔═</tspan><tspan fill="#c8c4b8"> system </tspan><tspan fill="#c8c4b8">═════╗</tspan><tspan fill="#c8c4b8"> </tspan><tspan fill="#c8c4b8" font-weight="bold">metrics</tspan><tspan fill="#c8c4b8">                        </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="88.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│║</tspan><tspan fill="#c8c4b8">● ONLINE      </tspan><tspan fill="#c8c4b8">║</tspan><tspan fill="#c8c4b8"> </tspan><tspan fill="#c8c4b8">───────────────────────────────│</tspan></text>
+<text x="16.0" y="104.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│║──────────────║</tspan><tspan fill="#c8c4b8"> requests..................1,247</tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="120.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│║</tspan><tspan fill="#c8c4b8">CPU.........72</tspan><tspan fill="#c8c4b8">║</tspan><tspan fill="#c8c4b8"> latency....................42ms</tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="136.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│║</tspan><tspan fill="#c8c4b8">MEM.........48</tspan><tspan fill="#c8c4b8">║</tspan><tspan fill="#c8c4b8"> errors.....................0.1%</tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="152.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│║</tspan><tspan fill="#c8c4b8">    </tspan><tspan fill="#c8c4b8">▂▄▁▇▃▆▂▄█▃║</tspan><tspan fill="#c8c4b8"> uptime....................99.9%</tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="168.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│╚══════════════╝</tspan><tspan fill="#c8c4b8">                                </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="184.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│────────────────────────────────────────────────│</tspan></text>
+<text x="16.0" y="200.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">│</tspan><tspan fill="#c8c4b8">all systems operational                         </tspan><tspan fill="#c8c4b8">│</tspan></text>
+<text x="16.0" y="216.0" dominant-baseline="text-before-edge" xml:space="preserve"><tspan fill="#c8c4b8">╰────────────────────────────────────────────────╯</tspan></text>
+</svg>
