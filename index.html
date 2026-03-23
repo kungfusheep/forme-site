@@ -1028,12 +1028,11 @@ func main() {
               for processes. AutoTable infers columns from struct fields.
             </div>
           </div>
-          <div class="code code-raw">VBox(
+          <div class="code code-raw">VBox.Gap(1)(
 	HBox.Gap(4)(
 		Text("CPU"), Progress(&cpuPct).Width(30),
 		Text("Mem"), Progress(&memPct).Width(30),
 	),
-	SpaceH(1),
 	AutoTable(&procs).Sortable().Scrollable(20).BindVimNav(),
 )</div>
           <div class="feature-preview">

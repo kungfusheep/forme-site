@@ -108,12 +108,11 @@ func examples() map[string]example {
 
 		m["process-monitor"] = example{
 			w: 60, h: 10,
-			view: VBox(
+			view: VBox.Gap(1)(
 				HBox.Gap(4)(
 					Text("CPU"), Progress(&cpuPct).Width(30),
 					Text("Mem"), Progress(&memPct).Width(30),
 				),
-				SpaceH(1),
 				AutoTable(&procs).Sortable().Scrollable(20).BindVimNav(),
 			),
 		}
