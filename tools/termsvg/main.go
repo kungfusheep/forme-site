@@ -113,6 +113,7 @@ func examples() map[string]example {
 					Text("CPU"), Progress(&cpuPct).Width(30),
 					Text("Mem"), Progress(&memPct).Width(30),
 				),
+				SpaceH(1),
 				AutoTable(&procs).Sortable().Scrollable(20).BindVimNav(),
 			),
 		}
