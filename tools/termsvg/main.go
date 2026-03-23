@@ -17,6 +17,19 @@ type example struct {
 func examples() map[string]example {
 	m := map[string]example{}
 
+	// first-app
+	{
+		count := 7
+
+		m["first-app"] = example{
+			w: 30, h: 3,
+			view: VBox(
+				Text(&count),
+				Text("↑/↓ to count, enter to quit"),
+			),
+		}
+	}
+
 	// hero
 	{
 		cpu, mem := 72, 48
@@ -327,7 +340,7 @@ func renderTerm(buf *Buffer, w, h int) termData {
 	}
 
 	trimH := lastRow + 1
-	td := termData{Width: w, Height: trimH}
+	td := termData{Width: w, Height: h}
 	for y := 0; y < trimH; y++ {
 		td.Lines = append(td.Lines, buf.GetLineStyled(y))
 	}
