@@ -1577,7 +1577,7 @@ document.querySelectorAll('.code-raw').forEach(el => {
     breathingWeight: false,    // line width pulses along the wave
     dash: false,               // dashed waves with animated offset
     echo: false,               // faint offset copies trailing each wave
-    glyphs: false,             // box-drawing characters scattered along waves
+    pulse: false,              // travelling brightness pulse along each wave
   }
 
   // ── gradient colours (used by gradientStroke and fillBetween) ──
@@ -1599,7 +1599,7 @@ document.querySelectorAll('.code-raw').forEach(el => {
     s: 'breathingWeight',
     d: 'dash',
     f: 'echo',
-    g: 'glyphs',
+    g: 'pulse',
   }
   document.addEventListener('keydown', (e) => {
     const feat = keyMap[e.key]
@@ -1719,33 +1719,29 @@ document.querySelectorAll('.code-raw').forEach(el => {
         ctx.setLineDash([])
       }
 
-      // ── glyphs: box-drawing characters scattered along wave paths ──
-      if (features.glyphs) {
-        const chars = '╭╮╰╯│─┌┐└┘├┤┬┴═║▁▂▃▄▅▆▇█░▒▓●◆◇'.split('')
-        const spacing = Math.round(120 * dpr)
-        const fontSize = 10 * dpr
-        ctx.font = fontSize + 'px monospace'
-        ctx.textAlign = 'center'
-        ctx.textBaseline = 'middle'
+      // ── pulse: travelling brightness spot along each wave ──
+      if (features.pulse) {
+        const pulseWidth = 0.08
+        const segLen = 4
         for (let i = 0; i < waves.length; i++) {
           const pts = points[i]
-          for (let j = 0; j < pts.length; j += spacing / 2) {
-            // deterministic pseudo-random from position + wave index
-            const seed = (j * 7 + i * 13 + n * 31) % chars.length
-            const ch = chars[seed]
-            const alpha = 0.06 + 0.03 * Math.sin(t * 0.0005 + j * 0.01 + i)
+          const pulsePos = ((t * 0.0001 * (1 + i * 0.2)) % 8.0) - 0.2
+          for (let j = 0; j < pts.length - 1; j += segLen) {
+            const progress = j / pts.length
+            const dist = Math.abs(progress - pulsePos)
+            const intensity = Math.max(0, 1 - dist / pulseWidth)
+            const alpha = intensity * (isHero ? 0.25 : 0.2)
+            if (alpha < 0.005) continue
             const color = isHero
-              ? `rgba(19,19,17,${alpha.toFixed(3)})`
-              : `rgba(140,170,150,${alpha.toFixed(3)})`
-            ctx.fillStyle = color
-            // slight rotation based on wave slope
-            const next = Math.min(j + 1, pts.length - 1)
-            const angle = Math.atan2(pts[next].y - pts[j].y, pts[next].x - pts[j].x) * 0.3
-            ctx.save()
-            ctx.translate(pts[j].x, pts[j].y)
-            ctx.rotate(angle)
-            ctx.fillText(ch, 0, 0)
-            ctx.restore()
+              ? `rgba(196,64,64,${alpha.toFixed(3)})`
+              : `rgba(140,180,150,${alpha.toFixed(3)})`
+            ctx.beginPath()
+            ctx.strokeStyle = color
+            ctx.lineWidth = (1 + intensity * 2) * dpr
+            const end = Math.min(j + segLen + 1, pts.length)
+            ctx.moveTo(pts[j].x, pts[j].y)
+            for (let k = j + 1; k < end; k++) ctx.lineTo(pts[k].x, pts[k].y)
+            ctx.stroke()
           }
         }
       }
