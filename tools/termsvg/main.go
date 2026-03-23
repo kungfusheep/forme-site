@@ -97,10 +97,10 @@ func examples() map[string]example {
 			w: 60, h: 10,
 			view: VBox(
 				HBox.Gap(4)(
-					Text("CPU"), Progress(&cpuPct).Width(20),
-					Text("Mem"), Progress(&memPct).Width(20),
+					Text("CPU"), Progress(&cpuPct).Width(30),
+					Text("Mem"), Progress(&memPct).Width(30),
 				),
-				AutoTable(&procs).Scrollable(20),
+				AutoTable(&procs).Sortable().Scrollable(20).BindVimNav(),
 			),
 		}
 	}
@@ -152,7 +152,7 @@ func examples() map[string]example {
 						Text(&p.Name).Bold(),
 						Text(&p.Desc).FG(BrightBlack),
 					)
-				}).MaxVisible(8).Border(BorderRounded).Title("packages"),
+				}).MaxVisible(15).Border(BorderRounded).Title("packages"),
 		}
 	}
 

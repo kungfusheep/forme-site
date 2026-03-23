@@ -1070,6 +1070,7 @@ func main() {
             </div>
           </div>
           <div class="code code-raw">FilterList(&packages, func(p *Pkg) string { return p.Name }).
+	Placeholder("search packages...").
 	Render(func(p *Pkg) any {
 		return HBox.Gap(2)(
 			Text(&p.Name).Bold(),
