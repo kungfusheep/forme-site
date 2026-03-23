@@ -13,18 +13,19 @@
   const headers = document.querySelectorAll('.zone-dark .section-head, .concept .section-head')
   if (!headers.length) return
 
+  // inject a style rule to allow overflow on narrow screens
+  const style = document.createElement('style')
+  style.textContent = '@media(max-width:959px){.concept,.page,.zone-inner,.zone-dark{overflow-x:visible!important}}'
+  document.head.appendChild(style)
+
   for (const header of headers) {
     header.style.position = 'relative'
     header.style.overflow = 'visible'
-    // use a wrapper div to hold position in the flow, canvas is fixed to viewport
-    const wrapper = document.createElement('div')
-    wrapper.style.cssText = 'position:absolute;top:50%;left:0;width:0;height:0;overflow:visible'
     const canvas = document.createElement('canvas')
     canvas.className = 'bg-waves'
-    canvas.style.cssText = 'position:fixed;left:0;height:120px;pointer-events:none;z-index:0;opacity:0;transition:opacity 0.8s'
-    wrapper.appendChild(canvas)
-    header.appendChild(wrapper)
-    instances.push({ canvas, ctx: canvas.getContext('2d'), waves: darkWaves, h: 120, visible: false, header, wrapper })
+    canvas.style.cssText = 'position:absolute;top:50%;transform:translateY(-50%);height:120px;pointer-events:none;z-index:0;opacity:0;transition:opacity 0.8s'
+    header.appendChild(canvas)
+    instances.push({ canvas, ctx: canvas.getContext('2d'), waves: darkWaves, h: 120, visible: false, header })
   }
 
   const observer = new IntersectionObserver((entries) => {
@@ -39,28 +40,38 @@
 
   for (const inst of instances) observer.observe(inst.canvas)
 
+  const WIDE = 960
+  const featherMask = 'linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)'
+
   function resize() {
     dpr = window.devicePixelRatio || 1
+    const wide = window.innerWidth >= WIDE
     for (const inst of instances) {
-      const vw = window.innerWidth
-      inst.canvas.width = vw * dpr
-      inst.canvas.height = inst.h * dpr
-      inst.canvas.style.width = vw + 'px'
+      if (wide) {
+        // parent-width, feathered
+        const w = inst.header.offsetWidth
+        inst.canvas.width = w * dpr
+        inst.canvas.height = inst.h * dpr
+        inst.canvas.style.width = '100%'
+        inst.canvas.style.left = '0'
+        inst.canvas.style.webkitMaskImage = featherMask
+        inst.canvas.style.maskImage = featherMask
+      } else {
+        // full viewport, no feathering
+        const vw = window.innerWidth
+        inst.canvas.width = vw * dpr
+        inst.canvas.height = inst.h * dpr
+        inst.canvas.style.width = vw + 'px'
+        // offset left to reach viewport edge
+        const headerRect = inst.header.getBoundingClientRect()
+        inst.canvas.style.left = -headerRect.left + 'px'
+        inst.canvas.style.webkitMaskImage = 'none'
+        inst.canvas.style.maskImage = 'none'
+      }
     }
   }
-
-  function updatePositions() {
-    for (const inst of instances) {
-      const rect = inst.header.getBoundingClientRect()
-      const midY = rect.top + rect.height / 2
-      inst.canvas.style.top = (midY - inst.h / 2) + 'px'
-    }
-  }
-
   resize()
-  updatePositions()
-  window.addEventListener('resize', () => { resize(); updatePositions() })
-  window.addEventListener('scroll', updatePositions, { passive: true })
+  window.addEventListener('resize', resize)
 
   const features = {
     ripple: false,
