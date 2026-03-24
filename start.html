@@ -85,7 +85,7 @@
     display: grid;
     grid-template-columns: 3fr 2fr;
     gap: var(--s5);
-    align-items: center;
+    align-items: start;
     margin: var(--s3) 0;
   }
   .show-grid .code { margin: 0; }
@@ -439,8 +439,11 @@
   <a href="#install" class="sidenav-link">Install</a>
   <a href="#first-app" class="sidenav-link">First App</a>
   <a href="#layout" class="sidenav-link">Layout</a>
+  <a href="#control-flow" class="sidenav-link">Control Flow</a>
   <a href="#lists" class="sidenav-link">Lists</a>
   <a href="#keyboard" class="sidenav-link">Keyboard</a>
+  <a href="#forms" class="sidenav-link">Forms</a>
+  <a href="#tables" class="sidenav-link">Tables</a>
   <a href="#styling" class="sidenav-link">Styling</a>
   <a href="#next" class="sidenav-link">Next Steps</a>
 </nav>
@@ -449,8 +452,11 @@
   <a href="#install" class="topnav-link">Install</a>
   <a href="#first-app" class="topnav-link">First App</a>
   <a href="#layout" class="topnav-link">Layout</a>
+  <a href="#control-flow" class="topnav-link">Control Flow</a>
   <a href="#lists" class="topnav-link">Lists</a>
   <a href="#keyboard" class="topnav-link">Keyboard</a>
+  <a href="#forms" class="topnav-link">Forms</a>
+  <a href="#tables" class="topnav-link">Tables</a>
   <a href="#styling" class="topnav-link">Styling</a>
   <a href="#next" class="topnav-link">Next Steps</a>
 </nav>
@@ -481,7 +487,7 @@ $ go get github.com/kungfusheep/glyph@latest</div>
   <div class="concept-prose">
     The dot import is optional, but used throughout these examples.
     It brings all glyph identifiers into scope. Write <code>VBox()</code> instead of <code>glyph.VBox()</code>.
-    A namespaced import works equally well; the dot form just keeps the tode shorter.
+    A namespaced import works equally well; the dot form keeps examples shorter.
   </div>
 
 <div class="code code-raw">package main
@@ -530,7 +536,7 @@ func main() {
 	println("You selected", count)
 }</div>
   <div class="show-text">
-    <canvas data-term="img/first-app.json"></canvas>
+    <canvas data-termdata="{&quot;w&quot;:30,&quot;h&quot;:3,&quot;lines&quot;:[&quot;7                             &quot;,&quot;↑/↓ to count, enter to quit   &quot;]}"></canvas>
   </div>
 </div>
 
@@ -580,7 +586,7 @@ func main() {
 	),
 )</div>
   <div class="show-text">
-    <canvas data-term="img/layout-panels.json" style="max-width:318px"></canvas>
+    <canvas data-termdata="{&quot;w&quot;:50,&quot;h&quot;:5,&quot;lines&quot;:[&quot;╭─ left ───────╮╭─ right ────────────────────────╮&quot;,&quot;│panel one     ││panel two takes 2/3 width       │&quot;,&quot;│              ││                                │&quot;,&quot;│              ││                                │&quot;,&quot;╰──────────────╯╰────────────────────────────────╯&quot;]}" style="max-width:318px"></canvas>
   </div>
 </div>
 
@@ -607,7 +613,7 @@ func main() {
 	Text("q: quit").FG(BrightBlack),
 )</div>
   <div class="show-text">
-    <canvas data-term="img/layout-statusbar.json" style="max-width:318px"></canvas>
+    <canvas data-termdata="{&quot;w&quot;:40,&quot;h&quot;:2,&quot;lines&quot;:[&quot;\u001b[0;32;49mready\u001b[0;39;49m  \u001b[0;1;39;49m3 tasks\u001b[0;39;49m                   \u001b[0;90;49mq: quit\u001b[0m&quot;]}" style="max-width:318px"></canvas>
   </div>
 </div>
 
@@ -642,18 +648,110 @@ grid(
 	VBox.Border(BorderRounded)(Text("zeta")),
 )</div>
   <div class="show-text">
-    <canvas data-term="img/layout-arrange.json" style="max-width:318px"></canvas>
+    <canvas data-termdata="{&quot;w&quot;:42,&quot;h&quot;:7,&quot;lines&quot;:[&quot;╭────────────╮╭────────────╮╭────────────╮&quot;,&quot;│alpha       ││beta        ││gamma       │&quot;,&quot;╰────────────╯╰────────────╯╰────────────╯&quot;,&quot;╭────────────╮╭────────────╮╭────────────╮&quot;,&quot;│delta       ││epsilon     ││zeta        │&quot;,&quot;╰────────────╯╰────────────╯╰────────────╯&quot;]}" style="max-width:318px"></canvas>
   </div>
 </div>
 
 </div>
 
 <!-- ============================================================
-     4. LISTS
+     4. CONTROL FLOW
+     ============================================================ -->
+<div class="concept" id="control-flow">
+  <div class="section-head">
+    <div class="section-num">04</div>
+    <div class="section-meta">
+      <div class="section-label">Logic</div>
+      <div class="section-title">Control Flow</div>
+    </div>
+  </div>
+
+  <div class="concept-sub">Conditional</div>
+  <div class="concept-prose">
+    <strong><code>If</code></strong> takes a pointer to a bool. glyph dereferences it each frame and picks the matching branch.
+  </div>
+
+<div class="show-grid">
+  <div class="code code-raw" style="margin:0">online := true
+
+If(&online).Then(
+	Text("● connected").FG(Green),
+).Else(
+	Text("● offline").FG(Red),
+)</div>
+  <div class="show-text">
+    <canvas data-termdata="{&quot;w&quot;:30,&quot;h&quot;:5,&quot;lines&quot;:[&quot;╭─ status ───────────────────╮&quot;,&quot;│\u001b[0;32;49m● connected\u001b[0;39;49m                 │&quot;,&quot;│\u001b[0;33;49mmode: edit\u001b[0;39;49m                  │&quot;,&quot;│                            │&quot;,&quot;╰────────────────────────────╯&quot;]}" style="max-width:318px"></canvas>
+  </div>
+</div>
+
+  <div class="concept-prose">
+    <strong><code>.Eq()</code></strong> matches a specific value. Works with any comparable type.
+    <strong><code>IfOrd</code></strong> adds <code>.Gt()</code>, <code>.Lt()</code>, <code>.Gte()</code>, <code>.Lte()</code> for ordered types.
+  </div>
+
+<div class="code code-raw">If(&status).Eq("active").
+	Then(Text("online").FG(Green)).
+	Else(Text("offline").FG(Red))
+
+IfOrd(&cpu).Gt(80).
+	Then(Text("CRIT").FG(Red).Bold()).
+	Else(IfOrd(&cpu).Gt(50).
+		Then(Text("WARN").FG(Yellow)).
+		Else(Text("OK").FG(Green)),
+	)</div>
+
+  <div class="concept-sub">Inline Values</div>
+  <div class="concept-prose">
+    <strong><code>If</code></strong> works anywhere a value is expected, not only as a child in a container.
+    Use it to drive layout properties, dimensions, and styling at render time.
+  </div>
+
+<div class="code code-raw">// dynamic height based on state
+VBox.Height(
+	If(&expanded).Then(30).Else(10),
+)(
+	Text("content"),
+)
+
+// dynamic width on a progress bar
+Progress(&val).Width(
+	If(&detailed).Then(40).Else(20),
+)</div>
+
+  <div class="concept-sub">Matching</div>
+  <div class="concept-prose">
+    <strong><code>Switch</code></strong> branches on a value with named cases. <code>Default</code> catches unmatched values.
+  </div>
+
+<div class="code code-raw">Switch(&mode).
+	Case("edit", Text("editing")).
+	Case("preview", Text("previewing")).
+	Default(Text("idle"))</div>
+
+  <div class="concept-sub">Iteration</div>
+  <div class="concept-prose">
+    <strong><code>ForEach</code></strong> iterates a slice. The callback receives a pointer to each item.
+    Conditions work per-item. Style, show, or hide based on each element's state.
+  </div>
+
+<div class="code code-raw">ForEach(&items, func(item *Todo) any {
+	return HBox.Gap(2)(
+		Checkbox(&item.Done, ""),
+		If(&item.Done).Then(
+			Text(&item.Title).Dim(),
+		).Else(
+			Text(&item.Title),
+		),
+	)
+})</div>
+</div>
+
+<!-- ============================================================
+     5. LISTS
      ============================================================ -->
 <div class="concept" id="lists">
   <div class="section-head">
-    <div class="section-num">04</div>
+    <div class="section-num">05</div>
     <div class="section-meta">
       <div class="section-label">Data</div>
       <div class="section-title">Lists</div>
@@ -690,7 +788,7 @@ func main() {
 	fmt.Println("opening", choice)
 }</div>
   <div class="show-text">
-    <canvas data-term="img/file-picker-start.json" style="max-width:318px"></canvas>
+    <canvas data-termdata="{&quot;w&quot;:24,&quot;h&quot;:7,&quot;lines&quot;:[&quot;╭─ open ───────────────╮&quot;,&quot;│\u003e main.go             │&quot;,&quot;│  go.mod              │&quot;,&quot;│  README.md           │&quot;,&quot;│  config.toml         │&quot;,&quot;│  Makefile            │&quot;,&quot;╰──────────────────────╯&quot;]}" style="max-width:318px"></canvas>
     <div class="show-aside">
       <strong><code>.BindVimNav()</code></strong> adds j/k, <code>&lt;C-d&gt;</code>/<code>&lt;C-u&gt;</code> to page, g/G for start/end.
       <strong><code>FilterList</code></strong> wraps the same API with a built-in fuzzy search input.
@@ -700,11 +798,11 @@ func main() {
 </div>
 
 <!-- ============================================================
-     5. KEYBOARD
+     6. KEYBOARD
      ============================================================ -->
 <div class="concept" id="keyboard">
   <div class="section-head">
-    <div class="section-num">05</div>
+    <div class="section-num">06</div>
     <div class="section-meta">
       <div class="section-label">Interaction</div>
       <div class="section-title">Keyboard</div>
@@ -749,11 +847,103 @@ app.Handle("&lt;C-s&gt;", func() { /* save */ })</div>
 </div>
 
 <!-- ============================================================
-     6. STYLING
+     7. FORMS
+     ============================================================ -->
+<div class="concept" id="forms">
+  <div class="section-head">
+    <div class="section-num">07</div>
+    <div class="section-meta">
+      <div class="section-label">Input</div>
+      <div class="section-title">Forms</div>
+    </div>
+  </div>
+
+  <div class="concept-prose">
+    <strong><code>Form</code></strong> auto-aligns labels, manages focus between fields, and wires validation.
+    Each <code>Field</code> pairs a label with an input component.
+  </div>
+
+<div class="show-grid">
+  <div class="code code-raw" style="margin:0">name := "Pete"
+email := "pete@example.com"
+role := 0
+agree := true
+
+Form.LabelBold().OnSubmit(register)(
+	Field("Name", Input(&name).
+		Validate(VRequired, VOnBlur)),
+	Field("Email", Input(&email).
+		Validate(VEmail, VOnBlur)),
+	Field("Role", Radio(&role,
+		"Admin", "User", "Guest")),
+	Field("Terms", Checkbox(&agree,
+		"I accept")),
+)</div>
+  <div class="show-text">
+    <canvas data-termdata="{&quot;w&quot;:36,&quot;h&quot;:9,&quot;lines&quot;:[&quot;╭─ register ───────────────────────╮&quot;,&quot;│▸ \u001b[0;1;39;49mName:\u001b[0;39;49m \u001b[0;7;39;49mP\u001b[0;39;49mete                      │&quot;,&quot;│ \u001b[0;1;39;49mEmail:\u001b[0;39;49m pete@example.com          │&quot;,&quot;│  \u001b[0;1;39;49mRole:\u001b[0;39;49m ◉ Admin                   │&quot;,&quot;│        ○ User                    │&quot;,&quot;│        ○ Guest                   │&quot;,&quot;│ \u001b[0;1;39;49mTerms:\u001b[0;39;49m ☑ I accept                │&quot;,&quot;│                                  │&quot;,&quot;╰──────────────────────────────────╯&quot;]}" style="max-width:318px"></canvas>
+  </div>
+</div>
+
+  <div class="concept-sub">Validation</div>
+  <div class="concept-prose">
+    Built-in validators: <code>VRequired</code>, <code>VEmail</code>, <code>VMinLen</code>, <code>VMaxLen</code>, <code>VMatch</code>, <code>VTrue</code>.
+    Trigger on <code>VOnBlur</code> (field loses focus) or <code>VOnSubmit</code> (form submitted).
+    Errors surface inline next to the field.
+  </div>
+</div>
+
+<!-- ============================================================
+     8. TABLES
+     ============================================================ -->
+<div class="concept" id="tables">
+  <div class="section-head">
+    <div class="section-num">08</div>
+    <div class="section-meta">
+      <div class="section-label">Data</div>
+      <div class="section-title">Tables</div>
+    </div>
+  </div>
+
+  <div class="concept-prose">
+    <strong><code>AutoTable</code></strong> takes a pointer to a slice of structs. Columns are inferred from field names.
+  </div>
+
+<div class="show-grid">
+  <div class="code code-raw" style="margin:0">type Service struct {
+	Name   string
+	Status string
+	CPU    string
+}
+
+services := []Service{
+	{"api", "running", "12%"},
+	{"worker", "running", "8%"},
+	{"cache", "stopped", "0%"},
+	{"db", "running", "23%"},
+}
+
+AutoTable(&services).
+	Sortable().
+	Scrollable(10).
+	BindVimNav()</div>
+  <div class="show-text">
+    <canvas data-termdata="{&quot;w&quot;:40,&quot;h&quot;:7,&quot;lines&quot;:[&quot;\u001b[0;1;39;49mName          \u001b[0;39;49m \u001b[0;1;39;49mStatus          \u001b[0;39;49m \u001b[0;1;39;49mCPU    \u001b[0;39;49m &quot;,&quot;api            running          12%     &quot;,&quot;worker         running          8%      &quot;,&quot;cache          stopped          0%      &quot;,&quot;db             running          23%     &quot;]}" style="max-width:318px"></canvas>
+  </div>
+</div>
+
+  <div class="concept-prose">
+    <strong><code>.Sortable()</code></strong> adds column-click sorting.
+    <strong><code>.Scrollable(n)</code></strong> sets the visible row count with a scrollbar.
+    Column formatting is automatic; override with <code>.Format()</code> for custom display.
+  </div>
+</div>
+
+<!-- ============================================================
+     9. STYLING
      ============================================================ -->
 <div class="concept" id="styling">
   <div class="section-head">
-    <div class="section-num">06</div>
+    <div class="section-num">09</div>
     <div class="section-meta">
       <div class="section-label">Appearance</div>
       <div class="section-title">Styling</div>
@@ -771,7 +961,7 @@ Text("muted").FG(BrightBlack).Dim()
 Text("success").FG(Green)
 Text("warning").FG(Yellow).Bold()</div>
   <div class="show-text">
-    <canvas data-term="img/styled-text.json" style="max-width:318px"></canvas>
+    <canvas data-termdata="{&quot;w&quot;:30,&quot;h&quot;:4,&quot;lines&quot;:[&quot;\u001b[0;1;31;49merror\u001b[0;39;49m                         &quot;,&quot;\u001b[0;2;90;49mmuted\u001b[0;39;49m                         &quot;,&quot;\u001b[0;32;49msuccess\u001b[0;39;49m                       &quot;,&quot;\u001b[0;1;33;49mwarning\u001b[0;39;49m                       &quot;]}" style="max-width:318px"></canvas>
   </div>
 </div>
 
@@ -810,7 +1000,7 @@ VBox.CascadeStyle(&theme.Base).Border(BorderRounded).BorderFG(theme.Border.FG)(
 	Text("error!").Style(theme.Error),
 )</div>
   <div class="show-text">
-    <canvas data-term="img/theme-demo.json" style="max-width:318px"></canvas>
+    <canvas data-termdata="{&quot;w&quot;:30,&quot;h&quot;:7,&quot;lines&quot;:[&quot;\u001b[0;90;49m╭────────────────────────────╮\u001b[0m&quot;,&quot;\u001b[0;90;49m│\u001b[0;37;49mnormal text\u001b[0;39;49m                 \u001b[0;90;49m│\u001b[0m&quot;,&quot;\u001b[0;90;49m│muted\u001b[0;39;49m                       \u001b[0;90;49m│\u001b[0m&quot;,&quot;\u001b[0;90;49m│\u001b[0;96;49maccent\u001b[0;39;49m                      \u001b[0;90;49m│\u001b[0m&quot;,&quot;\u001b[0;90;49m│\u001b[0;91;49merror!\u001b[0;39;49m                      \u001b[0;90;49m│\u001b[0m&quot;,&quot;\u001b[0;90;49m│\u001b[0;39;49m                            \u001b[0;90;49m│\u001b[0m&quot;,&quot;\u001b[0;90;49m╰────────────────────────────╯\u001b[0m&quot;]}" style="max-width:318px"></canvas>
   </div>
 </div>
 
@@ -837,7 +1027,7 @@ VBox.CascadeStyle(&theme.Base).Border(BorderRounded).BorderFG(theme.Border.FG)(
   <div class="concept-sub">Custom Rendering</div>
   <div class="concept-prose">
     <strong><code>Widget</code></strong> is the escape hatch for fully custom rendering.
-    Provide a measure function and a render function — glyph handles the rest.
+    Provide a measure function and a render function. glyph calls them during layout and draw.
   </div>
 
 <div class="show-grid">
@@ -867,23 +1057,46 @@ VBox.CascadeStyle(&theme.Base).Border(BorderRounded).BorderFG(theme.Border.FG)(
 	),
 )</div>
   <div class="show-text">
-    <canvas data-term="img/layout-compose.json" style="max-width:318px"></canvas>
+    <canvas data-termdata="{&quot;w&quot;:50,&quot;h&quot;:10,&quot;lines&quot;:[&quot;╭─ dashboard ────────────────────────────────────╮&quot;,&quot;│\u001b[0;1;39;49mmetrics\u001b[0;39;49m                                     \u001b[0;32;49mlive\u001b[0;39;49m│&quot;,&quot;│────────────────────────────────────────────────│&quot;,&quot;│╭─ chart ──────────────╮╭─ status ─────────────╮│&quot;,&quot;││    \u001b[0;32;49m█\u001b[0;39;49m     \u001b[0;32;49m█\u001b[0;39;49m           ││uptime...........99.9%││&quot;,&quot;││\u001b[0;32;49m█\u001b[0;39;49m   \u001b[0;32;49m█\u001b[0;39;49m   \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m     \u001b[0;32;49m█\u001b[0;39;49m     ││errors...............0││&quot;,&quot;││\u001b[0;32;49m█\u001b[0;39;49m   \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m   \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m   ││latency...........12ms││&quot;,&quot;││\u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m   ││                      ││&quot;,&quot;│╰──────────────────────╯╰──────────────────────╯│&quot;,&quot;╰────────────────────────────────────────────────╯&quot;]}" style="max-width:318px"></canvas>
   </div>
 </div>
 </div>
 
 <!-- ============================================================
-     7. NEXT STEPS
+     10. NEXT STEPS
      ============================================================ -->
 <div class="concept" id="next">
   <div class="section-head">
-    <div class="section-num">07</div>
+    <div class="section-num">10</div>
     <div class="section-meta">
       <div class="section-label">Continue</div>
       <div class="section-title">Next Steps</div>
     </div>
   </div>
 
+  <div class="concept-sub">Animation</div>
+  <div class="concept-prose">
+    Any property that accepts a value also accepts <strong><code>Animate</code></strong>.
+    glyph interpolates toward the target over time using easing functions.
+  </div>
+
+<div class="code code-raw">smooth := Animate.Duration(200 * time.Millisecond).Ease(EaseOutCubic)
+
+VBox.Height(smooth(&targetHeight))(
+	Text("content"),
+)
+
+// combine with conditions
+Sparkline(data).Height(
+	smooth(If(&expanded).Then(26).Else(1)),
+)</div>
+
+  <div class="concept-prose">
+    20+ easing functions built in: <code>EaseOutCubic</code>, <code>EaseInOutQuad</code>,
+    <code>EaseOutBounce</code>, <code>EaseInBack</code>, and more. Define a style once, reuse it across properties.
+  </div>
+
+  <div class="concept-sub">Keep going</div>
   <div class="concept-prose">
     <strong><a href="/concepts.html" style="color: var(--dk);">Concepts</a></strong>
     covers the build/execute cycle, the layout engine, viewport scrolling,

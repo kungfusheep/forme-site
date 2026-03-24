@@ -33,7 +33,11 @@
       const inst = instances.find(i => i.canvas === entry.target)
       if (inst) {
         inst.visible = entry.isIntersecting
-        inst.canvas.style.opacity = entry.isIntersecting ? '1' : '0'
+        if (stable) {
+          inst.canvas.style.opacity = entry.isIntersecting ? '1' : '0'
+        } else if (!entry.isIntersecting) {
+          inst.canvas.style.opacity = '0'
+        }
       }
     }
   }, { threshold: 0.1 })
@@ -108,13 +112,38 @@
     }
   })
 
-  const STEP = 4
-  let lastFrame = 0
+  const STEP = 2
+  let stable = false
+
+  let warmupCount = 0
+  const WARMUP_FRAMES = 20
+
+  function warmup(t) {
+    // draw real frames but keep canvases invisible — lets the browser JIT + allocate GPU textures
+    for (let n = 0; n < instances.length; n++) {
+      const inst = instances[n]
+      if (!inst.visible) continue
+      const { ctx, canvas } = inst
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+    }
+    warmupCount++
+    if (warmupCount < WARMUP_FRAMES) {
+      requestAnimationFrame(warmup)
+    } else {
+      stable = true
+      for (const inst of instances) {
+        if (inst.visible) inst.canvas.style.opacity = '1'
+      }
+      requestAnimationFrame(draw)
+    }
+  }
+
+  // start warmup after page load
+  window.addEventListener('load', () => {
+    setTimeout(() => requestAnimationFrame(warmup), 200)
+  })
 
   function draw(t) {
-    // throttle to ~30fps
-    if (t - lastFrame < 32) { requestAnimationFrame(draw); return }
-    lastFrame = t
 
     for (let n = 0; n < instances.length; n++) {
       const inst = instances[n]
@@ -351,5 +380,4 @@
     }
     requestAnimationFrame(draw)
   }
-  requestAnimationFrame(draw)
 })()

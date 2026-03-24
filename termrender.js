@@ -10,6 +10,7 @@
   const PAD = 16
   const CHROME_H = 40
   const DOTS = [['#c44040', 20], ['#c4a040', 38], ['#6a9a50', 56]]
+  const SHADOW_PAD = 32
   const shadowCache = new Map()
 
   // standard ANSI 256 color palette (first 16)
@@ -96,7 +97,6 @@
     const charW = ctx.measureText('M').width
     const charH = FONT_SIZE * 1.5
 
-    const SHADOW_PAD = 32
     const totalW = data.w * charW + PAD * 2
     const totalH = data.h * charH + PAD * 2 + CHROME_H
     const canvasW = totalW + SHADOW_PAD * 2
@@ -334,18 +334,12 @@
   // cache loaded data so we can re-render on DPR change
   const loaded = new Map()
 
-  async function init() {
-    const canvases = document.querySelectorAll('canvas[data-term]')
+  function init() {
+    const canvases = document.querySelectorAll('canvas[data-termdata]')
     for (const canvas of canvases) {
-      const src = canvas.getAttribute('data-term')
-      try {
-        const resp = await fetch(src)
-        const data = await resp.json()
-        loaded.set(canvas, data)
-        render(canvas, data)
-      } catch (e) {
-        console.error('termrender:', src, e)
-      }
+      const data = JSON.parse(canvas.getAttribute('data-termdata'))
+      loaded.set(canvas, data)
+      render(canvas, data)
     }
   }
 

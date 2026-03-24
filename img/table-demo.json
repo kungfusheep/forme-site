@@ -1,0 +1,1 @@
+{"w":40,"h":7,"lines":["\u001b[0;1;39;49mName          \u001b[0;39;49m \u001b[0;1;39;49mStatus          \u001b[0;39;49m \u001b[0;1;39;49mCPU    \u001b[0;39;49m ","api            running          12%     ","worker         running          8%      ","cache          stopped          0%      ","db             running          23%     "]}

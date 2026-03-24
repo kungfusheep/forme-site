@@ -45,6 +45,64 @@ func examples() map[string]example {
 		}
 	}
 
+	// form-demo
+	{
+		name := "Pete"
+		email := "pete@example.com"
+		role := 0
+		agree := true
+		register := func() {}
+
+		m["form-demo"] = example{
+			w: 36, h: 9,
+			view: VBox.Border(BorderRounded).Title("register")(
+				Form.LabelBold().OnSubmit(register)(
+					Field("Name", Input(&name)),
+					Field("Email", Input(&email)),
+					Field("Role", Radio(&role, "Admin", "User", "Guest")),
+					Field("Terms", Checkbox(&agree, "I accept")),
+				),
+			),
+		}
+	}
+
+	// table-demo
+	{
+		type svc struct {
+			Name   string
+			Status string
+			CPU    string
+		}
+		services := []svc{
+			{"api", "running", "12%"},
+			{"worker", "running", "8%"},
+			{"cache", "stopped", "0%"},
+			{"db", "running", "23%"},
+		}
+
+		m["table-demo"] = example{
+			w: 40, h: 7,
+			view: AutoTable(&services).Scrollable(10),
+		}
+	}
+
+	// control-flow
+	{
+		online := true
+		mode := "edit"
+
+		m["control-flow"] = example{
+			w: 30, h: 5,
+			view: VBox.Border(BorderRounded).Title("status")(
+				If(&online).Then(Text("● connected").FG(Green)).Else(Text("● offline").FG(Red)),
+				Switch(&mode).
+					Case("edit", Text("mode: edit").FG(Yellow)).
+					Case("preview", Text("mode: preview").FG(Cyan)).
+					Default(Text("mode: idle").FG(BrightBlack)),
+			),
+		}
+	}
+
 	// file-picker
 	{
 		files := []string{"main.go", "go.mod", "README.md", "config.toml", "Makefile"}
