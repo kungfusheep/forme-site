@@ -108,7 +108,14 @@
     }
   })
 
+  const STEP = 4
+  let lastFrame = 0
+
   function draw(t) {
+    // throttle to ~30fps
+    if (t - lastFrame < 32) { requestAnimationFrame(draw); return }
+    lastFrame = t
+
     for (let n = 0; n < instances.length; n++) {
       const inst = instances[n]
       if (!inst.visible) continue
@@ -121,28 +128,34 @@
       for (let i = 0; i < waves.length; i++) {
         const wave = waves[i]
         const baseY = h / 2 + (i - 1) * 18 * dpr
-        const pts = []
-        for (let x = 0; x <= w; x += 2) {
-          pts.push({ x, y: waveY(x, wave, baseY, t, n, i) })
+        // reuse inst's point buffer if same size, else allocate
+        if (!inst._pts) inst._pts = []
+        if (!inst._pts[i] || inst._pts[i].length !== Math.floor(w / STEP) + 1) {
+          inst._pts[i] = new Array(Math.floor(w / STEP) + 1)
+          for (let j = 0; j < inst._pts[i].length; j++) inst._pts[i][j] = { x: 0, y: 0 }
+        }
+        const pts = inst._pts[i]
+        for (let j = 0; j < pts.length; j++) {
+          const x = j * STEP
+          pts[j].x = x
+          pts[j].y = waveY(x, wave, baseY, t, n, i)
         }
         points.push(pts)
       }
 
       if (features.ripple) {
         for (let i = 0; i < waves.length; i++) {
-          const wave = waves[i]
-          const baseY = h / 2 + (i - 1) * 18 * dpr
+          const pts = points[i]
           const c = palette.dark[i % 3]
           const color = `rgba(${c},0.05)`
           for (let r = -1; r <= 1; r += 2) {
             ctx.beginPath()
             ctx.strokeStyle = color
             ctx.lineWidth = 0.5 * dpr
-            for (let x = 0; x <= w; x += 2) {
-              const mainY = waveY(x, wave, baseY, t, n, i)
-              const micro = Math.sin(x * 0.03 + t * 0.003 * r + i) * 3 * dpr * r
-              if (x === 0) ctx.moveTo(x, mainY + micro)
-              else ctx.lineTo(x, mainY + micro)
+            for (let j = 0; j < pts.length; j++) {
+              const micro = Math.sin(pts[j].x * 0.03 + t * 0.003 * r + i) * 3 * dpr * r
+              if (j === 0) ctx.moveTo(pts[j].x, pts[j].y + micro)
+              else ctx.lineTo(pts[j].x, pts[j].y + micro)
             }
             ctx.stroke()
           }

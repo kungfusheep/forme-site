@@ -17,6 +17,145 @@ type example struct {
 func examples() map[string]example {
 	m := map[string]example{}
 
+	// styled-text
+	{
+		m["styled-text"] = example{
+			w: 30, h: 4,
+			view: VBox(
+				Text("error").FG(Red).Bold(),
+				Text("muted").FG(BrightBlack).Dim(),
+				Text("success").FG(Green),
+				Text("warning").FG(Yellow).Bold(),
+			),
+		}
+	}
+
+	// theme-demo
+	{
+		theme := ThemeDark
+
+		m["theme-demo"] = example{
+			w: 30, h: 7,
+			view: VBox.CascadeStyle(&theme.Base).Border(BorderRounded).BorderFG(theme.Border.FG)(
+				Text("normal text"),
+				Text("muted").Style(theme.Muted),
+				Text("accent").Style(theme.Accent),
+				Text("error!").Style(theme.Error),
+			),
+		}
+	}
+
+	// file-picker
+	{
+		files := []string{"main.go", "go.mod", "README.md", "config.toml", "Makefile"}
+
+		m["file-picker"] = example{
+			w: 24, h: 7,
+			view: VBox.Border(BorderRounded).Title("open")(
+				List(&files).BindVimNav(),
+			),
+		}
+	}
+
+	// layout-statusbar
+	{
+		m["layout-statusbar"] = example{
+			w: 40, h: 2,
+			view: HBox.Gap(2)(
+				Text("ready").FG(Green),
+				Text("3 tasks").Bold(),
+				Space(),
+				Text("q: quit").FG(BrightBlack),
+			),
+		}
+	}
+
+	// layout-arrange
+	{
+		grid := Arrange(func(children []ChildSize, w, h int) []Rect {
+			cols := 3
+			cellW := w / cols
+			cellH := 3
+			rects := make([]Rect, len(children))
+			for i := range children {
+				rects[i] = Rect{
+					X: (i % cols) * cellW,
+					Y: (i / cols) * cellH,
+					W: cellW,
+					H: cellH,
+				}
+			}
+			return rects
+		})
+
+		m["layout-arrange"] = example{
+			w: 42, h: 7,
+			view: grid(
+				VBox.Border(BorderRounded)(Text("alpha")),
+				VBox.Border(BorderRounded)(Text("beta")),
+				VBox.Border(BorderRounded)(Text("gamma")),
+				VBox.Border(BorderRounded)(Text("delta")),
+				VBox.Border(BorderRounded)(Text("epsilon")),
+				VBox.Border(BorderRounded)(Text("zeta")),
+			),
+		}
+	}
+
+	// layout-compose (widget demo)
+	{
+		m["layout-compose"] = example{
+			w: 50, h: 10,
+			view: VBox.Border(BorderRounded).Title("dashboard")(
+				HBox.Gap(2)(
+					Text("metrics").Bold(),
+					Space(),
+					Text("live").FG(Green),
+				),
+				HRule(),
+				HBox(
+					VBox.Grow(1).Border(BorderRounded).Title("chart")(
+						Widget(
+							func(availW int16) (w, h int16) { return availW, 4 },
+							func(buf *Buffer, x, y, w, h int16) {
+								bars := []int{3, 1, 4, 2, 3, 4, 2, 1, 3, 2}
+								barW := int(w) / len(bars)
+								for i, v := range bars {
+									for row := 0; row < v; row++ {
+										bx := int(x) + i*barW
+										by := int(y) + int(h) - 1 - row
+										for dx := 0; dx < barW-1; dx++ {
+											buf.Set(bx+dx, by, Cell{Rune: '█', Style: Style{FG: Green}})
+										}
+									}
+								}
+							},
+						),
+					),
+					VBox.Grow(1).Border(BorderRounded).Title("status")(
+						Leader("uptime", "99.9%"),
+						Leader("errors", "0"),
+						Leader("latency", "12ms"),
+					),
+				),
+			),
+		}
+	}
+
+	// layout-panels
+	{
+		m["layout-panels"] = example{
+			w: 50, h: 5,
+			view: HBox(
+				VBox.Grow(1).Border(BorderRounded).Title("left")(
+					Text("panel one"),
+				),
+				VBox.Grow(2).Border(BorderRounded).Title("right")(
+					Text("panel two takes 2/3 width"),
+				),
+			),
+		}
+	}
+
 	// first-app
 	{
 		count := 7

@@ -81,6 +81,28 @@
   }
   .concept:last-child { border-bottom: none; }
 
+  .show-grid {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: var(--s5);
+    align-items: center;
+    margin: var(--s3) 0;
+  }
+  .show-grid .code { margin: 0; }
+  .show-text { display: flex; flex-direction: column; gap: var(--s3); }
+  .show-text canvas { border-radius: 10px; max-width: 318px; }
+  /* tighter coupling: prose followed by its example */
+  .concept-prose + .show-grid,
+  .concept-prose + .code { margin-top: calc(var(--s3) * -0.5); }
+  /* breathing room after an example before new topic */
+  .show-grid + .concept-prose,
+  .code + .concept-prose { margin-top: var(--s5); }
+  .show-aside {
+    font-size: 12px;
+    color: var(--dk-4);
+    line-height: 1.7;
+  }
+
   .section-head {
     display: flex;
     align-items: flex-start;
@@ -112,6 +134,16 @@
     color: var(--dk-hi);
     letter-spacing: -0.02em;
     line-height: 1.1;
+  }
+  .concept-sub {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--dk-4);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: var(--s5);
+    margin-bottom: var(--s2);
   }
   .concept-prose {
     font-size: 13px;
@@ -301,6 +333,9 @@
     .section-head { flex-direction: column; gap: var(--s2); }
     .section-num { font-size: 48px; min-width: auto; }
     .code { font-size: 11px; max-width: 100%; }
+    .show-grid { grid-template-columns: 1fr; }
+    .show-grid .show-text { order: -1; }
+    .show-text canvas { max-width: 318px !important; }
   }
 
   /* footer */
@@ -403,8 +438,8 @@
 <nav class="sidenav">
   <a href="#install" class="sidenav-link">Install</a>
   <a href="#first-app" class="sidenav-link">First App</a>
-  <a href="#lists" class="sidenav-link">Lists</a>
   <a href="#layout" class="sidenav-link">Layout</a>
+  <a href="#lists" class="sidenav-link">Lists</a>
   <a href="#keyboard" class="sidenav-link">Keyboard</a>
   <a href="#styling" class="sidenav-link">Styling</a>
   <a href="#next" class="sidenav-link">Next Steps</a>
@@ -413,8 +448,8 @@
 <nav class="topnav">
   <a href="#install" class="topnav-link">Install</a>
   <a href="#first-app" class="topnav-link">First App</a>
-  <a href="#lists" class="topnav-link">Lists</a>
   <a href="#layout" class="topnav-link">Layout</a>
+  <a href="#lists" class="topnav-link">Lists</a>
   <a href="#keyboard" class="topnav-link">Keyboard</a>
   <a href="#styling" class="topnav-link">Styling</a>
   <a href="#next" class="topnav-link">Next Steps</a>
@@ -471,7 +506,8 @@ import . "github.com/kungfusheep/glyph"</div>
     Pass a pointer and the framework reads current values on each update. Keyboard handlers are plain functions.
   </div>
 
-<div class="code code-raw">package main
+<div class="show-grid">
+  <div class="code code-raw">package main
 
 import . "github.com/kungfusheep/glyph"
 
@@ -493,6 +529,10 @@ func main() {
 
 	println("You selected", count)
 }</div>
+  <div class="show-text">
+    <canvas data-term="img/first-app.json"></canvas>
+  </div>
+</div>
 
   <div class="concept-prose">
     <strong><code>NewInlineApp()</code></strong> renders at the cursor position without taking over the screen.
@@ -513,90 +553,25 @@ func main() {
 </div>
 
 <!-- ============================================================
-     3. LISTS
-     ============================================================ -->
-<div class="concept" id="lists">
-  <div class="section-head">
-    <div class="section-num">03</div>
-    <div class="section-meta">
-      <div class="section-label">Data</div>
-      <div class="section-title">Lists</div>
-    </div>
-  </div>
-
-  <div class="concept-prose">
-    <strong>List</strong> takes a pointer to a slice and a <code>.Render()</code> callback
-    describing how each item looks. Each callback argument is a pointer to the element;
-    glyph dereferences it on the next frame.
-  </div>
-
-<div class="code code-raw">package main
-
-import . "github.com/kungfusheep/glyph"
-
-type Task struct {
-	Title string
-	Done  bool
-}
-
-func main() {
-	app := NewApp()
-
-	tasks := []Task{
-		{"Write tutorial", false},
-		{"Add tests", false},
-		{"Ship it", false},
-	}
-
-	app.SetView(
-		VBox(
-			Text("Tasks").Bold(),
-			List(&tasks).Render(func(t *Task) any {
-				return HBox.Gap(1)(
-					If(&t.Done).Then(Text("[x]")).Else(Text("[ ]")),
-					Text(&t.Title),
-				)
-			}).BindVimNav(),
-		),
-	)
-
-	app.Handle("q", app.Stop)
-	app.Run()
-}</div>
-
-  <div class="concept-prose">
-    <strong><code>.BindVimNav()</code></strong> adds j/k navigation, <code>&lt;C-d&gt;</code>/<code>&lt;C-u&gt;</code> to page, and g/G for start/end.
-  </div>
-
-  <div class="concept-prose">
-    <strong><code>FilterList</code></strong> wraps the same pointer API with a built-in fuzzy search input.
-    The list narrows as you type.
-  </div>
-
-<div class="code code-raw">FilterList(&tasks, func(t *Task) string { return t.Title }).
-	Render(func(t *Task) any {
-		return Text(&t.Title)
-	}).MaxVisible(10).Border(BorderRounded)</div>
-</div>
-
-<!-- ============================================================
-     4. LAYOUT
+     3. LAYOUT
      ============================================================ -->
 <div class="concept" id="layout">
   <div class="section-head">
-    <div class="section-num">04</div>
+    <div class="section-num">03</div>
     <div class="section-meta">
       <div class="section-label">Composition</div>
       <div class="section-title">Layout</div>
     </div>
   </div>
 
+  <div class="concept-sub">Panels &amp; Grow</div>
   <div class="concept-prose">
     <strong>VBox</strong> stacks children vertically, <strong>HBox</strong> places them side by side.
     Both measure and distribute space in a single pass.
   </div>
 
-<div class="code code-raw">HBox(
+<div class="show-grid">
+  <div class="code code-raw" style="margin:0">HBox(
 	VBox.Grow(1).Border(BorderRounded).Title("left")(
 		Text("panel one"),
 	),
@@ -604,6 +579,10 @@ func main() {
 		Text("panel two takes 2/3 width"),
 	),
 )</div>
+  <div class="show-text">
+    <canvas data-term="img/layout-panels.json" style="max-width:318px"></canvas>
+  </div>
+</div>
 
   <div class="concept-prose">
     <strong><code>.Grow(n)</code></strong> controls how remaining space is distributed.
@@ -611,6 +590,7 @@ func main() {
     Without <code>Grow</code>, elements shrink to fit their content.
   </div>
 
+  <div class="concept-sub">Borders, Gap &amp; Space</div>
   <div class="concept-prose">
     <strong><code>.Border(style)</code></strong> wraps the container in a box.
     Built-in styles are <code>BorderRounded</code>, <code>BorderSingle</code>, and <code>BorderDouble</code>.
@@ -619,68 +599,104 @@ func main() {
     <strong><code>Space()</code></strong> expands to fill remaining space; use it to push siblings to opposite ends.
   </div>
 
-<div class="code code-raw">HBox.Gap(2)(
+<div class="show-grid">
+  <div class="code code-raw" style="margin:0">HBox.Gap(2)(
 	Text("ready").FG(Green),
 	Text("3 tasks").Bold(),
 	Space(),
 	Text("q: quit").FG(BrightBlack),
 )</div>
+  <div class="show-text">
+    <canvas data-term="img/layout-statusbar.json" style="max-width:318px"></canvas>
+  </div>
+</div>
 
+  <div class="concept-sub">Custom Layout</div>
   <div class="concept-prose">
-    Selecting an item writes to <code>detail</code>; glyph reads it on the next frame.
+    <strong><code>Arrange</code></strong> gives you full control over layout.
+    Provide a function that receives child sizes and available space, return exact positions.
   </div>
 
-<div class="code code-raw">package main
+<div class="show-grid">
+  <div class="code code-raw" style="margin:0">grid := Arrange(func(children []ChildSize, w, h int) []Rect {
+	cols := 3
+	cellW := w / cols
+	cellH := 3
+	rects := make([]Rect, len(children))
+	for i := range children {
+		rects[i] = Rect{
+			X: (i % cols) * cellW,
+			Y: (i / cols) * cellH,
+			W: cellW, H: cellH,
+		}
+	}
+	return rects
+})
+
+grid(
+	VBox.Border(BorderRounded)(Text("alpha")),
+	VBox.Border(BorderRounded)(Text("beta")),
+	VBox.Border(BorderRounded)(Text("gamma")),
+	VBox.Border(BorderRounded)(Text("delta")),
+	VBox.Border(BorderRounded)(Text("epsilon")),
+	VBox.Border(BorderRounded)(Text("zeta")),
+)</div>
+  <div class="show-text">
+    <canvas data-term="img/layout-arrange.json" style="max-width:318px"></canvas>
+  </div>
+</div>
+
+</div>
+
+<!-- ============================================================
+     4. LISTS
+     ============================================================ -->
+<div class="concept" id="lists">
+  <div class="section-head">
+    <div class="section-num">04</div>
+    <div class="section-meta">
+      <div class="section-label">Data</div>
+      <div class="section-title">Lists</div>
+    </div>
+  </div>
+
+  <div class="concept-prose">
+    <strong>List</strong> takes a pointer to a slice. <strong><code>.OnSelect()</code></strong> fires when the user presses enter.
+    The app below lets you pick a file, then exits and prints it.
+  </div>
+
+<div class="show-grid">
+  <div class="code code-raw" style="margin:0">package main
 
 import (
 	"fmt"
 	. "github.com/kungfusheep/glyph"
 )
 
-type Task struct {
-	Title    string
-	Done     bool
-	Priority int
-}
-
 func main() {
 	app := NewApp()
-
-	tasks := []Task{
-		{"Write tutorial", false, 1},
-		{"Add tests", true, 2},
-		{"Ship it", false, 3},
-	}
-	detail := "select a task"
+	files := []string{"main.go", "go.mod", "README.md", "config.toml", "Makefile"}
+	var choice string
 
 	app.SetView(
-		VBox(
-			Text("Task Manager").Bold(),
-			HBox(
-				VBox.Grow(1).Border(BorderRounded).Title("tasks")(
-					List(&tasks).Render(func(t *Task) any {
-						return HBox.Gap(1)(
-							If(&t.Done).Then(Text("[x]")).Else(Text("[ ]")),
-							Text(&t.Title),
-						)
-					}).OnSelect(func(t *Task) {
-						detail = fmt.Sprintf("%s (priority: %d)", t.Title, t.Priority)
-					}).BindVimNav(),
-				),
-				VBox.Grow(1).Border(BorderRounded).Title("detail")(
-					Text(&detail),
-				),
-			),
-			HBox.Gap(2)(
-				Text("j/k: navigate").FG(BrightBlack),
-				Text("q: quit").FG(BrightBlack),
-			),
+		VBox.Border(BorderRounded).Title("open")(
+			List(&files).OnSelect(func(f *string) {
+				choice = *f
+				app.Stop()
+			}).BindVimNav(),
 		),
-	)
+	).Run()
 
-	app.Handle("q", app.Stop)
-	app.Run()
+	fmt.Println("opening", choice)
 }</div>
+  <div class="show-text">
+    <canvas data-term="img/file-picker-start.json" style="max-width:318px"></canvas>
+    <div class="show-aside">
+      <strong><code>.BindVimNav()</code></strong> adds j/k, <code>&lt;C-d&gt;</code>/<code>&lt;C-u&gt;</code> to page, g/G for start/end.
+      <strong><code>FilterList</code></strong> wraps the same API with a built-in fuzzy search input.
+    </div>
+  </div>
+</div>
 </div>
 
 <!-- ============================================================
@@ -744,14 +760,20 @@ app.Handle("&lt;C-s&gt;", func() { /* save */ })</div>
     </div>
   </div>
 
+  <div class="concept-sub">Colours &amp; Attributes</div>
   <div class="concept-prose">
     Styles chain directly on elements.
   </div>
 
-<div class="code code-raw">Text("error").FG(Red).Bold()
+<div class="show-grid">
+  <div class="code code-raw" style="margin:0">Text("error").FG(Red).Bold()
 Text("muted").FG(BrightBlack).Dim()
 Text("success").FG(Green)
 Text("warning").FG(Yellow).Bold()</div>
+  <div class="show-text">
+    <canvas data-term="img/styled-text.json" style="max-width:318px"></canvas>
+  </div>
+</div>
 
   <div class="concept-prose">
     <strong><code>.FG(color)</code></strong> and <strong><code>.BG(color)</code></strong> accept the standard ANSI names
@@ -770,6 +792,7 @@ Text("custom").BG(RGB(20, 20, 40))</div>
     Any combination is valid; glyph merges them into a single ANSI sequence per cell.
   </div>
 
+  <div class="concept-sub">Themes</div>
   <div class="concept-prose">
     <strong><code>.CascadeStyle()</code></strong> propagates a base style to all children.
     Set it on a container; glyph applies it to every nested widget on each render pass.
@@ -777,7 +800,8 @@ Text("custom").BG(RGB(20, 20, 40))</div>
     each with <code>Base</code>, <code>Muted</code>, <code>Accent</code>, <code>Error</code>, and <code>Border</code> slots.
   </div>
 
-<div class="code code-raw">theme := ThemeDark
+<div class="show-grid">
+  <div class="code code-raw" style="margin:0">theme := ThemeDark
 
 VBox.CascadeStyle(&theme.Base).Border(BorderRounded).BorderFG(theme.Border.FG)(
 	Text("normal text"),
@@ -785,6 +809,10 @@ VBox.CascadeStyle(&theme.Base).Border(BorderRounded).BorderFG(theme.Border.FG)(
 	Text("accent").Style(theme.Accent),
 	Text("error!").Style(theme.Error),
 )</div>
+  <div class="show-text">
+    <canvas data-term="img/theme-demo.json" style="max-width:318px"></canvas>
+  </div>
+</div>
 
   <div class="concept-prose">
     Custom themes use the same <strong><code>ThemeEx</code></strong> struct.
@@ -805,6 +833,43 @@ VBox.CascadeStyle(&theme.Base).Border(BorderRounded).BorderFG(theme.Border.FG)(
 <div class="code code-raw">VBox.Border(BorderRounded).BorderFG(Cyan).Title("status")(
 	Text("all systems go").FG(Green),
 )</div>
+
+  <div class="concept-sub">Custom Rendering</div>
+  <div class="concept-prose">
+    <strong><code>Widget</code></strong> is the escape hatch for fully custom rendering.
+    Provide a measure function and a render function — glyph handles the rest.
+  </div>
+
+<div class="show-grid">
+  <div class="code code-raw" style="margin:0">VBox.Border(BorderRounded).Title("dashboard")(
+	HBox.Gap(2)(
+		Text("metrics").Bold(),
+		Space(),
+		Text("live").FG(Green),
+	),
+	HRule(),
+	HBox(
+		VBox.Grow(1).Border(BorderRounded).Title("chart")(
+			Widget(
+				func(availW int16) (w, h int16) {
+					return availW, 4
+				},
+				func(buf *Buffer, x, y, w, h int16) {
+					// draw bar chart directly into the buffer
+				},
+			),
+		),
+		VBox.Grow(1).Border(BorderRounded).Title("status")(
+			Leader("uptime", "99.9%"),
+			Leader("errors", "0"),
+			Leader("latency", "12ms"),
+		),
+	),
+)</div>
+  <div class="show-text">
+    <canvas data-term="img/layout-compose.json" style="max-width:318px"></canvas>
+  </div>
+</div>
 </div>
 
 <!-- ============================================================
@@ -993,6 +1058,7 @@ VBox.CascadeStyle(&theme.Base).Border(BorderRounded).BorderFG(theme.Border.FG)(
 	}]
 }
 </script>
+<script src="termrender.js"></script>
 <script src="waves.js"></script>
 </body>
 </html>

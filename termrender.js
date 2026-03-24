@@ -10,6 +10,7 @@
   const PAD = 16
   const CHROME_H = 40
   const DOTS = [['#c44040', 20], ['#c4a040', 38], ['#6a9a50', 56]]
+  const shadowCache = new Map()
 
   // standard ANSI 256 color palette (first 16)
   const ANSI = [
@@ -95,18 +96,64 @@
     const charW = ctx.measureText('M').width
     const charH = FONT_SIZE * 1.5
 
+    const SHADOW_PAD = 32
     const totalW = data.w * charW + PAD * 2
     const totalH = data.h * charH + PAD * 2 + CHROME_H
+    const canvasW = totalW + SHADOW_PAD * 2
+    const canvasH = totalH + SHADOW_PAD * 2
 
-    canvas.width = totalW * dpr
-    canvas.height = totalH * dpr
-    canvas.style.aspectRatio = (totalW / totalH).toFixed(4)
+    canvas.width = canvasW * dpr
+    canvas.height = canvasH * dpr
+    canvas.style.maxWidth = canvasW + 'px'
+    canvas.style.width = '100%'
+    canvas.style.aspectRatio = (canvasW / canvasH).toFixed(4)
     ctx.scale(dpr, dpr)
+    ctx.translate(SHADOW_PAD, SHADOW_PAD)
 
-    // background
-    roundRect(ctx, 0, 0, totalW, totalH, 10)
-    ctx.fillStyle = BG
-    ctx.fill()
+    // macOS-style drop shadow — single pass, cached per size
+    const shadowKey = totalW + 'x' + totalH
+    let shadowCanvas = shadowCache.get(shadowKey)
+    if (!shadowCanvas) {
+      shadowCanvas = document.createElement('canvas')
+      const pad = SHADOW_PAD * dpr
+      shadowCanvas.width = canvasW * dpr
+      shadowCanvas.height = canvasH * dpr
+      const sctx = shadowCanvas.getContext('2d')
+      sctx.scale(dpr, dpr)
+      sctx.translate(SHADOW_PAD, SHADOW_PAD)
+      // layer 1: contact
+      sctx.save()
+      sctx.shadowColor = 'rgba(0,0,0,0.3)'
+      sctx.shadowBlur = 6
+      sctx.shadowOffsetY = 2
+      roundRect(sctx, 0, 0, totalW, totalH, 10)
+      sctx.fillStyle = BG
+      sctx.fill()
+      sctx.restore()
+      // layer 2: diffuse
+      sctx.save()
+      sctx.shadowColor = 'rgba(0,0,0,0.15)'
+      sctx.shadowBlur = 20
+      sctx.shadowOffsetY = 8
+      roundRect(sctx, 0, 0, totalW, totalH, 10)
+      sctx.fillStyle = BG
+      sctx.fill()
+      sctx.restore()
+      // layer 3: ambient
+      sctx.save()
+      sctx.shadowColor = 'rgba(0,0,0,0.08)'
+      sctx.shadowBlur = 40
+      sctx.shadowOffsetY = 12
+      roundRect(sctx, 0, 0, totalW, totalH, 10)
+      sctx.fillStyle = BG
+      sctx.fill()
+      sctx.restore()
+      shadowCache.set(shadowKey, shadowCanvas)
+    }
+    ctx.save()
+    ctx.setTransform(1, 0, 0, 1, 0, 0)
+    ctx.drawImage(shadowCanvas, 0, 0)
+    ctx.restore()
 
     // chrome bar
     roundRect(ctx, 0, 0, totalW, CHROME_H, 10)
@@ -161,13 +208,13 @@
       }
     }
 
-    // CSS mask fades the entire canvas to transparent at the bottom
-    // detect if last line has box-drawing (bordered) — fade earlier to hide bottom border
+    // CSS mask fades the canvas to transparent at the bottom of the terminal window
     const lastLine = data.lines[data.lines.length - 1] || ''
     const hasBorder = /[╭╮╰╯┌┐└┘─│═║╔╗╚╝├┤┬┴┼]/.test(lastLine)
-    const fadeEnd = hasBorder ? '80%' : '90%'
-    canvas.style.maskImage = `linear-gradient(to bottom, black 50%, transparent ${fadeEnd})`
-    canvas.style.webkitMaskImage = `linear-gradient(to bottom, black 50%, transparent ${fadeEnd})`
+    const fadeStart = ((SHADOW_PAD + totalH * 0.5) / canvasH * 100).toFixed(1)
+    const fadeEnd = ((SHADOW_PAD + totalH * (hasBorder ? 0.8 : 0.9)) / canvasH * 100).toFixed(1)
+    canvas.style.maskImage = `linear-gradient(to bottom, black ${fadeStart}%, transparent ${fadeEnd}%)`
+    canvas.style.webkitMaskImage = `linear-gradient(to bottom, black ${fadeStart}%, transparent ${fadeEnd}%)`
   }
 
   // draw box-drawing characters with canvas primitives for pixel-perfect alignment
@@ -306,6 +353,7 @@
   function watchDPR() {
     const mq = matchMedia(`(resolution: ${devicePixelRatio}dppx)`)
     mq.addEventListener('change', () => {
+      shadowCache.clear()
       for (const [canvas, data] of loaded) {
         render(canvas, data)
       }
