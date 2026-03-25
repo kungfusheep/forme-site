@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"strings"
 
 	. "github.com/kungfusheep/glyph"
 )
@@ -41,6 +42,42 @@ func examples() map[string]example {
 				Text("muted").Style(theme.Muted),
 				Text("accent").Style(theme.Accent),
 				Text("error!").Style(theme.Error),
+			),
+		}
+	}
+
+	// concepts-build
+	{
+		title := "Hello"
+		m["concepts-build"] = example{
+			w: 24, h: 3,
+			view: VBox(
+				Text(&title),
+				Text("static label"),
+			),
+		}
+	}
+
+	// concepts-vbox
+	{
+		m["concepts-vbox"] = example{
+			w: 16, h: 6,
+			view: VBox.Gap(1)(
+				Text("hello"),
+				Text("world"),
+				Text("!"),
+			),
+		}
+	}
+
+	// concepts-hbox
+	{
+		m["concepts-hbox"] = example{
+			w: 24, h: 2,
+			view: HBox.Gap(2)(
+				Text("hello"),
+				Text("world"),
+				Text("!"),
 			),
 		}
 	}
@@ -544,18 +581,34 @@ func renderTerm(buf *Buffer, w, h int) termData {
 	return td
 }
 
+func htmlEscape(s string) string {
+	s = strings.ReplaceAll(s, "&", "&amp;")
+	s = strings.ReplaceAll(s, "\"", "&quot;")
+	return s
+}
+
 func main() {
 	all := examples()
 
-	if len(os.Args) < 2 {
-		fmt.Fprintf(os.Stderr, "usage: termsvg <name|all>\n\navailable examples:\n")
+	html := false
+	args := os.Args[1:]
+	for i, a := range args {
+		if a == "--html" {
+			html = true
+			args = append(args[:i], args[i+1:]...)
+			break
+		}
+	}
+
+	if len(args) < 1 {
+		fmt.Fprintf(os.Stderr, "usage: termsvg [--html] <name|all>\n\navailable examples:\n")
 		for name := range all {
 			fmt.Fprintf(os.Stderr, "  %s\n", name)
 		}
 		os.Exit(1)
 	}
 
-	name := os.Args[1]
+	name := args[0]
 
 	if name == "all" {
 		for n, ex := range all {
@@ -597,5 +650,9 @@ func main() {
 	tmpl.Execute(buf, int16(ex.w), int16(ex.h))
 	td := renderTerm(buf, ex.w, ex.h)
 	data, _ := json.Marshal(td)
-	os.Stdout.Write(data)
+	if html {
+		fmt.Print(htmlEscape(string(data)))
+	} else {
+		os.Stdout.Write(data)
+	}
 }
