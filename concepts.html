@@ -121,7 +121,13 @@
   }
   .show-grid .code { margin: 0; }
   .show-text { display: flex; flex-direction: column; gap: var(--s3); }
-  .show-text canvas { border-radius: 10px; max-width: 318px; }
+  .show-text canvas { border-radius: 10px; max-width: 318px; min-width: 200px; }
+  .show-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--dk-5);
+    margin-bottom: var(--s1);
+  }
 
   .concept-prose {
     font-size: 13px;
@@ -648,6 +654,21 @@
     border-bottom: 1px solid var(--dk-6);
     background: rgba(255,255,255,0.02);
   }
+  .boxmodel-padding {
+    border: 1px dashed rgba(122, 154, 186, 0.25);
+    border-radius: 3px;
+    padding: 0;
+    position: relative;
+  }
+  .boxmodel-padding > .bm-label {
+    position: absolute;
+    top: -9px;
+    left: 10px;
+    font-size: 9px;
+    color: var(--dk-5);
+    background: var(--bg-dark);
+    padding: 0 4px;
+  }
   .boxmodel-content {
     padding: 8px;
   }
@@ -945,9 +966,8 @@
     .cascade-body { border-left: none; border-top: 1px solid var(--dk-border); }
     .viewport-diagram { grid-template-columns: 1fr; }
     .layout-compare { grid-template-columns: 1fr; }
-    .show-grid { grid-template-columns: 1fr; }
-    .show-grid .show-text { order: -1; }
-    .show-text canvas { max-width: 318px !important; }
+    .show-grid { grid-template-columns: 1fr; gap: 0; }
+    .show-text canvas { max-width: 318px !important; margin-top: -16px; }
   }
 
   /* footer */
@@ -1218,6 +1238,7 @@
   <a href="#routing" class="sidenav-link">Routing & Views</a>
   <a href="#layers" class="sidenav-link">Layers & Scrolling</a>
   <a href="#effects" class="sidenav-link">Screen Effects</a>
+  <a href="#animation" class="sidenav-link">Animation</a>
 </nav>
 
 <nav class="topnav">
@@ -1231,6 +1252,7 @@
   <a href="#routing" class="topnav-link">Routing</a>
   <a href="#layers" class="topnav-link">Layers</a>
   <a href="#effects" class="topnav-link">Effects</a>
+  <a href="#animation" class="topnav-link">Animation</a>
 </nav>
 
 <main id="main-content">
@@ -1304,7 +1326,7 @@
     ),
 )</div>
   <div class="show-text">
-    <canvas data-termdata="{&quot;w&quot;:24,&quot;h&quot;:3,&quot;lines&quot;:[&quot;Hello                   &quot;,&quot;static label            &quot;]}" style="max-width:318px"></canvas>
+    <canvas data-term="concepts-build" data-termdata="{&quot;w&quot;:24,&quot;h&quot;:3,&quot;lines&quot;:[&quot;Hello                   &quot;,&quot;static label            &quot;]}" style="max-width:318px"></canvas>
   </div>
 </div>
 </div>
@@ -1421,8 +1443,8 @@
   <!-- Box model: Margin → Border → Content -->
   <div class="concept-prose">
     <strong>Margin</strong> is outside the border, the space between this component and its siblings.
-    <strong>Border</strong> wraps the content area. <strong>Gap</strong> is the spacing a container
-    inserts between its children.
+    <strong>Border</strong> wraps the content area. <strong>Padding</strong> is the space between the border
+    and the children. <strong>Gap</strong> is the spacing a container inserts between its children.
   </div>
 
   <div class="boxmodel">
@@ -1434,11 +1456,16 @@
           <span class="bm-label">border</span>
           <div class="boxmodel-border-title">Title</div>
           <div class="boxmodel-content">
-            <div class="boxmodel-child">Text("hello")</div>
-            <div class="boxmodel-gap"><span class="boxmodel-gap-line">↕ gap</span></div>
-            <div class="boxmodel-child">Text("world")</div>
-            <div class="boxmodel-gap"><span class="boxmodel-gap-line">↕ gap</span></div>
-            <div class="boxmodel-child">Text("!")</div>
+            <div class="boxmodel-padding">
+              <span class="bm-label">padding</span>
+              <div style="padding: 8px;">
+                <div class="boxmodel-child">Text("hello")</div>
+                <div class="boxmodel-gap"><span class="boxmodel-gap-line">↕ gap</span></div>
+                <div class="boxmodel-child">Text("world")</div>
+                <div class="boxmodel-gap"><span class="boxmodel-gap-line">↕ gap</span></div>
+                <div class="boxmodel-child">Text("!")</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1446,26 +1473,26 @@
   </div>
 
 <div class="show-grid">
-  <div class="code code-raw" style="margin:0">// vertical stack with gap
-VBox.Gap(1)(
+  <div><div class="show-label">VBox stacks children vertically</div>
+  <div class="code code-raw" style="margin:0">VBox.Gap(1)(
     Text("hello"),
     Text("world"),
     Text("!"),
-)</div>
+)</div></div>
   <div class="show-text">
-    <canvas data-termdata="{&quot;w&quot;:16,&quot;h&quot;:6,&quot;lines&quot;:[&quot;hello           &quot;,&quot;                &quot;,&quot;world           &quot;,&quot;                &quot;,&quot;!               &quot;]}" style="max-width:318px"></canvas>
+    <canvas data-term="concepts-vbox" data-termdata="{&quot;w&quot;:24,&quot;h&quot;:6,&quot;lines&quot;:[&quot;hello                   &quot;,&quot;                        &quot;,&quot;world                   &quot;,&quot;                        &quot;,&quot;!                       &quot;]}" style="max-width:318px"></canvas>
   </div>
 </div>
 
 <div class="show-grid">
-  <div class="code code-raw" style="margin:0">// horizontal with gap
-HBox.Gap(2)(
+  <div><div class="show-label">HBox places them side by side</div>
+  <div class="code code-raw" style="margin:0">HBox.Gap(2)(
     Text("hello"),
     Text("world"),
     Text("!"),
-)</div>
+)</div></div>
   <div class="show-text">
-    <canvas data-termdata="{&quot;w&quot;:24,&quot;h&quot;:2,&quot;lines&quot;:[&quot;hello  world  !         &quot;]}" style="max-width:318px"></canvas>
+    <canvas data-term="concepts-hbox" data-termdata="{&quot;w&quot;:24,&quot;h&quot;:2,&quot;lines&quot;:[&quot;hello  world  !         &quot;]}" style="max-width:318px"></canvas>
   </div>
 </div>
 
@@ -1496,11 +1523,18 @@ HBox.Gap(2)(
     </div>
   </div>
 
-  <div class="code code-raw">VBox(
+<div class="show-grid">
+  <div class="code code-raw" style="margin:0">VBox(
     Text("header"),
-    List(&items).Grow(1),
+    VBox.Grow(1).Border(BorderRounded)(
+        List(&items),
+    ),
     Text("footer"),
 )</div>
+  <div class="show-text">
+    <canvas data-term="concepts-grow1" data-termdata="{&quot;w&quot;:30,&quot;h&quot;:12,&quot;lines&quot;:[&quot;header                        &quot;,&quot;╭────────────────────────────╮&quot;,&quot;│\u003e server.go                 │&quot;,&quot;│  handler.go                │&quot;,&quot;│  config.go                 │&quot;,&quot;│                            │&quot;,&quot;│                            │&quot;,&quot;│                            │&quot;,&quot;╰────────────────────────────╯&quot;,&quot;footer                        &quot;]}" style="max-width:318px"></canvas>
+  </div>
+</div>
 
   <div class="concept-prose">
     <strong>Two children with equal Grow(1)</strong> split the remaining space 50/50:
@@ -1521,11 +1555,21 @@ HBox.Gap(2)(
     </div>
   </div>
 
-  <div class="code code-raw">VBox(
+<div class="show-grid">
+  <div class="code code-raw" style="margin:0">VBox(
     Text("header"),
-    List(&items).Grow(1),
-    LayerView(&log).Grow(1),
+    VBox.Grow(1).Border(BorderRounded).Title("list")(
+        List(&items),
+    ),
+    VBox.Grow(1).Border(BorderRounded).Title("log")(
+        Text("started on :8080").FG(BrightBlack),
+    ),
+    Text("footer"),
 )</div>
+  <div class="show-text">
+    <canvas data-term="concepts-grow-equal" data-termdata="{&quot;w&quot;:30,&quot;h&quot;:14,&quot;lines&quot;:[&quot;header                        &quot;,&quot;╭─ list ─────────────────────╮&quot;,&quot;│\u003e server.go                 │&quot;,&quot;│  handler.go                │&quot;,&quot;│                            │&quot;,&quot;╰────────────────────────────╯&quot;,&quot;╭─ log ──────────────────────╮&quot;,&quot;│\u001b[0;90;49mstarted on :8080\u001b[0;39;49m            │&quot;,&quot;│                            │&quot;,&quot;│                            │&quot;,&quot;╰────────────────────────────╯&quot;,&quot;footer                        &quot;]}" style="max-width:318px"></canvas>
+  </div>
+</div>
 
   <div class="concept-prose">
     <strong>Unequal ratios, Grow(1) vs Grow(2)</strong>. The space is split proportionally.
@@ -1549,13 +1593,25 @@ HBox.Gap(2)(
     </div>
   </div>
 
-  <div class="code code-raw">VBox(
+<div class="show-grid">
+  <div class="code code-raw" style="margin:0">VBox(
     Text("header"),
     HBox.Grow(1)(
-        sidebar.Grow(1),            // 1 part
-        content.Grow(2),            // 2 parts
+        VBox.Grow(1).Border(BorderRounded).Title("sidebar")(
+            Text("nav one"),
+            Text("nav two"),
+        ),
+        VBox.Grow(2).Border(BorderRounded).Title("content")(
+            Text("main content area"),
+            Text("with more detail"),
+        ),
     ),
+    Text("footer"),
 )</div>
+  <div class="show-text">
+    <canvas data-term="concepts-grow-ratio" data-termdata="{&quot;w&quot;:40,&quot;h&quot;:12,&quot;lines&quot;:[&quot;header                                  &quot;,&quot;╭─ sidebar ─╮╭─ content ───────────────╮&quot;,&quot;│nav one    ││main content area        │&quot;,&quot;│nav two    ││with more detail         │&quot;,&quot;│           ││                         │&quot;,&quot;│           ││                         │&quot;,&quot;│           ││                         │&quot;,&quot;│           ││                         │&quot;,&quot;╰───────────╯╰─────────────────────────╯&quot;,&quot;footer                                  &quot;]}" style="max-width:318px"></canvas>
+  </div>
+</div>
 
   <div class="concept-prose">
     The number doesn't mean anything on its own. <code>Grow(1)</code> and <code>Grow(1)</code>
@@ -1712,12 +1768,23 @@ title = "World"               // next render shows "World"</div>
     to the sub-template's own ops array, not the parent's.
   </div>
 
-  <div class="code code-raw">ForEach(&items, func(item *Item) any {
+<div class="show-grid">
+  <div class="code code-raw" style="margin:0">ForEach(&items, func(item *Item) any {
     return HBox.Gap(2)(
         Text(&item.Name),
-        Text(&item.Status),
+        Text(&item.Status).FG(
+            Switch(&item.Status).
+                Case("running", Yellow).
+                Case("healthy", Green).
+                Case("stopped", Red).
+                Default(BrightBlack),
+        ),
     )
 })</div>
+  <div class="show-text">
+    <canvas data-term="concepts-foreach" data-termdata="{&quot;w&quot;:30,&quot;h&quot;:5,&quot;lines&quot;:[&quot;api server  \u001b[0;33;49mrunning\u001b[0;39;49m           &quot;,&quot;database  \u001b[0;32;49mhealthy\u001b[0;39;49m             &quot;,&quot;cache  \u001b[0;31;49mstopped\u001b[0;39;49m                &quot;]}" style="max-width:318px"></canvas>
+  </div>
+</div>
 </div>
 
 <!-- ============================================================
@@ -1830,7 +1897,8 @@ app.Pop()</div>
     label assignment and positioning during the render pass.
   </div>
 
-  <div class="code code-raw">app.JumpKey("&lt;Space&gt;")
+<div class="show-grid">
+  <div class="code code-raw" style="margin:0">app.JumpKey("&lt;Space&gt;")
 
 app.SetView(
     VBox.Gap(1)(
@@ -1839,6 +1907,10 @@ app.SetView(
         Jump(Text("Sent"), func() { section = "sent" }),
     ),
 )</div>
+  <div class="show-text">
+    <canvas data-term="concepts-jump" data-termdata="{&quot;w&quot;:24,&quot;h&quot;:7,&quot;lines&quot;:[&quot;\u001b[0;1;35;49ma\u001b[0;39;49mnbox                   &quot;,&quot;                        &quot;,&quot;\u001b[0;1;35;49ms\u001b[0;39;49mrafts                  &quot;,&quot;                        &quot;,&quot;\u001b[0;1;35;49md\u001b[0;39;49ment                    &quot;]}" style="max-width:318px"></canvas>
+  </div>
+</div>
 
   <div class="concept-prose">
     <code>app.SetJumpStyle()</code> controls how labels look. For dynamic targets that aren't
@@ -2085,46 +2157,81 @@ ScreenEffect(
   </div>
 
   <div class="concept-prose">
-    <strong>Focus and Dodge.</strong> Most effects accept <code>.Focus(&amp;ref)</code> and
-    <code>.Dodge(&amp;ref)</code> to target or exclude a specific node. Bind a
-    <code>NodeRef</code> to any component, then pass its pointer. Focus constrains the effect to
-    radiate from that node. Dodge leaves it untouched while the rest of the screen is affected.
-  </div>
-
-<div class="show-grid">
-  <div class="code code-raw" style="margin:0">var modal NodeRef
-
-VBox(
-    Text("background content"),
-    Overlay(
-        VBox.NodeRef(&modal).Border(BorderRounded)(
-            Text("modal dialog"),
-        ),
-    ),
-)
-
-// dim + frost the background, shadow around the modal
-ScreenEffect(
-    SEFocusDim(&modal).Strength(0.6),
-    SEDropShadow().Focus(&modal),
-)</div>
-  <div class="show-text">
-    <canvas data-termdata="{&quot;w&quot;:40,&quot;h&quot;:10,&quot;lines&quot;:[&quot;\u001b[0;38;2;131;128;120;48;2;17;17;15m┌\u001b[0;38;2;137;134;126;48;2;17;17;16m─\u001b[0;38;2;143;140;132;48;2;18;18;17m f\u001b[0;38;2;150;147;138;48;2;19;19;18mi\u001b[0;38;2;156;153;143;48;2;20;20;18mle\u001b[0;38;2;162;159;149;48;2;21;21;19ms\u001b[0;38;2;168;165;155;48;2;21;21;20m ─\u001b[0;38;2;175;171;161;48;2;22;22;21m───\u001b[0;38;2;181;177;166;48;2;23;23;21m────\u001b[0;38;2;187;183;172;48;2;24;24;22m───────\u001b[0;38;2;181;177;166;48;2;23;23;21m────\u001b[0;38;2;175;171;161;48;2;22;22;21m───\u001b[0;38;2;168;165;155;48;2;21;21;20m──\u001b[0;38;2;162;159;149;48;2;21;21;19m─\u001b[0;38;2;156;153;143;48;2;20;20;18m──\u001b[0;38;2;150;147;138;48;2;19;19;18m─\u001b[0;38;2;143;140;132;48;2;18;18;17m──\u001b[0;38;2;137;134;126;48;2;17;17;16m┐\u001b[0m&quot;,&quot;\u001b[0;38;2;137;134;126;48;2;17;17;16m│\u003e\u001b[0;38;2;143;140;132;48;2;18;18;17m \u001b[0;38;2;150;147;138;48;2;19;19;18ms\u001b[0;38;2;156;153;143;48;2;20;20;18me\u001b[0;38;2;162;159;149;48;2;21;21;19mrv\u001b[0;38;2;168;165;155;48;2;21;21;20mer\u001b[0;38;2;175;171;161;48;2;22;22;21m.g\u001b[0;38;2;181;177;166;48;2;23;23;21mo  \u001b[0;38;2;187;183;172;48;2;24;24;22m     \u001b[0;38;2;193;189;178;48;2;25;25;23m   \u001b[0;38;2;187;183;172;48;2;24;24;22m     \u001b[0;38;2;181;177;166;48;2;23;23;21m   \u001b[0;38;2;175;171;161;48;2;22;22;21m  \u001b[0;38;2;168;165;155;48;2;21;21;20m  \u001b[0;38;2;162;159;149;48;2;21;21;19m  \u001b[0;38;2;156;153;143;48;2;20;20;18m \u001b[0;38;2;150;147;138;48;2;19;19;18m \u001b[0;38;2;143;140;132;48;2;18;18;17m \u001b[0;38;2;137;134;126;48;2;17;17;16m│\u001b[0m&quot;,&quot;\u001b[0;38;2;137;134;126;48;2;17;17;16m│\u001b[0;38;2;143;140;132;48;2;18;18;17m \u001b[0;38;2;150;147;138;48;2;19;19;18m \u001b[0;38;2;156;153;143;48;2;20;20;18mha\u001b[0;38;2;162;159;149;48;2;21;21;19mn\u001b[0;38;2;168;165;155;48;2;21;21;20mdl\u001b[0;38;2;175;171;161;48;2;22;22;21mer\u001b[0;38;2;181;177;166;48;2;23;23;21m.g\u001b[0;38;2;187;183;172;48;2;24;24;22mo  \u001b[0;38;2;193;189;178;48;2;25;25;23m           \u001b[0;38;2;187;183;172;48;2;24;24;22m   \u001b[0;38;2;181;177;166;48;2;23;23;21m  \u001b[0;38;2;175;171;161;48;2;22;22;21m  \u001b[0;38;2;168;165;155;48;2;21;21;20m  \u001b[0;38;2;162;159;149;48;2;21;21;19m \u001b[0;38;2;156;153;143;48;2;20;20;18m  \u001b[0;38;2;150;147;138;48;2;19;19;18m \u001b[0;38;2;143;140;132;48;2;18;18;17m│\u001b[0m&quot;,&quot;\u001b[0;38;2;143;140;132;48;2;18;18;17m│\u001b[0;38;2;150;147;138;48;2;19;19;18m  \u001b[0;38;2;156;153;143;48;2;20;20;18mm\u001b[0;38;2;162;159;149;48;2;21;21;19mi\u001b[0;38;2;168;165;155;48;2;21;21;20mdd\u001b[0;38;2;175;171;161;48;2;22;22;21ml\u001b[0;38;2;200;196;184;48;2;50;50;48m                       \u001b[0;38;2;181;177;166;48;2;23;23;21m \u001b[0;38;2;175;171;161;48;2;22;22;21m  \u001b[0;38;2;168;165;155;48;2;21;21;20m  \u001b[0;38;2;162;159;149;48;2;21;21;19m \u001b[0;38;2;156;153;143;48;2;20;20;18m \u001b[0;38;2;150;147;138;48;2;19;19;18m │\u001b[0m&quot;,&quot;\u001b[0;38;2;143;140;132;48;2;18;18;17m│\u001b[0;38;2;150;147;138;48;2;19;19;18m \u001b[0;38;2;156;153;143;48;2;20;20;18m r\u001b[0;38;2;162;159;149;48;2;21;21;19mo\u001b[0;38;2;168;165;155;48;2;21;21;20mu\u001b[0;38;2;175;171;161;48;2;22;22;21mte\u001b[0;38;2;200;196;184;48;2;50;50;48m  confirm delete?      \u001b[0;38;2;181;177;166;48;2;23;23;21m  \u001b[0;38;2;175;171;161;48;2;22;22;21m  \u001b[0;38;2;168;165;155;48;2;21;21;20m \u001b[0;38;2;162;159;149;48;2;21;21;19m \u001b[0;38;2;156;153;143;48;2;20;20;18m  \u001b[0;38;2;150;147;138;48;2;19;19;18m│\u001b[0m&quot;,&quot;\u001b[0;38;2;143;140;132;48;2;18;18;17m│\u001b[0;38;2;150;147;138;48;2;19;19;18m \u001b[0;38;2;156;153;143;48;2;20;20;18m \u001b[0;38;2;162;159;149;48;2;21;21;19mco\u001b[0;38;2;168;165;155;48;2;21;21;20mn\u001b[0;38;2;175;171;161;48;2;22;22;21mfi\u001b[0;38;2;200;196;184;48;2;50;50;48m  \u001b[0;1;38;2;200;196;184;48;2;50;50;48myes\u001b[0;38;2;200;196;184;48;2;50;50;48m        no        \u001b[0;38;2;181;177;166;48;2;23;23;21m  \u001b[0;38;2;175;171;161;48;2;22;22;21m  \u001b[0;38;2;168;165;155;48;2;21;21;20m \u001b[0;38;2;162;159;149;48;2;21;21;19m  \u001b[0;38;2;156;153;143;48;2;20;20;18m \u001b[0;38;2;150;147;138;48;2;19;19;18m│\u001b[0m&quot;,&quot;\u001b[0;38;2;143;140;132;48;2;18;18;17m│\u001b[0;38;2;150;147;138;48;2;19;19;18m \u001b[0;38;2;156;153;143;48;2;20;20;18m m\u001b[0;38;2;162;159;149;48;2;21;21;19ma\u001b[0;38;2;168;165;155;48;2;21;21;20mi\u001b[0;38;2;175;171;161;48;2;22;22;21mn.\u001b[0;38;2;200;196;184;48;2;50;50;48m                       \u001b[0;38;2;181;177;166;48;2;23;23;21m  \u001b[0;38;2;175;171;161;48;2;22;22;21m  \u001b[0;38;2;168;165;155;48;2;21;21;20m \u001b[0;38;2;162;159;149;48;2;21;21;19m \u001b[0;38;2;156;153;143;48;2;20;20;18m  \u001b[0;38;2;150;147;138;48;2;19;19;18m│\u001b[0m&quot;,&quot;\u001b[0;38;2;143;140;132;48;2;18;18;17m│\u001b[0;38;2;150;147;138;48;2;19;19;18m  \u001b[0;38;2;156;153;143;48;2;20;20;18md\u001b[0;38;2;162;159;149;48;2;21;21;19mb\u001b[0;38;2;168;165;155;48;2;21;21;20m.g\u001b[0;38;2;175;171;161;48;2;22;22;21mo \u001b[0;38;2;181;177;166;48;2;23;23;21m  \u001b[0;38;2;187;183;172;48;2;24;24;22m  \u001b[0;38;2;193;189;178;48;2;25;25;23m     \u001b[0;38;2;200;196;184;48;2;26;26;24m     \u001b[0;38;2;193;189;178;48;2;25;25;23m     \u001b[0;38;2;187;183;172;48;2;24;24;22m  \u001b[0;38;2;181;177;166;48;2;23;23;21m  \u001b[0;38;2;175;171;161;48;2;22;22;21m  \u001b[0;38;2;168;165;155;48;2;21;21;20m  \u001b[0;38;2;162;159;149;48;2;21;21;19m \u001b[0;38;2;156;153;143;48;2;20;20;18m \u001b[0;38;2;150;147;138;48;2;19;19;18m │\u001b[0m&quot;,&quot;\u001b[0;38;2;137;134;126;48;2;17;17;16m│\u001b[0;38;2;143;140;132;48;2;18;18;17m \u001b[0;38;2;150;147;138;48;2;19;19;18m \u001b[0;38;2;156;153;143;48;2;20;20;18mau\u001b[0;38;2;162;159;149;48;2;21;21;19mt\u001b[0;38;2;168;165;155;48;2;21;21;20mh.\u001b[0;38;2;175;171;161;48;2;22;22;21mgo\u001b[0;38;2;181;177;166;48;2;23;23;21m  \u001b[0;38;2;187;183;172;48;2;24;24;22m   \u001b[0;38;2;193;189;178;48;2;25;25;23m           \u001b[0;38;2;187;183;172;48;2;24;24;22m   \u001b[0;38;2;181;177;166;48;2;23;23;21m  \u001b[0;38;2;175;171;161;48;2;22;22;21m  \u001b[0;38;2;168;165;155;48;2;21;21;20m  \u001b[0;38;2;162;159;149;48;2;21;21;19m \u001b[0;38;2;156;153;143;48;2;20;20;18m  \u001b[0;38;2;150;147;138;48;2;19;19;18m \u001b[0;38;2;143;140;132;48;2;18;18;17m│\u001b[0m&quot;,&quot;\u001b[0;38;2;137;134;126;48;2;17;17;16m└─\u001b[0;38;2;143;140;132;48;2;18;18;17m─\u001b[0;38;2;150;147;138;48;2;19;19;18m─\u001b[0;38;2;156;153;143;48;2;20;20;18m─\u001b[0;38;2;162;159;149;48;2;21;21;19m──\u001b[0;38;2;168;165;155;48;2;21;21;20m──\u001b[0;38;2;175;171;161;48;2;22;22;21m──\u001b[0;38;2;181;177;166;48;2;23;23;21m───\u001b[0;38;2;187;183;172;48;2;24;24;22m─────\u001b[0;38;2;193;189;178;48;2;25;25;23m───\u001b[0;38;2;187;183;172;48;2;24;24;22m─────\u001b[0;38;2;181;177;166;48;2;23;23;21m───\u001b[0;38;2;175;171;161;48;2;22;22;21m──\u001b[0;38;2;168;165;155;48;2;21;21;20m──\u001b[0;38;2;162;159;149;48;2;21;21;19m──\u001b[0;38;2;156;153;143;48;2;20;20;18m─\u001b[0;38;2;150;147;138;48;2;19;19;18m─\u001b[0;38;2;143;140;132;48;2;18;18;17m─\u001b[0;38;2;137;134;126;48;2;17;17;16m┘\u001b[0m&quot;]}" style="max-width:318px"></canvas>
-  </div>
-</div>
-
-  <div class="concept-prose">
     <strong>Custom per-cell transforms.</strong> <code>EachCell</code> is a per-cell callback that
     receives coordinates, the cell, and the post-processing context. It runs in parallel across quadrants of
     the buffer. This is the fragment-shader equivalent for terminal cells.
   </div>
 
-  <div class="code code-raw">ScreenEffect(EachCell(func(x, y int, c Cell, ctx PostContext) Cell {
-    if y%2 == 0 {
-        c.Style.Attr = c.Style.Attr.With(AttrDim)
+  <div class="show-grid">
+    <div class="code code-raw" style="margin:0">// diagonal flip band with brand gradient
+ScreenEffect(
+    EachCell(func(x, y int, c Cell, ctx PostContext) Cell {
+    diag := float64(x)/float64(ctx.Width) + float64(y)/float64(ctx.Height)
+    t := diag / 2.0
+    c.Style.FG = lerpGradient(t) // #682850 → #c44040 → #ff6060
+
+    dist := math.Abs(diag - 0.7)
+    if dist < 0.2 {
+        if f, ok := flipMap[c.Rune]; ok {
+            c.Rune = f
+        }
     }
     return c
-}))</div>
+    }),
+)</div>
+    <div class="show-text">
+      <canvas data-term="concepts-effect-flip" data-termdata="{&quot;w&quot;:34,&quot;h&quot;:11,&quot;lines&quot;:[&quot;\u001b[0;38;2;104;40;80;49m0\u001b[0;38;2;106;40;79;49m8\u001b[0;38;2;108;41;79;49m:\u001b[0;38;2;110;42;78;49m4\u001b[0;38;2;112;42;78;49m2\u001b[0;38;2;114;43;78;49m \u001b[0;38;2;116;44;77;49m \u001b[0;38;2;118;44;77;49mL\u001b[0;38;2;121;45;77;49mo\u001b[0;38;2;123;46;76;49mn\u001b[0;38;2;125;47;76;49md\u001b[0;38;2;127;47;76;49mo\u001b[0;38;2;129;48;75;49mn\u001b[0;38;2;131;49;75;49m \u001b[0;38;2;133;49;75;49mE\u001b[0;38;2;136;50;74;49mu\u001b[0;38;2;138;51;74;49ms\u001b[0;38;2;140;52;73;49mʇ\u001b[0;38;2;151;58;79;49mo\u001b[0;38;2;162;65;84;49mu\u001b[0;38;2;173;71;90;49m \u001b[0;38;2;184;78;96;49m \u001b[0;38;2;195;85;101;49m \u001b[0;38;2;206;91;107;49m \u001b[0;38;2;213;95;110;49mO\u001b[0;38;2;206;89;104;49mu\u001b[0;38;2;199;84;97;49m \u001b[0;38;2;192;78;91;49mʇ\u001b[0;38;2;185;73;85;49mᴉ\u001b[0;38;2;178;67;79;49mɯ\u001b[0;38;2;172;62;72;49mǝ\u001b[0;38;2;168;59;68;49m \u001b[0;38;2;170;59;68;49m \u001b[0;38;2;172;59;68;49m \u001b[0m&quot;,&quot;\u001b[0;38;2;110;42;78;49m0\u001b[0;38;2;112;42;78;49m8\u001b[0;38;2;114;43;78;49m:\u001b[0;38;2;117;44;77;49m4\u001b[0;38;2;119;45;77;49m7\u001b[0;38;2;121;45;77;49m \u001b[0;38;2;123;46;76;49m \u001b[0;38;2;125;47;76;49mB\u001b[0;38;2;127;47;76;49mr\u001b[0;38;2;129;48;75;49mi\u001b[0;38;2;132;49;75;49ms\u001b[0;38;2;134;50;74;49mt\u001b[0;38;2;136;50;74;49mo\u001b[0;38;2;138;51;74;49ml\u001b[0;38;2;141;52;74;49m \u001b[0;38;2;152;59;79;49m⊥\u001b[0;38;2;163;65;85;49mǝ\u001b[0;38;2;174;72;91;49mɯ\u001b[0;38;2;185;79;96;49md\u001b[0;38;2;196;85;102;49ml\u001b[0;38;2;207;92;107;49mǝ\u001b[0;38;2;212;94;109;49m \u001b[0;38;2;205;89;103;49m \u001b[0;38;2;198;83;97;49m \u001b[0;38;2;192;78;90;49m \u001b[0;38;2;185;72;84;49mԀ\u001b[0;38;2;178;67;78;49ml\u001b[0;38;2;171;61;72;49mɐ\u001b[0;38;2;168;59;68;49mt\u001b[0;38;2;170;59;68;49m \u001b[0;38;2;172;59;68;49m4\u001b[0;38;2;174;60;67;49m \u001b[0;38;2;176;60;67;49m \u001b[0;38;2;178;60;67;49m \u001b[0m&quot;,&quot;\u001b[0;38;2;117;44;77;49m0\u001b[0;38;2;119;45;77;49m8\u001b[0;38;2;121;45;77;49m:\u001b[0;38;2;123;46;76;49m5\u001b[0;38;2;125;47;76;49m5\u001b[0;38;2;127;47;76;49m \u001b[0;38;2;130;48;75;49m \u001b[0;38;2;132;49;75;49mB\u001b[0;38;2;134;50;74;49mi\u001b[0;38;2;136;50;74;49mr\u001b[0;38;2;138;51;74;49mm\u001b[0;38;2;142;53;74;49mᴉ\u001b[0;38;2;153;59;80;49mu\u001b[0;38;2;164;66;85;49mƃ\u001b[0;38;2;175;73;91;49mɥ\u001b[0;38;2;186;79;97;49mɐ\u001b[0;38;2;197;86;102;49mɯ\u001b[0;38;2;208;92;108;49m \u001b[0;38;2;212;94;109;49mN\u001b[0;38;2;205;88;102;49mǝ\u001b[0;38;2;198;83;96;49mʍ\u001b[0;38;2;191;77;90;49m \u001b[0;38;2;184;72;84;49m \u001b[0;38;2;177;66;77;49m \u001b[0;38;2;170;61;71;49mԀ\u001b[0;38;2;169;59;68;49ml\u001b[0;38;2;171;59;68;49ma\u001b[0;38;2;173;59;68;49mt\u001b[0;38;2;175;60;67;49m \u001b[0;38;2;176;60;67;49m6\u001b[0;38;2;178;60;67;49m \u001b[0;38;2;180;61;66;49m \u001b[0;38;2;182;61;66;49m \u001b[0;38;2;184;61;66;49m \u001b[0m&quot;,&quot;\u001b[0;38;2;123;46;76;49m0\u001b[0;38;2;125;47;76;49m9\u001b[0;38;2;128;48;75;49m:\u001b[0;38;2;130;48;75;49m1\u001b[0;38;2;132;49;75;49m0\u001b[0;38;2;134;50;74;49m \u001b[0;38;2;136;50;74;49m \u001b[0;38;2;138;51;74;49mM\u001b[0;38;2;143;53;75;49mɐ\u001b[0;38;2;154;60;80;49mu\u001b[0;38;2;165;67;86;49mɔ\u001b[0;38;2;176;73;92;49mɥ\u001b[0;38;2;187;80;97;49mǝ\u001b[0;38;2;198;86;103;49ms\u001b[0;38;2;208;93;108;49mʇ\u001b[0;38;2;211;93;108;49mǝ\u001b[0;38;2;204;88;102;49mɹ\u001b[0;38;2;197;82;96;49m \u001b[0;38;2;190;77;89;49mԀ\u001b[0;38;2;183;71;83;49mᴉ\u001b[0;38;2;177;66;77;49mɔ\u001b[0;38;2;170;60;71;49m \u001b[0;38;2;169;59;68;49m \u001b[0;38;2;171;59;68;49m \u001b[0;38;2;173;59;68;49mP\u001b[0;38;2;175;60;67;49ml\u001b[0;38;2;177;60;67;49ma\u001b[0;38;2;179;60;67;49mt\u001b[0;38;2;181;61;66;49m \u001b[0;38;2;183;61;66;49m3\u001b[0;38;2;185;62;65;49m \u001b[0;38;2;186;62;65;49m \u001b[0;38;2;188;62;65;49m \u001b[0;38;2;190;63;64;49m \u001b[0m&quot;,&quot;\u001b[0;38;2;130;48;75;49m0\u001b[0;38;2;132;49;75;49m9\u001b[0;38;2;134;50;74;49m:\u001b[0;38;2;136;50;74;49m1\u001b[0;38;2;139;51;74;49m5\u001b[0;38;2;144;54;75;49m \u001b[0;38;2;155;61;81;49m \u001b[0;38;2;166;67;87;49mƎ\u001b[0;38;2;177;74;92;49mp\u001b[0;38;2;188;80;98;49mᴉ\u001b[0;38;2;199;87;103;49mu\u001b[0;38;2;209;93;109;49mq\u001b[0;38;2;210;93;107;49mn\u001b[0;38;2;203;87;101;49mɹ\u001b[0;38;2;197;82;95;49mƃ\u001b[0;38;2;190;76;89;49mɥ\u001b[0;38;2;183;71;83;49m \u001b[0;38;2;176;65;76;49mM\u001b[0;38;2;169;60;70;49mɐ\u001b[0;38;2;169;59;68;49mv\u001b[0;38;2;171;59;68;49m \u001b[0;38;2;173;59;68;49m \u001b[0;38;2;175;60;67;49m \u001b[0;38;2;177;60;67;49m \u001b[0;38;2;179;60;67;49mD\u001b[0;38;2;181;61;66;49me\u001b[0;38;2;183;61;66;49ml\u001b[0;38;2;185;62;65;49ma\u001b[0;38;2;187;62;65;49my\u001b[0;38;2;189;62;65;49me\u001b[0;38;2;191;63;64;49md\u001b[0;38;2;193;63;64;49m \u001b[0;38;2;194;63;64;49m \u001b[0;38;2;197;64;64;49m \u001b[0m&quot;,&quot;\u001b[0;38;2;137;51;74;49m0\u001b[0;38;2;139;51;74;49m9\u001b[0;38;2;145;55;76;49m:\u001b[0;38;2;156;61;81;49mᄅ\u001b[0;38;2;167;68;87;49mᄅ\u001b[0;38;2;178;74;93;49m \u001b[0;38;2;189;81;98;49m \u001b[0;38;2;200;88;104;49m⅂\u001b[0;38;2;210;94;109;49mǝ\u001b[0;38;2;210;92;107;49mǝ\u001b[0;38;2;203;87;101;49mp\u001b[0;38;2;196;81;94;49ms\u001b[0;38;2;189;76;88;49m \u001b[0;38;2;182;70;82;49mƆ\u001b[0;38;2;175;65;76;49mǝ\u001b[0;38;2;168;59;69;49mu\u001b[0;38;2;169;59;68;49mt\u001b[0;38;2;171;59;68;49mr\u001b[0;38;2;173;59;68;49ma\u001b[0;38;2;175;60;67;49ml\u001b[0;38;2;177;60;67;49m \u001b[0;38;2;179;60;67;49m \u001b[0;38;2;181;61;66;49m \u001b[0;38;2;183;61;66;49m \u001b[0;38;2;185;62;65;49mP\u001b[0;38;2;187;62;65;49ml\u001b[0;38;2;189;62;65;49ma\u001b[0;38;2;191;63;64;49mt\u001b[0;38;2;193;63;64;49m \u001b[0;38;2;195;63;64;49m8\u001b[0;38;2;197;64;64;49m \u001b[0;38;2;200;66;66;49m \u001b[0;38;2;202;67;67;49m \u001b[0;38;2;205;68;68;49m \u001b[0m&quot;,&quot;\u001b[0;38;2;157;62;82;49m0\u001b[0;38;2;168;68;88;49m6\u001b[0;38;2;179;75;93;49m:\u001b[0;38;2;190;82;99;49mƐ\u001b[0;38;2;201;88;104;49m0\u001b[0;38;2;211;94;110;49m \u001b[0;38;2;209;92;106;49m \u001b[0;38;2;202;86;100;49m⅁\u001b[0;38;2;195;81;94;49ml\u001b[0;38;2;188;75;88;49mɐ\u001b[0;38;2;182;70;81;49ms\u001b[0;38;2;175;64;75;49mƃ\u001b[0;38;2;168;59;69;49mo\u001b[0;38;2;169;59;68;49mw\u001b[0;38;2;171;59;68;49m \u001b[0;38;2;173;59;68;49mC\u001b[0;38;2;175;60;67;49mt\u001b[0;38;2;177;60;67;49ml\u001b[0;38;2;179;61;66;49m \u001b[0;38;2;181;61;66;49m \u001b[0;38;2;183;61;66;49m \u001b[0;38;2;185;62;65;49m \u001b[0;38;2;187;62;65;49m \u001b[0;38;2;189;62;65;49m \u001b[0;38;2;191;63;64;49mP\u001b[0;38;2;193;63;64;49ml\u001b[0;38;2;195;63;64;49ma\u001b[0;38;2;197;64;64;49mt\u001b[0;38;2;200;66;66;49m \u001b[0;38;2;202;67;67;49m1\u001b[0;38;2;205;69;69;49m \u001b[0;38;2;207;70;70;49m \u001b[0;38;2;210;71;71;49m \u001b[0;38;2;213;73;73;49m \u001b[0m&quot;]}" style="max-width:318px"></canvas>
+    </div>
+  </div>
+
+  <div class="show-grid">
+    <div class="code code-raw" style="margin:0">// brand gradient across columns: #c44040 → #ff6060 → #983848 → #682850
+ScreenEffect(
+    EachCell(func(x, y int, c Cell, ctx PostContext) Cell {
+    t := float64(x) / float64(ctx.Width-1)
+    c.Style.FG = lerpBrandGradient(t)
+    return c
+    }),
+)</div>
+    <div class="show-text">
+      <canvas data-term="concepts-effect-gradient" data-termdata="{&quot;w&quot;:30,&quot;h&quot;:10,&quot;lines&quot;:[&quot;\u001b[0;38;2;196;64;64;49m╭\u001b[0;38;2;202;67;67;49m─\u001b[0;38;2;208;70;70;49m \u001b[0;38;2;214;74;74;49ms\u001b[0;38;2;220;77;77;49mt\u001b[0;38;2;226;80;80;49ma\u001b[0;38;2;232;84;84;49mt\u001b[0;38;2;239;87;87;49mu\u001b[0;38;2;245;90;90;49ms\u001b[0;38;2;251;94;94;49m \u001b[0;38;2;250;94;94;49m─\u001b[0;38;2;239;90;92;49m─\u001b[0;38;2;228;85;89;49m─\u001b[0;38;2;218;81;87;49m─\u001b[0;38;2;207;77;84;49m─\u001b[0;38;2;196;73;82;49m─\u001b[0;38;2;185;69;79;49m─\u001b[0;38;2;175;64;77;49m─\u001b[0;38;2;164;60;74;49m─\u001b[0;38;2;153;56;72;49m─\u001b[0;38;2;147;54;72;49m─\u001b[0;38;2;142;52;73;49m─\u001b[0;38;2;138;51;74;49m─\u001b[0;38;2;133;49;75;49m─\u001b[0;38;2;128;48;75;49m─\u001b[0;38;2;123;46;76;49m─\u001b[0;38;2;118;44;77;49m─\u001b[0;38;2;113;43;78;49m─\u001b[0;38;2;108;41;79;49m─\u001b[0;38;2;104;40;80;49m╮\u001b[0m&quot;,&quot;\u001b[0;38;2;196;64;64;49m│\u001b[0;38;2;202;67;67;49ma\u001b[0;38;2;208;70;70;49mp\u001b[0;38;2;214;74;74;49mi\u001b[0;38;2;220;77;77;49m.\u001b[0;38;2;226;80;80;49m.\u001b[0;38;2;232;84;84;49m.\u001b[0;38;2;239;87;87;49m.\u001b[0;38;2;245;90;90;49m.\u001b[0;38;2;251;94;94;49m.\u001b[0;38;2;250;94;94;49m.\u001b[0;38;2;239;90;92;49m.\u001b[0;38;2;228;85;89;49m.\u001b[0;38;2;218;81;87;49m.\u001b[0;38;2;207;77;84;49m.\u001b[0;38;2;196;73;82;49m.\u001b[0;38;2;185;69;79;49m.\u001b[0;38;2;175;64;77;49m.\u001b[0;38;2;164;60;74;49m.\u001b[0;38;2;153;56;72;49m.\u001b[0;38;2;147;54;72;49m.\u001b[0;38;2;142;52;73;49m.\u001b[0;38;2;138;51;74;49m.\u001b[0;38;2;133;49;75;49mo\u001b[0;38;2;128;48;75;49mn\u001b[0;38;2;123;46;76;49ml\u001b[0;38;2;118;44;77;49mi\u001b[0;38;2;113;43;78;49mn\u001b[0;38;2;108;41;79;49me\u001b[0;38;2;104;40;80;49m│\u001b[0m&quot;,&quot;\u001b[0;38;2;196;64;64;49m│\u001b[0;38;2;202;67;67;49mc\u001b[0;38;2;208;70;70;49ma\u001b[0;38;2;214;74;74;49mc\u001b[0;38;2;220;77;77;49mh\u001b[0;38;2;226;80;80;49me\u001b[0;38;2;232;84;84;49m.\u001b[0;38;2;239;87;87;49m.\u001b[0;38;2;245;90;90;49m.\u001b[0;38;2;251;94;94;49m.\u001b[0;38;2;250;94;94;49m.\u001b[0;38;2;239;90;92;49m.\u001b[0;38;2;228;85;89;49m.\u001b[0;38;2;218;81;87;49m.\u001b[0;38;2;207;77;84;49m.\u001b[0;38;2;196;73;82;49m.\u001b[0;38;2;185;69;79;49m.\u001b[0;38;2;175;64;77;49m.\u001b[0;38;2;164;60;74;49m.\u001b[0;38;2;153;56;72;49m.\u001b[0;38;2;147;54;72;49m.\u001b[0;38;2;142;52;73;49m.\u001b[0;38;2;138;51;74;49m.\u001b[0;38;2;133;49;75;49m.\u001b[0;38;2;128;48;75;49m.\u001b[0;38;2;123;46;76;49mw\u001b[0;38;2;118;44;77;49ma\u001b[0;38;2;113;43;78;49mr\u001b[0;38;2;108;41;79;49mm\u001b[0;38;2;104;40;80;49m│\u001b[0m&quot;,&quot;\u001b[0;38;2;196;64;64;49m│\u001b[0;38;2;202;67;67;49mq\u001b[0;38;2;208;70;70;49mu\u001b[0;38;2;214;74;74;49me\u001b[0;38;2;220;77;77;49mu\u001b[0;38;2;226;80;80;49me\u001b[0;38;2;232;84;84;49m.\u001b[0;38;2;239;87;87;49m.\u001b[0;38;2;245;90;90;49m.\u001b[0;38;2;251;94;94;49m.\u001b[0;38;2;250;94;94;49m.\u001b[0;38;2;239;90;92;49m.\u001b[0;38;2;228;85;89;49m.\u001b[0;38;2;218;81;87;49m.\u001b[0;38;2;207;77;84;49m.\u001b[0;38;2;196;73;82;49m.\u001b[0;38;2;185;69;79;49m.\u001b[0;38;2;175;64;77;49m.\u001b[0;38;2;164;60;74;49m.\u001b[0;38;2;153;56;72;49m1\u001b[0;38;2;147;54;72;49m2\u001b[0;38;2;142;52;73;49m \u001b[0;38;2;138;51;74;49mp\u001b[0;38;2;133;49;75;49me\u001b[0;38;2;128;48;75;49mn\u001b[0;38;2;123;46;76;49md\u001b[0;38;2;118;44;77;49mi\u001b[0;38;2;113;43;78;49mn\u001b[0;38;2;108;41;79;49mg\u001b[0;38;2;104;40;80;49m│\u001b[0m&quot;,&quot;\u001b[0;38;2;196;64;64;49m╰\u001b[0;38;2;202;67;67;49m─\u001b[0;38;2;208;70;70;49m─\u001b[0;38;2;214;74;74;49m─\u001b[0;38;2;220;77;77;49m─\u001b[0;38;2;226;80;80;49m─\u001b[0;38;2;232;84;84;49m─\u001b[0;38;2;239;87;87;49m─\u001b[0;38;2;245;90;90;49m─\u001b[0;38;2;251;94;94;49m─\u001b[0;38;2;250;94;94;49m─\u001b[0;38;2;239;90;92;49m─\u001b[0;38;2;228;85;89;49m─\u001b[0;38;2;218;81;87;49m─\u001b[0;38;2;207;77;84;49m─\u001b[0;38;2;196;73;82;49m─\u001b[0;38;2;185;69;79;49m─\u001b[0;38;2;175;64;77;49m─\u001b[0;38;2;164;60;74;49m─\u001b[0;38;2;153;56;72;49m─\u001b[0;38;2;147;54;72;49m─\u001b[0;38;2;142;52;73;49m─\u001b[0;38;2;138;51;74;49m─\u001b[0;38;2;133;49;75;49m─\u001b[0;38;2;128;48;75;49m─\u001b[0;38;2;123;46;76;49m─\u001b[0;38;2;118;44;77;49m─\u001b[0;38;2;113;43;78;49m─\u001b[0;38;2;108;41;79;49m─\u001b[0;38;2;104;40;80;49m╯\u001b[0m&quot;]}" style="max-width:318px"></canvas>
+    </div>
+  </div>
+
+
+  <div class="show-grid">
+    <div class="code code-raw" style="margin:0">// wave — shift each row by a sine offset (full-buffer effect)
+type waveEffect struct{ phase *float64 }
+
+func (w waveEffect) Apply(buf *Buffer, ctx PostContext) {
+    for y := range ctx.Height {
+        offset := int(4 * math.Sin(float64(y)*0.7 + *w.phase))
+        shiftRow(buf, y, offset, ctx.Width)
+    }
+}</div>
+    <div class="show-text">
+      <canvas data-term="concepts-effect-wave" data-termdata="{&quot;w&quot;:34,&quot;h&quot;:11,&quot;lines&quot;:[&quot;08:42  London Euston    On time   &quot;,&quot;  08:47  Bristol Temple    Plat 4 &quot;,&quot;  08:55  Birmingham New   Plat 6  &quot;,&quot; 09:10  Manchester Pic   Plat 3   &quot;,&quot;9:15  Edinburgh Wav    Delayed    &quot;,&quot;:22  Leeds Central    Plat 8      &quot;,&quot;:30  Glasgow Ctl      Plat 1      &quot;]}" style="max-width:318px"></canvas>
+    </div>
+  </div>
+
+  <div class="show-grid">
+    <div class="code code-raw" style="margin:0">// collapse — radial block fill from center
+ScreenEffect(
+    EachCell(func(x, y int, c Cell, ctx PostContext) Cell {
+    dx := (float64(x) - float64(ctx.Width)/2) / float64(ctx.Width/2)
+    dy := (float64(y) - float64(ctx.Height)/2) / float64(ctx.Height/2)
+    dist := math.Sqrt(dx*dx + dy*dy)
+    if dist &lt; radius {
+        blocks := []rune{' ', '░', '▒', '▓', '█'}
+        c.Rune = blocks[int((1-dist/radius)*4)]
+    }
+    return c
+    }),
+)</div>
+    <div class="show-text">
+      <canvas data-term="concepts-effect-collapse" data-termdata="{&quot;w&quot;:34,&quot;h&quot;:11,&quot;lines&quot;:[&quot;08:42  London Euston    On time   &quot;,&quot;08:47  Bristol Temple    Plat 4   &quot;,&quot;08:55  Birmingham New   Plat 6    &quot;,&quot;09:10  Manc\u001b[0;38;2;110;42;80;49m \u001b[0;38;2;118;45;81;49m \u001b[0;38;2;126;48;82;49m \u001b[0;38;2;132;50;82;49m \u001b[0;38;2;136;52;83;49m \u001b[0;38;2;139;53;83;49m \u001b[0;38;2;140;53;83;49m \u001b[0;38;2;139;53;83;49m \u001b[0;38;2;136;52;83;49m \u001b[0;38;2;132;50;82;49m \u001b[0;38;2;126;48;82;49m \u001b[0;38;2;118;45;81;49m \u001b[0;38;2;110;42;80;49m \u001b[0;39;49mPlat 3    &quot;,&quot;09:15  E\u001b[0;38;2;105;40;80;49m \u001b[0;38;2;118;45;81;49m \u001b[0;38;2;130;49;82;49m \u001b[0;38;2;142;54;84;49m░\u001b[0;38;2;154;58;85;49m░\u001b[0;38;2;164;62;86;49m░\u001b[0;38;2;173;65;87;49m░\u001b[0;38;2;180;68;88;49m▒\u001b[0;38;2;184;69;88;49m▒\u001b[0;38;2;186;70;88;49m▒\u001b[0;38;2;184;69;88;49m▒\u001b[0;38;2;180;68;88;49m▒\u001b[0;38;2;173;65;87;49m░\u001b[0;38;2;164;62;86;49m░\u001b[0;38;2;154;58;85;49m░\u001b[0;38;2;142;54;84;49m░\u001b[0;38;2;130;49;82;49m \u001b[0;38;2;118;45;81;49m \u001b[0;38;2;105;40;80;49m \u001b[0;39;49mayed   &quot;,&quot;09:22  \u001b[0;38;2;105;40;80;49m \u001b[0;38;2;119;45;81;49m \u001b[0;38;2;134;51;83;49m \u001b[0;38;2;148;56;84;49m░\u001b[0;38;2;163;61;86;49m░\u001b[0;38;2;177;67;87;49m░\u001b[0;38;2;191;72;89;49m▒\u001b[0;38;2;205;77;90;49m▒\u001b[0;38;2;217;82;92;49m▓\u001b[0;38;2;227;85;93;49m▓\u001b[0;38;2;232;87;93;49m▓\u001b[0;38;2;227;85;93;49m▓\u001b[0;38;2;217;82;92;49m▓\u001b[0;38;2;205;77;90;49m▒\u001b[0;38;2;191;72;89;49m▒\u001b[0;38;2;177;67;87;49m░\u001b[0;38;2;163;61;86;49m░\u001b[0;38;2;148;56;84;49m░\u001b[0;38;2;134;51;83;49m \u001b[0;38;2;119;45;81;49m \u001b[0;38;2;105;40;80;49m \u001b[0;39;49m 8    &quot;,&quot;09:30  \u001b[0;38;2;105;40;80;49m \u001b[0;38;2;119;45;81;49m \u001b[0;38;2;134;51;83;49m \u001b[0;38;2;148;56;84;49m░\u001b[0;38;2;163;61;86;49m░\u001b[0;38;2;177;67;87;49m░\u001b[0;38;2;191;72;89;49m▒\u001b[0;38;2;205;77;90;49m▒\u001b[0;38;2;217;82;92;49m▓\u001b[0;38;2;227;85;93;49m▓\u001b[0;38;2;232;87;93;49m▓\u001b[0;38;2;227;85;93;49m▓\u001b[0;38;2;217;82;92;49m▓\u001b[0;38;2;205;77;90;49m▒\u001b[0;38;2;191;72;89;49m▒\u001b[0;38;2;177;67;87;49m░\u001b[0;38;2;163;61;86;49m░\u001b[0;38;2;148;56;84;49m░\u001b[0;38;2;134;51;83;49m \u001b[0;38;2;119;45;81;49m \u001b[0;38;2;105;40;80;49m \u001b[0;39;49m 1    &quot;,&quot;        \u001b[0;38;2;105;40;80;49m \u001b[0;38;2;118;45;81;49m \u001b[0;38;2;130;49;82;49m \u001b[0;38;2;142;54;84;49m░\u001b[0;38;2;154;58;85;49m░\u001b[0;38;2;164;62;86;49m░\u001b[0;38;2;173;65;87;49m░\u001b[0;38;2;180;68;88;49m▒\u001b[0;38;2;184;69;88;49m▒\u001b[0;38;2;186;70;88;49m▒\u001b[0;38;2;184;69;88;49m▒\u001b[0;38;2;180;68;88;49m▒\u001b[0;38;2;173;65;87;49m░\u001b[0;38;2;164;62;86;49m░\u001b[0;38;2;154;58;85;49m░\u001b[0;38;2;142;54;84;49m░\u001b[0;38;2;130;49;82;49m \u001b[0;38;2;118;45;81;49m \u001b[0;38;2;105;40;80;49m \u001b[0;39;49m       &quot;]}" style="max-width:318px"></canvas>
+    </div>
+  </div>
 
   <div class="concept-prose">
     <strong>Blend modes</strong> wrap any effect with compositing:
@@ -2132,6 +2239,25 @@ ScreenEffect(
     Overlay, Add, SoftLight, ColorDodge, ColorBurn). <code>WithQuantize</code> snaps RGB values
     to step-size buckets, reducing unique colours and shrinking diff output.
   </div>
+
+  <div class="concept-prose">
+    <strong>Focus and Dodge.</strong> Most effects accept <code>.Focus(&amp;ref)</code> and
+    <code>.Dodge(&amp;ref)</code> to target or exclude a specific node. Bind a
+    <code>NodeRef</code> to any component, then pass its pointer. Focus constrains the effect to
+    radiate from that node. Dodge leaves it untouched while the rest of the screen is affected.
+  </div>
+
+<div class="show-grid">
+  <div class="code code-raw" style="margin:0">var selRef NodeRef
+
+VBox(
+    List(&items).SelectedRef(&selRef).BindVimNav(),
+    ScreenEffect(SEFocusDim(&selRef)),
+)</div>
+  <div class="show-text">
+    <canvas data-term="concepts-effect-after" data-termdata="{&quot;w&quot;:24,&quot;h&quot;:5,&quot;lines&quot;:[&quot;\u001b[0;2;39;49m  main.go               \u001b[0m&quot;,&quot;\u001b[0;2;39;49m  handler.go            \u001b[0m&quot;,&quot;\u003e config.go             &quot;,&quot;\u001b[0;2;39;49m  routes.go             \u001b[0m&quot;,&quot;\u001b[0;2;39;49m  auth.go               \u001b[0m&quot;]}" style="max-width:318px"></canvas>
+  </div>
+</div>
 
   <div class="concept-prose">
     Effects toggle conditionally with <code>If()</code>. When the condition is false, the
@@ -2143,11 +2269,93 @@ ScreenEffect(
 app.SetView(
     VBox(
         Text("content"),
-        If(&dimmed).Then(ScreenEffect(SEDesaturate(), SEDimAll())),
+        If(&dimmed).Then(
+            ScreenEffect(
+                SEDesaturate(),
+                SEDimAll(),
+            ),
+        ),
     ),
 )
 
 app.Handle("d", func() { dimmed = !dimmed })</div>
+</div>
+
+<!-- ============================================================
+     11. ANIMATION
+     ============================================================ -->
+<div class="concept" id="animation">
+  <div class="section-head">
+    <div class="section-num">11</div>
+    <div class="section-meta">
+      <div class="section-label">Motion</div>
+      <div class="section-title">Animation</div>
+    </div>
+  </div>
+
+  <div class="concept-prose">
+    Animation is declared inline. Wrap any property value with <code>Animate</code> and
+    the framework interpolates toward it whenever it changes. The animation is part of
+    the property declaration, not a separate system.
+  </div>
+
+  <div class="code code-raw">// any property that accepts a pointer can animate
+VBox.Height(Animate(&targetHeight))
+
+// when targetHeight changes, the height interpolates smoothly</div>
+
+  <div class="concept-prose">
+    Configure duration and easing. <code>Animate</code> returns a reusable function,
+    so you define an animation style once and apply it to any property.
+  </div>
+
+  <div class="code code-raw">smooth := Animate.Duration(300 * time.Millisecond).Ease(EaseOutCubic)
+
+VBox(
+    sidebar.Width(smooth(&sidebarW)),
+    content.Height(smooth(&contentH)),
+    Text("status").FG(smooth(&statusColor)),
+)</div>
+
+  <div class="concept-prose">
+    Conditions compose with animations. A single expression declares the values,
+    the condition, and the transition between them.
+  </div>
+
+  <div class="code code-raw">// sparkline expands to 26 rows or collapses to 1, animated
+Sparkline(data).Height(
+    Animate.Duration(200 * time.Millisecond).Ease(EaseOutCubic)(
+        If(&expanded).Then(int16(26)).Else(int16(1)),
+    ),
+)</div>
+
+  <div class="concept-prose">
+    <code>From</code> sets an initial value so the animation starts immediately on first render.
+    <code>OnComplete</code> fires once when the target is reached.
+  </div>
+
+  <div class="code code-raw">// toggle a vignette on and off with a smooth transition
+vignetteOn := false
+
+SEVignette().Strength(
+    Animate.Ease(EaseOutCubic)(
+        If(&vignetteOn).Then(0.8).Else(0.0),
+    ),
+)
+
+app.Handle("v", func() { vignetteOn = !vignetteOn })</div>
+
+  <div class="concept-prose">
+    Built-in easing functions cover Quad, Cubic, Quart, Quint,
+    Sine, Expo, Circ, Back, and Bounce. Each has In, Out, and InOut variants. Linear
+    is the default. Any <code>func(float64) float64</code> works as a custom easing.
+  </div>
+
+  <div class="concept-prose">
+    Colors and styles interpolate. An animated <code>FG</code> lerps through RGB space.
+    An animated <code>Style</code> interpolates foreground, background, and fill colours simultaneously.
+  </div>
+
 </div>
 
 </div><!-- .page -->

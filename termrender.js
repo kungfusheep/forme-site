@@ -209,10 +209,8 @@
     }
 
     // CSS mask fades the canvas to transparent at the bottom of the terminal window
-    const lastLine = data.lines[data.lines.length - 1] || ''
-    const hasBorder = /[╭╮╰╯┌┐└┘─│═║╔╗╚╝├┤┬┴┼]/.test(lastLine)
-    const fadeStart = ((SHADOW_PAD + totalH * 0.5) / canvasH * 100).toFixed(1)
-    const fadeEnd = ((SHADOW_PAD + totalH * (hasBorder ? 0.8 : 0.9)) / canvasH * 100).toFixed(1)
+    const fadeStart = ((SHADOW_PAD + totalH * 0.75) / canvasH * 100).toFixed(1)
+    const fadeEnd = ((SHADOW_PAD + totalH * 0.98) / canvasH * 100).toFixed(1)
     canvas.style.maskImage = `linear-gradient(to bottom, black ${fadeStart}%, transparent ${fadeEnd}%)`
     canvas.style.webkitMaskImage = `linear-gradient(to bottom, black ${fadeStart}%, transparent ${fadeEnd}%)`
   }

@@ -5,14 +5,16 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"regexp"
 	"strings"
 
 	. "github.com/kungfusheep/glyph"
 )
 
 type example struct {
-	view any
-	w, h int
+	view   any
+	w, h   int
+	pad    int // extra rows below content for fade clearance
 }
 
 func examples() map[string]example {
@@ -61,13 +63,91 @@ func examples() map[string]example {
 	// concepts-vbox
 	{
 		m["concepts-vbox"] = example{
-			w: 16, h: 6,
+			w: 24, h: 6,
 			view: VBox.Gap(1)(
 				Text("hello"),
 				Text("world"),
 				Text("!"),
 			),
 		}
+	}
+
+	// concepts-grow1 (header + Grow(1) fills remaining + footer)
+	{
+		items := []string{"server.go", "handler.go", "config.go"}
+		m["concepts-grow1"] = example{
+			w: 30, h: 10, pad: 2,
+			view: VBox(
+				Text("header"),
+				VBox.Grow(1).Border(BorderRounded)(
+					List(&items),
+				),
+				Text("footer"),
+			),
+		}
+	}
+
+	// concepts-grow-equal (header + two equal Grow(1))
+	{
+		items := []string{"server.go", "handler.go"}
+		m["concepts-grow-equal"] = example{
+			w: 30, h: 12, pad: 2,
+			view: VBox(
+				Text("header"),
+				VBox.Grow(1).Border(BorderRounded).Title("list")(
+					List(&items),
+				),
+				VBox.Grow(1).Border(BorderRounded).Title("log")(
+					Text("started on :8080").FG(BrightBlack),
+				),
+				Text("footer"),
+			),
+		}
+	}
+
+	// concepts-grow-ratio (header + Grow(1) vs Grow(2))
+	{
+		m["concepts-grow-ratio"] = example{
+			w: 40, h: 10, pad: 2,
+			view: VBox(
+				Text("header"),
+				HBox.Grow(1)(
+					VBox.Grow(1).Border(BorderRounded).Title("sidebar")(
+						Text("nav one"),
+						Text("nav two"),
+					),
+					VBox.Grow(2).Border(BorderRounded).Title("content")(
+						Text("main content area"),
+						Text("with more detail"),
+					),
+				),
+				Text("footer"),
+			),
+		}
+	}
+
+	// concepts-foreach
+	{
+		s1, s2, s3 := "running", "healthy", "stopped"
+		m["concepts-foreach"] = example{
+			w: 30, h: 5,
+			view: VBox(
+				HBox.Gap(2)(Text("api server"), Text(&s1).FG(
+					Switch(&s1).Case("running", Yellow).Case("stopped", Red).Default(BrightBlack),
+				)),
+				HBox.Gap(2)(Text("database"), Text(&s2).FG(
+					Switch(&s2).Case("healthy", Green).Case("stopped", Red).Default(BrightBlack),
+				)),
+				HBox.Gap(2)(Text("cache"), Text(&s3).FG(
+					Switch(&s3).Case("running", Green).Case("healthy", Green).Case("stopped", Red).Default(BrightBlack),
+				)),
+			),
+		}
+	}
+
+	// concepts-jump
+	{
+		m["concepts-jump"] = example{w: 24, h: 7, view: nil}
 	}
 
 	// concepts-hbox
@@ -455,6 +535,184 @@ func examples() map[string]example {
 		}
 	}
 
+	// concepts-effect-flip
+	{
+		flip := map[rune]rune{
+			'a': 'ɐ', 'b': 'q', 'c': 'ɔ', 'd': 'p', 'e': 'ǝ', 'f': 'ɟ',
+			'g': 'ƃ', 'h': 'ɥ', 'i': 'ᴉ', 'j': 'ɾ', 'k': 'ʞ', 'l': 'l',
+			'm': 'ɯ', 'n': 'u', 'o': 'o', 'p': 'd', 'q': 'b', 'r': 'ɹ',
+			's': 's', 't': 'ʇ', 'u': 'n', 'v': 'ʌ', 'w': 'ʍ', 'x': 'x',
+			'y': 'ʎ', 'z': 'z',
+			'A': '∀', 'B': 'ꓭ', 'C': 'Ɔ', 'D': 'ꓷ', 'E': 'Ǝ', 'F': 'Ⅎ',
+			'G': '⅁', 'H': 'H', 'I': 'I', 'J': 'ſ', 'K': 'ꓘ', 'L': '⅂',
+			'M': 'W', 'N': 'N', 'O': 'O', 'P': 'Ԁ', 'Q': 'Ό', 'R': 'ꓤ',
+			'S': 'S', 'T': '⊥', 'U': '∩', 'V': 'Λ', 'W': 'M', 'X': 'X',
+			'Y': '⅄', 'Z': 'Z',
+			'1': 'Ɩ', '2': 'ᄅ', '3': 'Ɛ', '4': 'ㄣ', '5': 'ϛ',
+			'6': '9', '7': 'ㄥ', '8': '8', '9': '6', '0': '0',
+			'.': '˙', ',': '\'', '!': '¡', '?': '¿',
+		}
+		w := 34
+		pad := func(s string) string {
+			for len(s) < w {
+				s += " "
+			}
+			return s[:w]
+		}
+		m["concepts-effect-flip"] = example{
+			w: w, h: 9, pad: 2,
+			view: VBox(
+				Text(pad("08:42  London Euston    On time")),
+				Text(pad("08:47  Bristol Temple    Plat 4")),
+				Text(pad("08:55  Birmingham New   Plat 6")),
+				Text(pad("09:10  Manchester Pic   Plat 3")),
+				Text(pad("09:15  Edinburgh Wav    Delayed")),
+				Text(pad("09:22  Leeds Central    Plat 8")),
+				Text(pad("09:30  Glasgow Ctl      Plat 1")),
+				ScreenEffect(EachCell(func(x, y int, c Cell, ctx PostContext) Cell {
+					diag := float64(x)/float64(ctx.Width) + float64(y)/float64(ctx.Height)
+					// brand gradient over everything based on diagonal position
+					// #682850 (dark) → #983848 → #c44040 → #ff6060 (bright)
+					t := diag / 2.0
+					var r, g, b float64
+					switch {
+					case t < 0.33:
+						s := t / 0.33
+						r = 104 + s*(152-104)
+						g = 40 + s*(56-40)
+						b = 80 + s*(72-80)
+					case t < 0.66:
+						s := (t - 0.33) / 0.33
+						r = 152 + s*(196-152)
+						g = 56 + s*(64-56)
+						b = 72 + s*(64-72)
+					default:
+						s := (t - 0.66) / 0.34
+						r = 196 + s*(255-196)
+						g = 64 + s*(96-64)
+						b = 64 + s*(96-64)
+					}
+					// flip band shifted left (centered at 0.8)
+					dist := math.Abs(diag - 0.7)
+					if dist < 0.2 {
+						if f, ok := flip[c.Rune]; ok {
+							c.Rune = f
+						}
+						// brighten the flipped zone
+						bright := 1.0 - dist/0.2
+						r = min(255, r+bright*60)
+						g = min(255, g+bright*40)
+						b = min(255, b+bright*40)
+					}
+					c.Style.FG = RGB(uint8(r), uint8(g), uint8(b))
+					return c
+				})),
+			),
+		}
+	}
+
+	// concepts-effect-gradient
+	{
+		m["concepts-effect-gradient"] = example{
+			w: 30, h: 8, pad: 2,
+			view: VBox(
+				VBox.Border(BorderRounded).Title("status")(
+					Leader("api", "online"),
+					Leader("cache", "warm"),
+					Leader("queue", "12 pending"),
+				),
+				ScreenEffect(EachCell(func(x, y int, c Cell, ctx PostContext) Cell {
+					t := float64(x) / float64(ctx.Width-1)
+					// brand gradient: #c44040 → #ff6060 → #983848 → #682850
+					var r, g, b float64
+					switch {
+					case t < 0.33:
+						s := t / 0.33
+						r = 196 + s*(255-196)
+						g = 64 + s*(96-64)
+						b = 64 + s*(96-64)
+					case t < 0.66:
+						s := (t - 0.33) / 0.33
+						r = 255 + s*(152-255)
+						g = 96 + s*(56-96)
+						b = 96 + s*(72-96)
+					default:
+						s := (t - 0.66) / 0.34
+						r = 152 + s*(104-152)
+						g = 56 + s*(40-56)
+						b = 72 + s*(80-72)
+					}
+					c.Style.FG = RGB(uint8(r), uint8(g), uint8(b))
+					return c
+				})),
+			),
+		}
+	}
+
+	// concepts-effect-redact
+	{
+		m["concepts-effect-redact"] = example{
+			w: 30, h: 8, pad: 2,
+			view: VBox(
+				VBox.Border(BorderRounded).Title("status")(
+					Leader("api", "online"),
+					Leader("cache", "warm"),
+					Leader("queue", "12 pending"),
+				),
+				ScreenEffect(EachCell(func(x, y int, c Cell, ctx PostContext) Cell {
+					if x > ctx.Width*2/3 && c.Rune != '│' && c.Rune != '┐' && c.Rune != '┘' {
+						c.Rune = '█'
+						c.Style.FG = RGB(200, 60, 60)
+					}
+					return c
+				})),
+			),
+		}
+	}
+
+	// concepts-effect-wave (rendered manually — needs full-buffer access)
+	{
+		m["concepts-effect-wave"] = example{w: 34, h: 9, pad: 2, view: nil}
+	}
+
+	// concepts-effect-scatter (rendered manually — needs hash-based buffer writes)
+	{
+		m["concepts-effect-scatter"] = example{w: 34, h: 9, pad: 2, view: nil}
+	}
+
+	// concepts-effect-collapse (rendered manually — needs radial distance calc)
+	{
+		m["concepts-effect-collapse"] = example{w: 34, h: 9, pad: 2, view: nil}
+	}
+
+	// concepts-effect-before (no effect applied)
+	{
+		m["concepts-effect-before"] = example{
+			w: 24, h: 7, pad: 2,
+			view: VBox(
+				Text("  inbox").FG(BrightBlack),
+				Text("  drafts").FG(BrightBlack),
+				Text("> sent").Bold(),
+				Text("  trash").FG(BrightBlack),
+				Text("  spam").FG(BrightBlack),
+			),
+		}
+	}
+
+	// concepts-effect-after (focus dim with SelectedRef)
+	{
+		var selRef NodeRef
+		sel := 2
+		items := []string{"main.go", "handler.go", "config.go", "routes.go", "auth.go"}
+		m["concepts-effect-after"] = example{
+			w: 24, h: 5,
+			view: VBox(
+				List(&items).Selection(&sel).SelectedRef(&selRef).BindVimNav(),
+				ScreenEffect(SEFocusDim(&selRef)),
+			),
+		}
+	}
+
 	// modal (rendered manually with vignette + overlay)
 	{
 		m["modal"] = example{w: 40, h: 10, view: nil}
@@ -547,7 +805,7 @@ func renderModal() termData {
 	buf.Blit(modalBuf, 0, 0, ox, oy, modalW, modalH)
 
 	// return all lines (no trim — vignette sets explicit BG on every cell)
-	td := termData{Width: w, Height: h}
+	td := termData{Width: w, Height: h + 3}
 	for y := 0; y < h; y++ {
 		td.Lines = append(td.Lines, buf.GetLineStyled(y))
 	}
@@ -587,6 +845,248 @@ func htmlEscape(s string) string {
 	return s
 }
 
+func renderWaveDemo() termData {
+	w, h := 34, 11
+	padStr := func(s string) string {
+		for len(s) < w {
+			s += " "
+		}
+		return s[:w]
+	}
+	view := VBox(
+		Text(padStr("08:42  London Euston    On time")),
+		Text(padStr("08:47  Bristol Temple    Plat 4")),
+		Text(padStr("08:55  Birmingham New   Plat 6")),
+		Text(padStr("09:10  Manchester Pic   Plat 3")),
+		Text(padStr("09:15  Edinburgh Wav    Delayed")),
+		Text(padStr("09:22  Leeds Central    Plat 8")),
+		Text(padStr("09:30  Glasgow Ctl      Plat 1")),
+	)
+	tmpl := Build(view)
+	buf := NewBuffer(w, h)
+	tmpl.Execute(buf, int16(w), 9)
+
+	// wave: shift each row by a sine offset
+	tmp := NewBuffer(w, h)
+	for y := range h {
+		offset := int(3.0 * math.Sin(float64(y)*0.9))
+		for x := range w {
+			srcX := x - offset
+			if srcX >= 0 && srcX < w {
+				c := buf.Get(srcX, y)
+				tmp.Set(x, y, c)
+			}
+		}
+	}
+
+	return renderTerm(tmp, w, h)
+}
+
+func renderScatterDemo() termData {
+	w, h := 34, 11
+	padStr := func(s string) string {
+		for len(s) < w {
+			s += " "
+		}
+		return s[:w]
+	}
+	hash := func(x, y int) int {
+		h := x*374761393 + y*668265263
+		h = (h ^ (h >> 13)) * 1274126177
+		if h < 0 {
+			h = -h
+		}
+		return h
+	}
+	view := VBox(
+		Text(padStr("08:42  London Euston    On time")),
+		Text(padStr("08:47  Bristol Temple    Plat 4")),
+		Text(padStr("08:55  Birmingham New   Plat 6")),
+		Text(padStr("09:10  Manchester Pic   Plat 3")),
+		Text(padStr("09:15  Edinburgh Wav    Delayed")),
+		Text(padStr("09:22  Leeds Central    Plat 8")),
+		Text(padStr("09:30  Glasgow Ctl      Plat 1")),
+	)
+	tmpl := Build(view)
+	buf := NewBuffer(w, h)
+	tmpl.Execute(buf, int16(w), 9)
+
+	// scatter: randomly replace some chars with block elements
+	for y := range h {
+		for x := range w {
+			c := buf.Get(x, y)
+			if c.Rune != ' ' && c.Rune != 0 {
+				hv := hash(x, y)
+				if hv%4 == 0 {
+					glitches := []rune{'░', '▒', '▓', '█', '▄', '▀', '▌', '▐'}
+					c.Rune = glitches[(hv>>8)%len(glitches)]
+					c.Style.FG = RGB(uint8(100+hv%80), uint8(60+hv%40), uint8(80+hv%60))
+					buf.Set(x, y, c)
+				}
+			}
+		}
+	}
+
+	return renderTerm(buf, w, h)
+}
+
+func renderCollapseDemo() termData {
+	w, h := 34, 11
+	padStr := func(s string) string {
+		for len(s) < w {
+			s += " "
+		}
+		return s[:w]
+	}
+	view := VBox(
+		Text(padStr("08:42  London Euston    On time")),
+		Text(padStr("08:47  Bristol Temple    Plat 4")),
+		Text(padStr("08:55  Birmingham New   Plat 6")),
+		Text(padStr("09:10  Manchester Pic   Plat 3")),
+		Text(padStr("09:15  Edinburgh Wav    Delayed")),
+		Text(padStr("09:22  Leeds Central    Plat 8")),
+		Text(padStr("09:30  Glasgow Ctl      Plat 1")),
+	)
+	tmpl := Build(view)
+	buf := NewBuffer(w, h)
+	tmpl.Execute(buf, int16(w), 9)
+
+	// collapse: radial block fill from center
+	cx := float64(w) / 2
+	cy := float64(h) / 2
+	for y := range h {
+		for x := range w {
+			dx := (float64(x) - cx) / cx
+			dy := (float64(y) - cy) / cy
+			dist := math.Sqrt(dx*dx + dy*dy)
+			if dist < 0.6 {
+				t := 1.0 - dist/0.6
+				blocks := []rune{' ', '░', '▒', '▓', '█'}
+				idx := int(t * float64(len(blocks)-1))
+				c := buf.Get(x, y)
+				c.Rune = blocks[idx]
+				c.Style.FG = RGB(
+					uint8(min(255, 104+t*151)),
+					uint8(min(255, 40+t*56)),
+					uint8(min(255, 80+t*16)),
+				)
+				buf.Set(x, y, c)
+			}
+		}
+	}
+
+	return renderTerm(buf, w, h)
+}
+
+func renderJumpDemo() termData {
+	w, h := 24, 7
+	noop := func() {}
+	view := VBox.Gap(1)(
+		Jump(Text("Inbox"), noop),
+		Jump(Text("Drafts"), noop),
+		Jump(Text("Sent"), noop),
+	)
+
+	app := NewApp()
+	tmpl := Build(view)
+	tmpl.SetApp(app)
+
+	// activate jump mode manually and render to collect targets
+	jm := app.JumpMode()
+	jm.Active = true
+	jm.ClearJumpTargets()
+	buf := NewBuffer(w, h)
+	tmpl.Execute(buf, int16(w), int16(h))
+
+	// assign labels, then re-render to draw them
+	jm.AssignLabels()
+	buf = NewBuffer(w, h)
+	tmpl.Execute(buf, int16(w), int16(h))
+
+	return renderTerm(buf, w, h)
+}
+
+func renderExample(id string, ex example) termData {
+	if id == "modal" {
+		return renderModal()
+	}
+	if id == "concepts-jump" {
+		return renderJumpDemo()
+	}
+	if id == "concepts-effect-wave" {
+		return renderWaveDemo()
+	}
+	if id == "concepts-effect-scatter" {
+		return renderScatterDemo()
+	}
+	if id == "concepts-effect-collapse" {
+		return renderCollapseDemo()
+	}
+	totalH := ex.h + ex.pad
+	tmpl := Build(ex.view)
+	buf := NewBuffer(ex.w, totalH)
+	tmpl.Execute(buf, int16(ex.w), int16(ex.h))
+
+	// apply screen effects if any were declared in the view tree
+	effects := tmpl.ScreenEffects()
+	if len(effects) > 0 {
+		defaultFG := RGB(200, 196, 184)
+		defaultBG := RGB(26, 26, 24)
+		ppCtx := PostContext{
+			Width:     ex.w,
+			Height:    totalH,
+			DefaultFG: defaultFG,
+			DefaultBG: defaultBG,
+		}
+		for _, e := range effects {
+			e.Apply(buf, ppCtx)
+		}
+	}
+
+	return renderTerm(buf, ex.w, totalH)
+}
+
+func injectHTML(path string, all map[string]example) error {
+	html, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+
+	reStrip := regexp.MustCompile(` data-termdata="[^"]*"`)
+	html = reStrip.ReplaceAll(html, nil)
+
+	reTerm := regexp.MustCompile(`data-term="([^"]+)"`)
+	var missing []string
+	count := 0
+
+	result := reTerm.ReplaceAllFunc(html, func(match []byte) []byte {
+		sub := reTerm.FindSubmatch(match)
+		id := string(sub[1])
+
+		ex, ok := all[id]
+		if !ok {
+			missing = append(missing, id)
+			return match
+		}
+
+		td := renderExample(id, ex)
+		data, _ := json.Marshal(td)
+		escaped := htmlEscape(string(data))
+		count++
+		return []byte(string(match) + ` data-termdata="` + escaped + `"`)
+	})
+
+	for _, id := range missing {
+		fmt.Fprintf(os.Stderr, "warning: unknown example %q\n", id)
+	}
+
+	if err := os.WriteFile(path, result, 0644); err != nil {
+		return err
+	}
+	fmt.Fprintf(os.Stderr, "injected %d examples into %s\n", count, path)
+	return nil
+}
+
 func main() {
 	all := examples()
 
@@ -601,7 +1101,7 @@ func main() {
 	}
 
 	if len(args) < 1 {
-		fmt.Fprintf(os.Stderr, "usage: termsvg [--html] <name|all>\n\navailable examples:\n")
+		fmt.Fprintf(os.Stderr, "usage: termsvg [--html] <name|all|inject <file>>\n\navailable examples:\n")
 		for name := range all {
 			fmt.Fprintf(os.Stderr, "  %s\n", name)
 		}
@@ -610,17 +1110,21 @@ func main() {
 
 	name := args[0]
 
+	if name == "inject" {
+		if len(args) < 2 {
+			fmt.Fprintf(os.Stderr, "usage: termsvg inject <file>\n")
+			os.Exit(1)
+		}
+		if err := injectHTML(args[1], all); err != nil {
+			fmt.Fprintf(os.Stderr, "error: %v\n", err)
+			os.Exit(1)
+		}
+		return
+	}
+
 	if name == "all" {
 		for n, ex := range all {
-			var td termData
-			if n == "modal" {
-				td = renderModal()
-			} else {
-				tmpl := Build(ex.view)
-				buf := NewBuffer(ex.w, ex.h)
-				tmpl.Execute(buf, int16(ex.w), int16(ex.h))
-				td = renderTerm(buf, ex.w, ex.h)
-			}
+			td := renderExample(n, ex)
 			data, _ := json.Marshal(td)
 			path := fmt.Sprintf("img/%s.json", n)
 			if err := os.WriteFile(path, data, 0644); err != nil {
@@ -632,23 +1136,13 @@ func main() {
 		return
 	}
 
-	if name == "modal" {
-		td := renderModal()
-		data, _ := json.Marshal(td)
-		os.Stdout.Write(data)
-		return
-	}
-
 	ex, ok := all[name]
 	if !ok {
 		fmt.Fprintf(os.Stderr, "unknown example: %s\n", name)
 		os.Exit(1)
 	}
 
-	tmpl := Build(ex.view)
-	buf := NewBuffer(ex.w, ex.h)
-	tmpl.Execute(buf, int16(ex.w), int16(ex.h))
-	td := renderTerm(buf, ex.w, ex.h)
+	td := renderExample(name, ex)
 	data, _ := json.Marshal(td)
 	if html {
 		fmt.Print(htmlEscape(string(data)))
