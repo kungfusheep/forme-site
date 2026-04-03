@@ -17,8 +17,8 @@
   --fg0:  #131311;
   --fg:   #3a3a36;
   --fg2:  #6a6a64;
-  --fg3:  #8a8880;
-  --fg4:  #b0aba0;
+  --fg3:  #6e6c66;
+  --fg4:  #6f6d66;
 
   /* rules */
   --rule:    #d4d0c8;
@@ -38,9 +38,9 @@
   --dk:        #c8c4b8;  /* primary dark-page body text, code blocks */
   --dk-2:      #999;     /* inline code, secondary code elements */
   --dk-3:      #888;     /* muted prose, secondary body copy (absorbs #777) */
-  --dk-4:      #666;     /* recessive text, asides, descriptions */
-  --dk-5:      #555;     /* inactive nav, prompts, labels */
-  --dk-6:      #444;     /* very muted, code comments, sidenav (absorbs #333) */
+  --dk-4:      #84847e;  /* recessive text, asides, descriptions */
+  --dk-5:      #80807a;  /* inactive nav, prompts, labels */
+  --dk-6:      #7e7e7a;  /* very muted, code comments, sidenav */
   --dk-border: #1e1e1c;  /* structural dark: section nums, borders */
 
   /* spacing scale (8px base) */

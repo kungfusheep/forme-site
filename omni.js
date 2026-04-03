@@ -199,7 +199,7 @@
       padding: 14px 16px;
       outline: none;
     }
-    .omni-input::placeholder { color: #444; }
+    .omni-input::placeholder { color: #7e7e7a; }
     .omni-results:empty ~ .omni-input,
     .omni-input:only-child {
       border-radius: 10px;
@@ -241,7 +241,7 @@
     }
     .omni-row-kind {
       font-size: 11px;
-      color: #555;
+      color: #80807a;
       margin-left: auto;
       white-space: nowrap;
     }
@@ -252,7 +252,7 @@
       gap: 12px;
       padding: 8px 16px;
       font-size: 11px;
-      color: #333;
+      color: #7e7e7a;
       font-family: var(--mono, 'Berkeley Mono', monospace);
       background: var(--bg-dark3, #0e0e0c);
       border-top: 1px solid var(--rule-dk, #262624);
