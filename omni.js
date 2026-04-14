@@ -22,7 +22,8 @@
     SpacerC: 'Spacer', AutoTableC: 'AutoTable',
     SparklineC: 'Sparkline', ProgressC: 'Progress', SpinnerC: 'Spinner',
     ForEachC: 'ForEach', Condition: 'If', OrdCondition: 'IfOrd',
-    SwitchBuilder: 'Switch', RichTextNode: 'Rich',
+    SwitchBuilder: 'Switch', MatchNode: 'Match', MatchCase: 'MatchCase',
+    RichTextNode: 'Rich',
     Custom: 'Widget', ThemeEx: 'Theme',
   };
 

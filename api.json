@@ -26,6 +26,25 @@
       ]
     },
     {
+      "name": "AnchorPosition",
+      "doc": "AnchorPosition defines how an overlay is positioned relative to a NodeRef\n",
+      "decl": "type AnchorPosition int",
+      "consts": [
+        {
+          "doc": "",
+          "names": [
+            "AnchorNone",
+            "AnchorBelow",
+            "AnchorAbove",
+            "AnchorOnTop",
+            "AnchorRightOf",
+            "AnchorLeftOf"
+          ],
+          "decl": "const (\n\tAnchorNone    AnchorPosition = iota\n\tAnchorBelow                  // top of overlay at bottom of ref\n\tAnchorAbove                  // bottom of overlay at top of ref\n\tAnchorOnTop                  // overlay covers the ref exactly\n\tAnchorRightOf                // left edge of overlay at right edge of ref\n\tAnchorLeftOf                 // right edge of overlay at left edge of ref\n)"
+        }
+      ]
+    },
+    {
       "name": "AnimateFn",
       "doc": "AnimateFn configures and creates tweens. Methods return new AnimateFn values,\nso animation styles can be defined once and reused across properties:\n\n\tsmooth := Animate.Duration(200 * time.Millisecond).Ease(EaseOutCubic)\n\tVBox.Height(smooth(\u0026targetHeight))\n\tVBox.Width(smooth(\u0026targetWidth))\n\tSparkline(data).Height(smooth(If(\u0026expanded).Then(int16(26)).Else(int16(1))))\n",
       "decl": "type AnimateFn func(target any) *tween",
@@ -306,7 +325,7 @@
         },
         {
           "name": "SetCursorColor",
-          "doc": "SetCursorColor sets the cursor color using OSC 12 escape sequence.\nThis changes the actual cursor color in supporting terminals.\n",
+          "doc": "",
           "signature": "func (a *App) SetCursorColor(c Color)",
           "recv": "*App"
         },
@@ -314,6 +333,12 @@
           "name": "SetCursorStyle",
           "doc": "SetCursorStyle sets the cursor visual style.\n",
           "signature": "func (a *App) SetCursorStyle(style CursorShape)",
+          "recv": "*App"
+        },
+        {
+          "name": "SetDefaultStyle",
+          "doc": "SetCursorColor sets the cursor color using OSC 12 escape sequence.\nThis changes the actual cursor color in supporting terminals.\nSetDefaultStyle sets the default style for all cells. Any cell not explicitly\nstyled will use this FG/BG instead of the terminal default.\n",
+          "signature": "func (a *App) SetDefaultStyle(s Style)",
           "recv": "*App"
         },
         {
@@ -598,8 +623,76 @@
     },
     {
       "name": "BorderStyle",
-      "doc": "BorderStyle defines the characters used for drawing borders.\n",
-      "decl": "type BorderStyle struct {\n\tHorizontal  rune\n\tVertical    rune\n\tTopLeft     rune\n\tTopRight    rune\n\tBottomLeft  rune\n\tBottomRight rune\n}",
+      "doc": "BorderStyle defines the characters used for drawing borders.\nTop/Bottom override Horizontal for their respective edge.\nZero-value runes are skipped, enabling partial borders.\n",
+      "decl": "type BorderStyle struct {\n\tHorizontal  rune\n\tVertical    rune\n\tTopLeft     rune\n\tTopRight    rune\n\tBottomLeft  rune\n\tBottomRight rune\n\tTop         rune // overrides Horizontal for top edge\n\tBottom      rune // overrides Horizontal for bottom edge\n\tLeft        rune // overrides Vertical for left edge\n\tRight       rune // overrides Vertical for right edge\n}",
+      "methods": [
+        {
+          "name": "HasBorder",
+          "doc": "HasBorder returns true if any edge is drawn.\n",
+          "signature": "func (b BorderStyle) HasBorder() bool",
+          "recv": "BorderStyle"
+        },
+        {
+          "name": "HasBottom",
+          "doc": "",
+          "signature": "func (b BorderStyle) HasBottom() bool",
+          "recv": "BorderStyle"
+        },
+        {
+          "name": "HasLeft",
+          "doc": "",
+          "signature": "func (b BorderStyle) HasLeft() bool",
+          "recv": "BorderStyle"
+        },
+        {
+          "name": "HasRight",
+          "doc": "",
+          "signature": "func (b BorderStyle) HasRight() bool",
+          "recv": "BorderStyle"
+        },
+        {
+          "name": "HasTop",
+          "doc": "",
+          "signature": "func (b BorderStyle) HasTop() bool",
+          "recv": "BorderStyle"
+        },
+        {
+          "name": "PadBottom",
+          "doc": "PadBottom returns 1 if the bottom edge is drawn, 0 otherwise.\n",
+          "signature": "func (b BorderStyle) PadBottom() int16",
+          "recv": "BorderStyle"
+        },
+        {
+          "name": "PadH",
+          "doc": "PadH returns total horizontal border padding (left + right).\n",
+          "signature": "func (b BorderStyle) PadH() int16",
+          "recv": "BorderStyle"
+        },
+        {
+          "name": "PadLeft",
+          "doc": "PadLeft returns 1 if the left edge is drawn, 0 otherwise.\n",
+          "signature": "func (b BorderStyle) PadLeft() int16",
+          "recv": "BorderStyle"
+        },
+        {
+          "name": "PadRight",
+          "doc": "PadRight returns 1 if the right edge is drawn, 0 otherwise.\n",
+          "signature": "func (b BorderStyle) PadRight() int16",
+          "recv": "BorderStyle"
+        },
+        {
+          "name": "PadTop",
+          "doc": "PadTop returns 1 if the top edge is drawn, 0 otherwise.\n",
+          "signature": "func (b BorderStyle) PadTop() int16",
+          "recv": "BorderStyle"
+        },
+        {
+          "name": "PadV",
+          "doc": "PadV returns total vertical border padding (top + bottom).\n",
+          "signature": "func (b BorderStyle) PadV() int16",
+          "recv": "BorderStyle"
+        }
+      ],
       "examples": [
         {
           "doc": "Built-in borders.\nChoose from BorderSingle, BorderRounded, or BorderDouble.\n",
@@ -679,7 +772,7 @@
         },
         {
           "name": "DrawBorder",
-          "doc": "DrawBorder draws a border around the given rectangle.\n",
+          "doc": "DrawBorder draws a border around the given rectangle.\nZero-value runes are skipped, enabling partial borders.\n",
           "signature": "func (b *Buffer) DrawBorder(x, y, width, height int, border BorderStyle, style Style)",
           "recv": "*Buffer"
         },
@@ -1618,7 +1711,7 @@
     {
       "name": "Filter",
       "doc": "Filter provides fzf-style filtering mechanics for a slice of items.\nIt handles query parsing, scoring, filtering and index mapping back to the\noriginal source slice. No UI opinions, bring your own rendering.\n\nusage:\n\n\tf := NewFilter(\u0026items, func(item *Item) string { return item.Name })\n\tf.Update(\"query\")           // re-filter when query changes\n\tf.Items                     // filtered+ranked subset, point a ListC at \u0026f.Items\n\tf.Original(selectedIndex)   // map filtered index back to source item\n",
-      "decl": "type Filter[T any] struct {\n\tItems []T // filtered+ranked subset, safe to point a ListC at \u0026f.Items\n\t// contains filtered or unexported fields\n}",
+      "decl": "type Filter[T any] struct {\n\tItems []*T // filtered+ranked subset — pointers into source for live reads\n\t// contains filtered or unexported fields\n}",
       "constructors": [
         {
           "name": "NewFilter",
@@ -2380,6 +2473,24 @@
           "recv": "HBoxFn"
         },
         {
+          "name": "Padding",
+          "doc": "Padding sets uniform padding on all sides.\n",
+          "signature": "func (f HBoxFn) Padding(all int16) HBoxFn",
+          "recv": "HBoxFn"
+        },
+        {
+          "name": "PaddingTRBL",
+          "doc": "PaddingTRBL sets individual padding for top, right, bottom, left.\n",
+          "signature": "func (f HBoxFn) PaddingTRBL(top, right, bottom, left int16) HBoxFn",
+          "recv": "HBoxFn"
+        },
+        {
+          "name": "PaddingVH",
+          "doc": "PaddingVH sets vertical and horizontal padding.\n",
+          "signature": "func (f HBoxFn) PaddingVH(vertical, horizontal int16) HBoxFn",
+          "recv": "HBoxFn"
+        },
+        {
           "name": "Size",
           "doc": "Size sets a fixed width and height.\n",
           "signature": "func (f HBoxFn) Size(w, h int16) HBoxFn",
@@ -2673,6 +2784,24 @@
           "name": "MarginVH",
           "doc": "MarginVH sets vertical and horizontal margin.\n",
           "signature": "func (j JumpC) MarginVH(v, h int16) JumpC",
+          "recv": "JumpC"
+        },
+        {
+          "name": "Padding",
+          "doc": "Padding sets uniform padding on all sides.\n",
+          "signature": "func (j JumpC) Padding(all int16) JumpC",
+          "recv": "JumpC"
+        },
+        {
+          "name": "PaddingTRBL",
+          "doc": "PaddingTRBL sets individual padding for top, right, bottom, left.\n",
+          "signature": "func (j JumpC) PaddingTRBL(a, b, c, d int16) JumpC",
+          "recv": "JumpC"
+        },
+        {
+          "name": "PaddingVH",
+          "doc": "PaddingVH sets vertical and horizontal padding.\n",
+          "signature": "func (j JumpC) PaddingVH(v, h int16) JumpC",
           "recv": "JumpC"
         },
         {
@@ -2978,6 +3107,24 @@
           "recv": "LayerViewC"
         },
         {
+          "name": "Padding",
+          "doc": "Padding sets uniform padding on all sides.\n",
+          "signature": "func (l LayerViewC) Padding(all int16) LayerViewC",
+          "recv": "LayerViewC"
+        },
+        {
+          "name": "PaddingTRBL",
+          "doc": "PaddingTRBL sets individual padding for top, right, bottom, left.\n",
+          "signature": "func (l LayerViewC) PaddingTRBL(a, b, c, d int16) LayerViewC",
+          "recv": "LayerViewC"
+        },
+        {
+          "name": "PaddingVH",
+          "doc": "PaddingVH sets vertical and horizontal padding.\n",
+          "signature": "func (l LayerViewC) PaddingVH(v, h int16) LayerViewC",
+          "recv": "LayerViewC"
+        },
+        {
           "name": "ViewHeight",
           "doc": "Height sets a fixed height.\n",
           "signature": "func (l LayerViewC) ViewHeight(h int16) LayerViewC",
@@ -3239,9 +3386,15 @@
           "recv": "*ListC[T]"
         },
         {
+          "name": "SelectedRef",
+          "doc": "SelectedRef binds a NodeRef that tracks the selected row's position each frame.\n",
+          "signature": "func (l *ListC[T]) SelectedRef(ref *NodeRef) *ListC[T]",
+          "recv": "*ListC[T]"
+        },
+        {
           "name": "SelectedStyle",
-          "doc": "SelectedStyle sets the style for the selected row.\n",
-          "signature": "func (l *ListC[T]) SelectedStyle(s Style) *ListC[T]",
+          "doc": "SelectedStyle sets the style for the selected row.\nAccepts Style, *Style, conditionNode, or tweenNode.\n",
+          "signature": "func (l *ListC[T]) SelectedStyle(s any) *ListC[T]",
           "recv": "*ListC[T]"
         },
         {
@@ -3258,8 +3411,8 @@
         },
         {
           "name": "Style",
-          "doc": "Style sets the default style for non-selected rows.\n",
-          "signature": "func (l *ListC[T]) Style(s Style) *ListC[T]",
+          "doc": "Style sets the default style for non-selected rows.\nAccepts Style, *Style, conditionNode, or tweenNode.\n",
+          "signature": "func (l *ListC[T]) Style(s any) *ListC[T]",
           "recv": "*ListC[T]"
         },
         {
@@ -3404,6 +3557,84 @@
       ]
     },
     {
+      "name": "MatchCase",
+      "doc": "MatchCase holds a single case arm for Match: an operator, a comparison value\nor predicate function, and the node to render when the case matches.\n",
+      "decl": "type MatchCase[T comparable] struct {\n\t// contains filtered or unexported fields\n}",
+      "constructors": [
+        {
+          "name": "Eq",
+          "doc": "Eq matches when *ptr == val.\n",
+          "signature": "func Eq[T comparable](val T, node any) MatchCase[T]"
+        },
+        {
+          "name": "Gt",
+          "doc": "Gt matches when *ptr \u003e val.\n",
+          "signature": "func Gt[T cmp.Ordered](val T, node any) MatchCase[T]"
+        },
+        {
+          "name": "Gte",
+          "doc": "Gte matches when *ptr \u003e= val.\n",
+          "signature": "func Gte[T cmp.Ordered](val T, node any) MatchCase[T]"
+        },
+        {
+          "name": "Lt",
+          "doc": "Lt matches when *ptr \u003c val.\n",
+          "signature": "func Lt[T cmp.Ordered](val T, node any) MatchCase[T]"
+        },
+        {
+          "name": "Lte",
+          "doc": "Lte matches when *ptr \u003c= val.\n",
+          "signature": "func Lte[T cmp.Ordered](val T, node any) MatchCase[T]"
+        },
+        {
+          "name": "Ne",
+          "doc": "Ne matches when *ptr != val.\n",
+          "signature": "func Ne[T comparable](val T, node any) MatchCase[T]"
+        },
+        {
+          "name": "Where",
+          "doc": "Where matches when fn(*ptr) returns true.\n",
+          "signature": "func Where[T comparable](fn func(T) bool, node any) MatchCase[T]"
+        }
+      ]
+    },
+    {
+      "name": "MatchNode",
+      "doc": "MatchNode is the compiled form of a Match, ready for template evaluation.\nT is comparable; ordered operators (Gt/Lt/Gte/Lte) constrain themselves\nto cmp.Ordered at the case level.\n",
+      "decl": "type MatchNode[T comparable] struct {\n\t// contains filtered or unexported fields\n}",
+      "constructors": [
+        {
+          "name": "Match",
+          "doc": "Match builds a first-match-wins conditional block.\nEach case is evaluated top-to-bottom; the first true case renders.\nChain .Default() to set a fallback when no case matches.\n\n\tMatch(\u0026cpu,\n\t    Gt(90.0, Text(\"CRITICAL\").FG(Red)),\n\t    Gt(70.0, Text(\"WARNING\").FG(Yellow)),\n\t    Where(func(v float64) bool { return v \u003c 10 }, Text(\"COLD\").FG(Blue)),\n\t).Default(Text(\"OK\").FG(Green))\n",
+          "signature": "func Match[T comparable](ptr *T, cases ...MatchCase[T]) *MatchNode[T]",
+          "examples": [
+            {
+              "doc": "First-match-wins conditional.\nEvaluates cases top-to-bottom; the first true case renders.\n",
+              "code": "status := \"error\"\nMatch(\u0026status,\n\tEq(\"ok\", Text(\"all clear\").FG(Green)),\n\tEq(\"warn\", Text(\"warning\").FG(Yellow)),\n\tEq(\"error\", Text(\"failure\").FG(Red)),\n).Default(Text(\"unknown\"))"
+            },
+            {
+              "name": "ordered",
+              "doc": "Ordered thresholds.\nOrder matters — the first matching case wins, so check the highest threshold first.\n",
+              "code": "cpu := 85.0\nMatch(\u0026cpu,\n\tGt(90.0, Text(\"CRITICAL\").FG(Red)),\n\tGt(70.0, Text(\"WARNING\").FG(Yellow)),\n\tLte(70.0, Text(\"OK\").FG(Green)),\n)"
+            },
+            {
+              "name": "where",
+              "doc": "Predicate matching.\nWhere accepts a function for cases that need custom logic.\n",
+              "code": "query := \"hello world\"\nMatch(\u0026query,\n\tEq(\"\", Text(\"type to search\")),\n\tWhere(func(q string) bool { return len(q) \u003c 3 }, Text(\"keep typing...\")),\n\tWhere(func(q string) bool { return len(q) \u003e= 3 }, Text(\"searching\")),\n)"
+            }
+          ]
+        }
+      ],
+      "methods": [
+        {
+          "name": "Default",
+          "doc": "Default sets the fallback node when no case matches.\n",
+          "signature": "func (m *MatchNode[T]) Default(node any) *MatchNode[T]",
+          "recv": "*MatchNode[T]"
+        }
+      ]
+    },
+    {
       "name": "NodeRef",
       "doc": "NodeRef holds a node's rendered screen bounds, populated each frame after layout.\nDeclare one, attach it to a node with .NodeRef(), then read it in effects or\nanywhere that needs to know where something actually rendered.\n",
       "decl": "type NodeRef = Rect"
@@ -3411,7 +3642,7 @@
     {
       "name": "Op",
       "doc": "Op represents a single compiled template instruction.\nThe template compiler produces a flat array of these; Execute walks them to render.\n",
-      "decl": "type Op struct {\n\tKind   OpKind\n\tDepth  int8  // tree depth (root children = 0)\n\tParent int16 // parent op index, -1 for root children\n\n\t// Layout hints\n\tWidth        int16   // explicit width\n\tHeight       int16   // explicit height\n\tPercentWidth float32 // 0.0-1.0\n\tFlexGrow     float32 // share of remaining space\n\tGap          int8    // gap between children\n\tContentSized bool    // has fixed-width children (don't implicit flex)\n\tFitContent   bool    // size to content instead of filling available space\n\n\t// Container\n\tIsRow        bool        // true=HBox, false=VBox\n\tBorder       BorderStyle // border style\n\tBorderFG     *Color      // border foreground color\n\tBorderBG     *Color      // border background color\n\tTitle        string      // border title\n\tChildStart   int16       // first child op index\n\tChildEnd     int16       // last child op index (exclusive)\n\tCascadeStyle *Style      // style inherited by children (pointer for dynamic themes)\n\tLocalStyle   *Style      // style for this container only (not inherited)\n\tFill         Color       // container fill color (fills entire area)\n\tMargin       [4]int16    // outer margin: top, right, bottom, left\n\tNodeRef      *NodeRef    // if set, populated with rendered screen bounds each frame\n\n\t// kind-specific data — type-assert based on Kind.\n\t// we use a Kind switch + type assertion instead of interface dispatch because\n\t// concrete method calls after assertion are inlinable. interface calls are not,\n\t// and cause parameters to escape to heap. verified via go build -gcflags='-m -m'.\n\tExt any\n\n\t// dynamic layout property overrides — nil for static ops\n\tDyn *OpDyn\n}"
+      "decl": "type Op struct {\n\tKind   OpKind\n\tDepth  int8  // tree depth (root children = 0)\n\tParent int16 // parent op index, -1 for root children\n\n\t// Layout hints\n\tWidth        int16   // explicit width\n\tHeight       int16   // explicit height\n\tPercentWidth float32 // 0.0-1.0\n\tFlexGrow     float32 // share of remaining space\n\tGap          int8    // gap between children\n\tContentSized bool    // has fixed-width children (don't implicit flex)\n\tFitContent   bool    // size to content instead of filling available space\n\n\t// Container\n\tIsRow        bool        // true=HBox, false=VBox\n\tBorder       BorderStyle // border style\n\tBorderFG     *Color      // border foreground color\n\tBorderBG     *Color      // border background color\n\tTitle        string      // border title\n\tChildStart   int16       // first child op index\n\tChildEnd     int16       // last child op index (exclusive)\n\tCascadeStyle *Style      // style inherited by children (pointer for dynamic themes)\n\tLocalStyle   *Style      // style for this container only (not inherited)\n\tFill         Color       // container fill color (fills entire area)\n\tMargin       [4]int16    // outer margin: top, right, bottom, left\n\tPadding      [4]int16    // inner padding: top, right, bottom, left\n\tNodeRef      *NodeRef    // if set, populated with rendered screen bounds each frame\n\n\t// kind-specific data — type-assert based on Kind.\n\t// we use a Kind switch + type assertion instead of interface dispatch because\n\t// concrete method calls after assertion are inlinable. interface calls are not,\n\t// and cause parameters to escape to heap. verified via go build -gcflags='-m -m'.\n\tExt any\n\n\t// dynamic layout property overrides — nil for static ops\n\tDyn *OpDyn\n}"
     },
     {
       "name": "OpDyn",
@@ -3435,6 +3666,7 @@
             "OpIf",
             "OpForEach",
             "OpSwitch",
+            "OpMatch",
             "OpCustom",
             "OpLayout",
             "OpLayer",
@@ -3454,7 +3686,7 @@
             "OpOverlay",
             "OpScreenEffect"
           ],
-          "decl": "const (\n\tOpText     OpKind = iota // Text (data in Ext)\n\tOpProgress               // Progress bar (data in Ext)\n\tOpRichText               // RichText (data in Ext)\n\tOpLeader                 // Leader dots (data in Ext)\n\tOpCounter                // Counter (data in Ext)\n\n\tOpContainer // VBox or HBox (determined by IsRow)\n\n\tOpIf\n\tOpForEach\n\tOpSwitch\n\n\tOpCustom // Custom renderer\n\tOpLayout // Custom layout\n\tOpLayer  // LayerView (data in Ext)\n\n\tOpSelectionList // SelectionList (data in Ext)\n\n\tOpTable     // Table (data in Ext)\n\tOpAutoTable // AutoTable (data in Ext)\n\n\tOpSparkline // Sparkline (data in Ext)\n\n\tOpHRule        // Horizontal line (data in Ext)\n\tOpVRule        // Vertical line (data in Ext)\n\tOpSpacer       // Empty space (data in Ext)\n\tOpSpinner      // Animated spinner (data in Ext)\n\tOpScrollbar    // Scroll indicator (data in Ext)\n\tOpTabs         // Tab headers (data in Ext)\n\tOpTreeView     // Hierarchical tree (data in Ext)\n\tOpJump         // Jump target wrapper (data in Ext)\n\tOpTextInput    // Single-line text input (data in Ext)\n\tOpOverlay      // Floating overlay/modal (data in Ext)\n\tOpScreenEffect // Full-screen post-processing effect (data in Ext)\n)"
+          "decl": "const (\n\tOpText     OpKind = iota // Text (data in Ext)\n\tOpProgress               // Progress bar (data in Ext)\n\tOpRichText               // RichText (data in Ext)\n\tOpLeader                 // Leader dots (data in Ext)\n\tOpCounter                // Counter (data in Ext)\n\n\tOpContainer // VBox or HBox (determined by IsRow)\n\n\tOpIf\n\tOpForEach\n\tOpSwitch\n\tOpMatch\n\n\tOpCustom // Custom renderer\n\tOpLayout // Custom layout\n\tOpLayer  // LayerView (data in Ext)\n\n\tOpSelectionList // SelectionList (data in Ext)\n\n\tOpTable     // Table (data in Ext)\n\tOpAutoTable // AutoTable (data in Ext)\n\n\tOpSparkline // Sparkline (data in Ext)\n\n\tOpHRule        // Horizontal line (data in Ext)\n\tOpVRule        // Vertical line (data in Ext)\n\tOpSpacer       // Empty space (data in Ext)\n\tOpSpinner      // Animated spinner (data in Ext)\n\tOpScrollbar    // Scroll indicator (data in Ext)\n\tOpTabs         // Tab headers (data in Ext)\n\tOpTreeView     // Hierarchical tree (data in Ext)\n\tOpJump         // Jump target wrapper (data in Ext)\n\tOpTextInput    // Single-line text input (data in Ext)\n\tOpOverlay      // Floating overlay/modal (data in Ext)\n\tOpScreenEffect // Full-screen post-processing effect (data in Ext)\n)"
         }
       ]
     },
@@ -3544,6 +3776,12 @@
       "decl": "type OverlayFn func(children ...any) OverlayC",
       "methods": [
         {
+          "name": "Above",
+          "doc": "Above positions the overlay directly above the referenced node.\n",
+          "signature": "func (f OverlayFn) Above(ref *NodeRef) OverlayFn",
+          "recv": "OverlayFn"
+        },
+        {
           "name": "At",
           "doc": "At positions the overlay at fixed coordinates.\n",
           "signature": "func (f OverlayFn) At(x, y int) OverlayFn",
@@ -3568,9 +3806,33 @@
           "recv": "OverlayFn"
         },
         {
+          "name": "Below",
+          "doc": "Below positions the overlay directly below the referenced node.\n",
+          "signature": "func (f OverlayFn) Below(ref *NodeRef) OverlayFn",
+          "recv": "OverlayFn"
+        },
+        {
           "name": "Centered",
           "doc": "Centered centers the overlay content within the parent bounds.\n",
           "signature": "func (f OverlayFn) Centered() OverlayFn",
+          "recv": "OverlayFn"
+        },
+        {
+          "name": "LeftOf",
+          "doc": "LeftOf positions the overlay to the left of the referenced node.\n",
+          "signature": "func (f OverlayFn) LeftOf(ref *NodeRef) OverlayFn",
+          "recv": "OverlayFn"
+        },
+        {
+          "name": "OnTop",
+          "doc": "OnTop positions the overlay covering the referenced node exactly.\n",
+          "signature": "func (f OverlayFn) OnTop(ref *NodeRef) OverlayFn",
+          "recv": "OverlayFn"
+        },
+        {
+          "name": "RightOf",
+          "doc": "RightOf positions the overlay to the right of the referenced node.\n",
+          "signature": "func (f OverlayFn) RightOf(ref *NodeRef) OverlayFn",
           "recv": "OverlayFn"
         },
         {
@@ -4139,7 +4401,7 @@
     {
       "name": "SelectionList",
       "doc": "SelectionList displays a list of items with selection marker.\nItems must be a pointer to a slice (*[]T).\nSelected must be a pointer to an int (*int) tracking the selected index.\nRender is optional - if nil, items are rendered using fmt.Sprintf(\"%v\", item).\nMarker defaults to \"\u003e \" if not specified.\n",
-      "decl": "type SelectionList struct {\n\tItems         any    // *[]T - pointer to slice of items\n\tSelected      *int   // pointer to selected index\n\tMarker        string // selection marker (default \"\u003e \", use \" \" for no visible marker)\n\tMarkerStyle   Style  // style for marker text (merged with SelectedStyle.BG for selected rows)\n\tRender        any    // func(*T) any - optional, renders each item\n\tMaxVisible    int    // max items to show (0 = all)\n\tStyle         Style  // default style for non-selected rows (e.g., background)\n\tSelectedStyle Style  // style for selected row (e.g., background color)\n\t// contains filtered or unexported fields\n}",
+      "decl": "type SelectionList struct {\n\tItems            any      // *[]T - pointer to slice of items\n\tSelected         *int     // pointer to selected index\n\tMarker           string   // selection marker (default \"\u003e \", use \" \" for no visible marker)\n\tMarkerStyle      Style    // style for marker text (merged with SelectedStyle.BG for selected rows)\n\tRender           any      // func(*T) any - optional, renders each item\n\tMaxVisible       int      // max items to show (0 = all)\n\tStyle            Style    // default style for non-selected rows\n\tSelectedStyle    Style    // style for selected row\n\tStyleDyn         any      // dynamic value (compiled eval writes into Style)\n\tSelectedStyleDyn any      // dynamic value (compiled eval writes into SelectedStyle)\n\tSelectedRef      *NodeRef // tracks position of the selected row each frame\n\t// contains filtered or unexported fields\n}",
       "methods": [
         {
           "name": "Down",
@@ -5142,6 +5404,24 @@
           "recv": "VBoxFn"
         },
         {
+          "name": "Padding",
+          "doc": "Padding sets uniform padding on all sides.\n",
+          "signature": "func (f VBoxFn) Padding(all int16) VBoxFn",
+          "recv": "VBoxFn"
+        },
+        {
+          "name": "PaddingTRBL",
+          "doc": "PaddingTRBL sets individual padding for top, right, bottom, left.\n",
+          "signature": "func (f VBoxFn) PaddingTRBL(top, right, bottom, left int16) VBoxFn",
+          "recv": "VBoxFn"
+        },
+        {
+          "name": "PaddingVH",
+          "doc": "PaddingVH sets vertical and horizontal padding.\n",
+          "signature": "func (f VBoxFn) PaddingVH(vertical, horizontal int16) VBoxFn",
+          "recv": "VBoxFn"
+        },
+        {
           "name": "Size",
           "doc": "Size sets a fixed width and height.\n",
           "signature": "func (f VBoxFn) Size(w, h int16) VBoxFn",
@@ -5821,9 +6101,10 @@
       "names": [
         "BorderSingle",
         "BorderRounded",
-        "BorderDouble"
+        "BorderDouble",
+        "BorderSoft"
       ],
-      "decl": "var (\n\tBorderSingle = BorderStyle{\n\t\tHorizontal:  BoxHorizontal,\n\t\tVertical:    BoxVertical,\n\t\tTopLeft:     BoxTopLeft,\n\t\tTopRight:    BoxTopRight,\n\t\tBottomLeft:  BoxBottomLeft,\n\t\tBottomRight: BoxBottomRight,\n\t}\n\tBorderRounded = BorderStyle{\n\t\tHorizontal:  BoxHorizontal,\n\t\tVertical:    BoxVertical,\n\t\tTopLeft:     BoxRoundedTopLeft,\n\t\tTopRight:    BoxRoundedTopRight,\n\t\tBottomLeft:  BoxRoundedBottomLeft,\n\t\tBottomRight: BoxRoundedBottomRight,\n\t}\n\tBorderDouble = BorderStyle{\n\t\tHorizontal:  BoxDoubleHorizontal,\n\t\tVertical:    BoxDoubleVertical,\n\t\tTopLeft:     BoxDoubleTopLeft,\n\t\tTopRight:    BoxDoubleTopRight,\n\t\tBottomLeft:  BoxDoubleBottomLeft,\n\t\tBottomRight: BoxDoubleBottomRight,\n\t}\n)"
+      "decl": "var (\n\tBorderSingle = BorderStyle{\n\t\tHorizontal:  BoxHorizontal,\n\t\tVertical:    BoxVertical,\n\t\tTopLeft:     BoxTopLeft,\n\t\tTopRight:    BoxTopRight,\n\t\tBottomLeft:  BoxBottomLeft,\n\t\tBottomRight: BoxBottomRight,\n\t}\n\tBorderRounded = BorderStyle{\n\t\tHorizontal:  BoxHorizontal,\n\t\tVertical:    BoxVertical,\n\t\tTopLeft:     BoxRoundedTopLeft,\n\t\tTopRight:    BoxRoundedTopRight,\n\t\tBottomLeft:  BoxRoundedBottomLeft,\n\t\tBottomRight: BoxRoundedBottomRight,\n\t}\n\tBorderDouble = BorderStyle{\n\t\tHorizontal:  BoxDoubleHorizontal,\n\t\tVertical:    BoxDoubleVertical,\n\t\tTopLeft:     BoxDoubleTopLeft,\n\t\tTopRight:    BoxDoubleTopRight,\n\t\tBottomLeft:  BoxDoubleBottomLeft,\n\t\tBottomRight: BoxDoubleBottomRight,\n\t}\n\tBorderSoft = BorderStyle{\n\t\tTop:         '▀',\n\t\tBottom:      '▄',\n\t\tLeft:        '▌',\n\t\tRight:       '▐',\n\t\tTopLeft:     '▛',\n\t\tTopRight:    '▜',\n\t\tBottomLeft:  '▙',\n\t\tBottomRight: '▟',\n\t}\n)"
     },
     {
       "doc": "Standard basic colours for convenience.\n",
