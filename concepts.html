@@ -1762,6 +1762,12 @@ title = "World"               // next render shows "World"</div>
   </div>
 
   <div class="concept-prose">
+    <strong>Match</strong> uses the same sub-template mechanism but supports operators
+    (<code>Eq</code>, <code>Gt</code>, <code>Lt</code>, <code>Gte</code>, <code>Lte</code>, <code>Ne</code>)
+    and predicate functions (<code>Where</code>). Cases evaluate first-match-wins, so threshold order matters.
+  </div>
+
+  <div class="concept-prose">
     None of these participate in the parent's <code>byDepth</code> layout pass directly.
     They're measured inline by their parent container when it encounters them during the child scan
     in <code>layoutContainer</code>. The sub-templates run their own complete layout pipeline

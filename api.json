@@ -3610,17 +3610,20 @@
           "examples": [
             {
               "doc": "First-match-wins conditional.\nEvaluates cases top-to-bottom; the first true case renders.\n",
-              "code": "status := \"error\"\nMatch(\u0026status,\n\tEq(\"ok\", Text(\"all clear\").FG(Green)),\n\tEq(\"warn\", Text(\"warning\").FG(Yellow)),\n\tEq(\"error\", Text(\"failure\").FG(Red)),\n).Default(Text(\"unknown\"))"
+              "code": "status := \"error\"\ntree := Match(\u0026status,\n\tEq(\"ok\", Text(\"all clear\")),\n\tEq(\"warn\", Text(\"warning\")),\n\tEq(\"error\", Text(\"failure\")),\n).Default(Text(\"unknown\"))",
+              "output": "failure\n"
             },
             {
               "name": "ordered",
               "doc": "Ordered thresholds.\nOrder matters — the first matching case wins, so check the highest threshold first.\n",
-              "code": "cpu := 85.0\nMatch(\u0026cpu,\n\tGt(90.0, Text(\"CRITICAL\").FG(Red)),\n\tGt(70.0, Text(\"WARNING\").FG(Yellow)),\n\tLte(70.0, Text(\"OK\").FG(Green)),\n)"
+              "code": "cpu := 85.0\ntree := Match(\u0026cpu,\n\tGt(90.0, Text(\"CRITICAL\")),\n\tGt(70.0, Text(\"WARNING\")),\n\tLte(70.0, Text(\"OK\")),\n)",
+              "output": "WARNING\n"
             },
             {
               "name": "where",
               "doc": "Predicate matching.\nWhere accepts a function for cases that need custom logic.\n",
-              "code": "query := \"hello world\"\nMatch(\u0026query,\n\tEq(\"\", Text(\"type to search\")),\n\tWhere(func(q string) bool { return len(q) \u003c 3 }, Text(\"keep typing...\")),\n\tWhere(func(q string) bool { return len(q) \u003e= 3 }, Text(\"searching\")),\n)"
+              "code": "query := \"hello world\"\ntree := Match(\u0026query,\n\tEq(\"\", Text(\"type to search\")),\n\tWhere(func(q string) bool { return len(q) \u003c 3 }, Text(\"keep typing...\")),\n\tWhere(func(q string) bool { return len(q) \u003e= 3 }, Text(\"searching\")),\n)",
+              "output": "searching\n"
             }
           ]
         }
@@ -5937,7 +5940,7 @@
       "examples": [
         {
           "doc": "Remap colours through a three-stop gradient.\n",
-          "code": "ScreenEffect(SEGradientMap(\n\tRGB(0, 0, 50),\n\tRGB(0, 128, 128),\n\tRGB(200, 255, 200),\n))"
+          "code": "ScreenEffect(SEGradientMap(\n\tRGB(0, 0, 50),      // shadows → deep blue\n\tRGB(0, 128, 128),   // midtones → teal\n\tRGB(200, 255, 200), // highlights → mint\n))"
         }
       ]
     },

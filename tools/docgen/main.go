@@ -199,28 +199,63 @@ func funcDoc(fset *token.FileSet, f *doc.Func) FuncDoc {
 }
 
 func exampleDoc(fset *token.FileSet, e *doc.Example) ExampleDoc {
-	var buf bytes.Buffer
-	if e.Code != nil {
-		if err := format.Node(&buf, fset, e.Code); err == nil {
-			// format.Node on a BlockStmt gives "{\n...\n}", strip the braces
-			code := buf.String()
-			code = strings.TrimPrefix(code, "{\n")
-			code = strings.TrimSuffix(code, "\n}")
-			// dedent one tab level (go/format indents the body)
-			lines := strings.Split(code, "\n")
-			for i, line := range lines {
-				lines[i] = strings.TrimPrefix(line, "\t")
-			}
-			code = strings.Join(lines, "\n")
-			return ExampleDoc{
-				Name:   e.Suffix,
-				Doc:    e.Doc,
-				Code:   code,
-				Output: e.Output,
-			}
+	if e.Code == nil {
+		return ExampleDoc{Name: e.Suffix, Doc: e.Doc}
+	}
+
+	// read the raw source to preserve comments (format.Node strips them)
+	pos := fset.Position(e.Code.Pos())
+	end := fset.Position(e.Code.End())
+	raw, err := os.ReadFile(pos.Filename)
+	if err != nil {
+		return ExampleDoc{Name: e.Suffix, Doc: e.Doc}
+	}
+
+	// extract the function body between braces
+	body := string(raw[pos.Offset:end.Offset])
+	body = strings.TrimPrefix(body, "{")
+	body = strings.TrimSuffix(body, "}")
+	body = strings.TrimRight(body, "\n")
+
+	// dedent one tab level
+	lines := strings.Split(body, "\n")
+	var clean []string
+	for i := range lines {
+		lines[i] = strings.TrimPrefix(lines[i], "\t")
+	}
+
+	// if markers exist, extract only the region between them
+	inMarker, hasMarkers := false, false
+	for _, line := range lines {
+		trimmed := strings.TrimSpace(line)
+		if trimmed == "// example:" {
+			inMarker = true
+			hasMarkers = true
+			continue
+		}
+		if trimmed == "// :example" {
+			inMarker = false
+			continue
+		}
+		if inMarker {
+			clean = append(clean, line)
 		}
 	}
-	return ExampleDoc{Name: e.Suffix, Doc: e.Doc}
+
+	var code string
+	if hasMarkers {
+		code = strings.Join(clean, "\n")
+	} else {
+		code = strings.Join(lines, "\n")
+	}
+	code = strings.TrimSpace(code)
+
+	return ExampleDoc{
+		Name:   e.Suffix,
+		Doc:    e.Doc,
+		Code:   code,
+		Output: e.Output,
+	}
 }
 
 func funcSignature(fset *token.FileSet, decl *ast.FuncDecl) string {

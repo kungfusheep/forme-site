@@ -729,6 +729,28 @@ Progress(&val).Width(
 	Case("preview", Text("previewing")).
 	Default(Text("idle"))</div>
 
+  <div class="concept-prose">
+    <strong><code>Match</code></strong> is first-match-wins with operators.
+    Cases evaluate top-to-bottom; the first true case renders.
+    Use <code>Eq</code>, <code>Gt</code>, <code>Lt</code>, <code>Gte</code>, <code>Lte</code>, <code>Ne</code> for comparisons and <code>Where</code> for predicates.
+  </div>
+
+<div class="code code-raw">Match(&cpu,
+	Gt(90.0, Text("CRITICAL").FG(Red)),
+	Gt(70.0, Text("WARNING").FG(Yellow)),
+	Lte(70.0, Text("OK").FG(Green)),
+)
+
+Match(&query,
+	Eq("", Text("type to search")),
+	Where(func(q string) bool { return len(q) < 3 },
+		Text("keep typing..."),
+	),
+	Where(func(q string) bool { return len(q) >= 3 },
+		Text("searching"),
+	),
+)</div>
+
   <div class="concept-sub">Iteration</div>
   <div class="concept-prose">
     <strong><code>ForEach</code></strong> iterates a slice. The callback receives a pointer to each item.
