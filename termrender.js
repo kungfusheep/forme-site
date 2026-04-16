@@ -37,7 +37,7 @@
   // parse a single ANSI-styled line into [{ch, fg, bg, bold, dim, inverse}, ...]
   function parseLine(str) {
     const cells = []
-    let fg = null, bg = null, bold = false, dim = false, inverse = false
+    let fg = null, bg = null, bold = false, dim = false, italic = false, underline = false, inverse = false
     let i = 0
 
     while (i < str.length) {
@@ -49,10 +49,14 @@
 
         for (let p = 0; p < params.length; p++) {
           const v = params[p]
-          if (v === 0) { fg = null; bg = null; bold = false; dim = false; inverse = false }
+          if (v === 0) { fg = null; bg = null; bold = false; dim = false; italic = false; underline = false; inverse = false }
           else if (v === 1) bold = true
           else if (v === 2) dim = true
+          else if (v === 3) italic = true
+          else if (v === 4) underline = true
           else if (v === 7) inverse = true
+          else if (v === 23) italic = false
+          else if (v === 24) underline = false
           else if (v === 27) inverse = false
           else if (v >= 30 && v <= 37) fg = ansiToHex(v - 30)
           else if (v >= 40 && v <= 47) bg = ansiToHex(v - 40)
@@ -81,7 +85,7 @@
         cellBG = fg || DEFAULT_FG
       }
 
-      cells.push({ ch: str[i], fg: cellFG, bg: cellBG, bold, dim })
+      cells.push({ ch: str[i], fg: cellFG, bg: cellBG, bold, dim, italic, underline })
       i++
     }
 
@@ -198,9 +202,14 @@
           if (drawBoxChar(ctx, cell.ch, px, py, charW, charH, color)) {
             // drawn via primitives
           } else {
-            ctx.font = (cell.bold ? 'bold ' : '') + FONT_SIZE + 'px ' + FONT
+            ctx.font = (cell.italic ? 'italic ' : '') + (cell.bold ? 'bold ' : '') + FONT_SIZE + 'px ' + FONT
             ctx.fillStyle = color
             ctx.fillText(cell.ch, px, py + charH * 0.75)
+          }
+
+          if (cell.underline) {
+            ctx.fillStyle = cell.fg || DEFAULT_FG
+            ctx.fillRect(px, py + charH * 0.85, charW, 1)
           }
 
           if (cell.dim) ctx.globalAlpha = 1
@@ -358,4 +367,12 @@
   } else {
     init(); watchDPR()
   }
+
+  function renderOne(canvas) {
+    const data = JSON.parse(canvas.getAttribute('data-termdata'))
+    loaded.set(canvas, data)
+    render(canvas, data)
+  }
+
+  window.termRender = { init, renderOne }
 })()

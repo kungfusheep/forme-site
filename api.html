@@ -800,6 +800,18 @@
   .api-example-code .tp  { color: #a088b8; }
   .api-example-code .nr  { color: #c488a8; }
 
+  .api-example-preview {
+    padding: var(--s3);
+    padding-bottom: 0;
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid var(--rule-dk);
+  }
+  .api-example-preview canvas {
+    max-width: min(100%, 500px);
+    border-radius: 10px;
+  }
+
   @media (max-width: 768px) {
     .api-example-row {
       grid-template-columns: 1fr;
@@ -1160,7 +1172,7 @@
         <a href="https://github.com/kungfusheep/glyph/blob/main/CONTRIBUTING.md">Contributing</a>
         <a href="https://discord.gg/HWJ5XnNeMP">Discord</a>
       </div>
-      <div class="footer-copyright">&copy; 2025 glyph</div>
+      <div class="footer-copyright">&copy; 2026 glyph</div>
     </footer>
   </div>
 </div>
@@ -1206,8 +1218,11 @@ function copyInstall(el) {
     FilterListC: 'FilterList', FilterLogC: 'FilterLog', LogC: 'Log',
     LayerViewC: 'LayerView', JumpC: 'Jump',
     RadioC: 'Radio', CheckboxC: 'Checkbox',
-    ScrollbarC: 'Scroll',
+    ScrollbarC: 'Scroll', ScrollViewC: 'ScrollView', ScrollViewFn: 'ScrollView',
+    TextBlockC: 'TextBlock', TextViewC: 'TextView',
+    FormFn: 'Form', FormC: 'Form',
     HRuleC: 'HRule', VRuleC: 'VRule', LeaderC: 'Leader',
+    ScreenEffectNode: 'ScreenEffect',
     SpacerC: 'Spacer', AutoTableC: 'AutoTable',
     SparklineC: 'Sparkline', ProgressC: 'Progress', SpinnerC: 'Spinner',
     ForEachC: 'ForEach', Condition: 'If', OrdCondition: 'IfOrd',
@@ -1224,6 +1239,7 @@ function copyInstall(el) {
     'IfNode', 'ElseNode', 'SwitchNode', 'ForEachNode', 'LayerViewNode',
     'ChildSize', 'Size', 'Rect', 'Component', 'TextInput', 'Renderer',
     'LayoutFunc', 'Layout', 'FocusGroup',
+    'ConditionEval', 'OrdConditionEval', 'InputState',
   ]);
 
   const categoryMap = {
@@ -1235,12 +1251,14 @@ function copyInstall(el) {
     TabsC: 'Components', TabsStyle: 'Components',
     FilterListC: 'Components', FilterLogC: 'Components', LogC: 'Components',
     LayerViewC: 'Components',
-    JumpC: 'Components', JumpMode: 'Components',
-    JumpStyle: 'Components', JumpTarget: 'Components',
+    JumpC: 'Components', JumpMode: 'Components', JumpStyle: 'Components', JumpTarget: 'Components',
     RadioC: 'Components', CheckboxC: 'Components',
-    FormC: 'Components', FormField: 'Components',
+    FormC: 'Components', FormFn: 'Components', FormField: 'Components',
     ScrollbarC: 'Components', HRuleC: 'Components', VRuleC: 'Components',
     LeaderC: 'Components', Custom: 'Components',
+    ScrollViewC: 'Components', ScrollViewFn: 'Components',
+    TextBlockC: 'Components', TextViewC: 'Components',
+    StringValidator: 'Components', BoolValidator: 'Components', ValidateOn: 'Components',
     AutoTableC: 'Data Display', Table: 'Data Display', TableColumn: 'Data Display',
     SparklineC: 'Data Display', ProgressC: 'Data Display', SpinnerC: 'Data Display',
     TreeNode: 'Data Display', TreeView: 'Data Display',
@@ -1252,6 +1270,8 @@ function copyInstall(el) {
     Style: 'Style & Theme', Color: 'Style & Theme', ColorMode: 'Style & Theme',
     Attribute: 'Style & Theme', BorderStyle: 'Style & Theme',
     ThemeEx: 'Style & Theme', TextTransform: 'Style & Theme',
+    AnimateFn: 'Style & Theme', BlendMode: 'Style & Theme',
+    Effect: 'Style & Theme', ScreenEffectNode: 'Style & Theme',
     Align: 'Style & Theme', CursorShape: 'Style & Theme', Cursor: 'Style & Theme',
     RichTextNode: 'Rich Text', Span: 'Rich Text',
     Template: 'Internals', Op: 'Internals', OpKind: 'Internals',
@@ -1260,6 +1280,8 @@ function copyInstall(el) {
     Layer: 'Internals', Filter: 'Internals', FzfQuery: 'Internals',
     FocusManager: 'Internals', SelectionList: 'Internals',
     FlushStats: 'Internals', Timings: 'Internals',
+    OpDyn: 'Internals', PostContext: 'Internals', NodeRef: 'Internals',
+    StreamWriter: 'Internals', InputState: 'Internals',
     FlexNode: 'Internals', FlexNodeKind: 'Internals', FlexTree: 'Internals',
     HorizontalLayout: 'Internals', VerticalLayout: 'Internals',
   };
@@ -1430,7 +1452,7 @@ function copyInstall(el) {
           const desc = m ? m[2].trim() : '';
           const titleEl = document.createElement('div');
           titleEl.className = 'api-example-title';
-          titleEl.textContent = title;
+          titleEl.textContent = `#${window._exNum = (window._exNum||0)+1} ${title}`;
           prose.appendChild(titleEl);
           if (desc) {
             const descEl = document.createElement('div');
@@ -1446,6 +1468,14 @@ function copyInstall(el) {
         const pre = document.createElement('pre');
         pre.innerHTML = highlightGo(ex.code);
         code.appendChild(pre);
+        if (ex.preview) {
+          const wrap = document.createElement('div');
+          wrap.className = 'api-example-preview';
+          const canvas = document.createElement('canvas');
+          canvas.setAttribute('data-termdata', JSON.stringify(ex.preview));
+          wrap.appendChild(canvas);
+          code.appendChild(wrap);
+        }
         row.appendChild(code);
 
         exContainer.appendChild(row);
@@ -1693,11 +1723,115 @@ function copyInstall(el) {
       container.appendChild(cat);
     });
 
-    if (data.funcs?.length) {
-      container.appendChild(renderFreeFunctions(data.funcs));
+    // ── attach related items to their parent types ──
+    // one map: name → {target, label}. covers funcs, vars, and hidden-type constructors.
+    const attachTo = {
+      // rich text spans → Rich
+      Bold: 'RichTextNode', Dim: 'RichTextNode', Italic: 'RichTextNode',
+      Underline: 'RichTextNode', FG: 'RichTextNode', BG: 'RichTextNode',
+      Inverse: 'RichTextNode', Styled: 'Span',
+      // screen effects → ScreenEffect
+      SEBloom: 'ScreenEffectNode', SEContrast: 'ScreenEffectNode',
+      SEDesaturate: 'ScreenEffectNode', SEDissolve: 'ScreenEffectNode',
+      SEDropShadow: 'ScreenEffectNode', SEFocusDim: 'ScreenEffectNode',
+      SEGlow: 'ScreenEffectNode', SEGradientMap: 'ScreenEffectNode',
+      SEMonochrome: 'ScreenEffectNode', SEPulse: 'ScreenEffectNode',
+      SEQuantize: 'ScreenEffectNode', SEScreenShake: 'ScreenEffectNode',
+      SETint: 'ScreenEffectNode', SEVignette: 'ScreenEffectNode',
+      // validators → Form
+      VEmail: 'FormC', VRequired: 'FormC', VTrue: 'FormC',
+      // leader variants
+      LeaderDash: 'LeaderC', LeaderStr: 'LeaderC',
+      // jump
+      GenerateLabels: 'JumpC',
+      // layout
+      Arrange: 'VBoxFn', Define: 'VBoxFn',
+      // easing → Animate
+      EaseInBack: 'AnimateFn', EaseInBounce: 'AnimateFn', EaseInCirc: 'AnimateFn',
+      EaseInCubic: 'AnimateFn', EaseInExpo: 'AnimateFn', EaseInQuad: 'AnimateFn',
+      EaseInQuart: 'AnimateFn', EaseInQuint: 'AnimateFn', EaseInSine: 'AnimateFn',
+      EaseOutBack: 'AnimateFn', EaseOutBounce: 'AnimateFn', EaseOutCirc: 'AnimateFn',
+      EaseOutCubic: 'AnimateFn', EaseOutExpo: 'AnimateFn', EaseOutQuad: 'AnimateFn',
+      EaseOutQuart: 'AnimateFn', EaseOutQuint: 'AnimateFn', EaseOutSine: 'AnimateFn',
+      EaseInOutBack: 'AnimateFn', EaseInOutBounce: 'AnimateFn', EaseInOutCirc: 'AnimateFn',
+      EaseInOutCubic: 'AnimateFn', EaseInOutExpo: 'AnimateFn', EaseInOutQuad: 'AnimateFn',
+      EaseInOutQuart: 'AnimateFn', EaseInOutQuint: 'AnimateFn', EaseInOutSine: 'AnimateFn',
+      // spinner presets (vars)
+      SpinnerBraille: 'SpinnerC', SpinnerCircle: 'SpinnerC',
+      SpinnerDots: 'SpinnerC', SpinnerLine: 'SpinnerC',
+    };
+    // hidden types whose constructors get promoted to a visible type
+    const promoteFrom = {};
+
+    // collect items per target type: {sig, doc}
+    const related = {};
+    function addRelated(target, item) {
+      (related[target] = related[target] || []).push(item);
     }
 
-    const vars = renderVarsConsts(data.vars, 'Package Variables');
+    // 1. free functions
+    const uncategorisedFuncs = [];
+    (data.funcs || []).forEach(fn => {
+      const t = attachTo[fn.name];
+      if (t) addRelated(t, { sig: fn.signature, doc: fn.doc, id: fn.name });
+      else uncategorisedFuncs.push(fn);
+    });
+
+    // 2. constructors and consts from hidden types
+    (data.types || []).forEach(type => {
+      const t = promoteFrom[type.name];
+      if (!t) return;
+      (type.constructors || []).forEach(c =>
+        addRelated(t, { sig: c.signature, doc: c.doc, id: c.name }));
+      (type.consts || []).forEach(c =>
+        addRelated(t, { sig: c.decl, doc: c.doc }));
+    });
+
+    // 3. package vars
+    const remainingVars = [];
+    (data.vars || []).forEach(v => {
+      const name = v.names?.length === 1 ? v.names[0] : null;
+      const t = name && attachTo[name];
+      if (t) addRelated(t, { sig: v.decl, doc: v.doc, id: name });
+      else remainingVars.push(v);
+    });
+
+    // inject into rendered type elements
+    for (const el of typeElements) {
+      const items = related[el._typeName];
+      if (!items) continue;
+      const section = document.createElement('div');
+      section.className = 'api-related-fns';
+      const label = document.createElement('div');
+      label.className = 'api-methods-label';
+      label.textContent = 'Related';
+      section.appendChild(label);
+      const list = document.createElement('div');
+      list.className = 'api-methods-list open';
+      items.forEach(item => {
+        const me = document.createElement('div');
+        me.className = 'api-method';
+        if (item.id) me.id = item.id;
+        const sig = document.createElement('div');
+        sig.className = 'api-sig';
+        sig.textContent = item.sig;
+        me.appendChild(sig);
+        if (item.doc) {
+          const d = document.createElement('div');
+          d.className = 'api-method-doc';
+          d.textContent = trimDoc(item.doc);
+          me.appendChild(d);
+        }
+        list.appendChild(me);
+      });
+      section.appendChild(list);
+      el.appendChild(section);
+    }
+    if (uncategorisedFuncs.length) {
+      container.appendChild(renderFreeFunctions(uncategorisedFuncs));
+    }
+
+    const vars = renderVarsConsts(remainingVars, 'Package Variables');
     if (vars) container.appendChild(vars);
 
     const consts = renderVarsConsts(data.consts, 'Package Constants');
@@ -2125,7 +2259,17 @@ function copyInstall(el) {
 
   fetch('api.json')
     .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(data => { renderAPI(data); buildSidebar(); setupActiveTracking(); scrollToHash(); })
+    .then(data => {
+      renderAPI(data); buildSidebar(); setupActiveTracking(); scrollToHash();
+      const obs = new IntersectionObserver((entries, o) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          if (window.termRender) window.termRender.renderOne(e.target);
+          o.unobserve(e.target);
+        }
+      }, { rootMargin: '200px' });
+      document.querySelectorAll('canvas[data-termdata]').forEach(c => obs.observe(c));
+    })
     .catch(err => {
       document.getElementById('api-content').innerHTML =
         `<div class="api-loading">Failed to load API reference: ${esc(err.message)}</div>`;
@@ -2143,5 +2287,6 @@ function copyInstall(el) {
 }
 </script>
 <script src="waves.js"></script>
+<script src="termrender.js"></script>
 </body>
 </html>

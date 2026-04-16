@@ -47,10 +47,17 @@ type FuncDoc struct {
 }
 
 type ExampleDoc struct {
-	Name   string `json:"name,omitempty"`
-	Doc    string `json:"doc,omitempty"`
-	Code   string `json:"code"`
-	Output string `json:"output,omitempty"`
+	Name    string   `json:"name,omitempty"`
+	Doc     string   `json:"doc,omitempty"`
+	Code    string   `json:"code"`
+	Output  string   `json:"output,omitempty"`
+	Preview *Preview `json:"preview,omitempty"`
+}
+
+type Preview struct {
+	W     int      `json:"w"`
+	H     int      `json:"h"`
+	Lines []string `json:"lines"`
 }
 
 type ValueDoc struct {
@@ -61,11 +68,12 @@ type ValueDoc struct {
 
 func main() {
 	importPath := flag.String("import", "github.com/kungfusheep/glyph", "import path for the package")
+	previewsDir := flag.String("previews", "", "directory of preview JSON files to merge into examples")
 	flag.Parse()
 
 	dir := flag.Arg(0)
 	if dir == "" {
-		fmt.Fprintln(os.Stderr, "usage: docgen [-import path] <source-directory>")
+		fmt.Fprintln(os.Stderr, "usage: docgen [-import path] [-previews dir] <source-directory>")
 		os.Exit(1)
 	}
 
@@ -135,10 +143,10 @@ func main() {
 			Decl: renderGenDecl(fset, t.Decl),
 		}
 		for _, f := range t.Funcs {
-			td.Constructors = append(td.Constructors, funcDoc(fset, f))
+			td.Constructors = append(td.Constructors, funcDoc(fset, f, *previewsDir))
 		}
 		for _, m := range t.Methods {
-			td.Methods = append(td.Methods, funcDoc(fset, m))
+			td.Methods = append(td.Methods, funcDoc(fset, m, *previewsDir))
 		}
 		for _, c := range t.Consts {
 			td.Consts = append(td.Consts, valueDoc(fset, c))
@@ -147,19 +155,19 @@ func main() {
 			td.Vars = append(td.Vars, valueDoc(fset, v))
 		}
 		for _, e := range t.Examples {
-			td.Examples = append(td.Examples, exampleDoc(fset, e))
+			td.Examples = append(td.Examples, exampleDoc(fset, e, *previewsDir))
 		}
 		out.Types = append(out.Types, td)
 	}
 
 	// free functions
 	for _, f := range dpkg.Funcs {
-		out.Funcs = append(out.Funcs, funcDoc(fset, f))
+		out.Funcs = append(out.Funcs, funcDoc(fset, f, *previewsDir))
 	}
 
 	// package-level examples
 	for _, e := range dpkg.Examples {
-		out.Examples = append(out.Examples, exampleDoc(fset, e))
+		out.Examples = append(out.Examples, exampleDoc(fset, e, *previewsDir))
 	}
 
 	// package-level constants
@@ -185,7 +193,7 @@ func main() {
 	}
 }
 
-func funcDoc(fset *token.FileSet, f *doc.Func) FuncDoc {
+func funcDoc(fset *token.FileSet, f *doc.Func, previewsDir string) FuncDoc {
 	fd := FuncDoc{
 		Name:      f.Name,
 		Doc:       f.Doc,
@@ -193,12 +201,12 @@ func funcDoc(fset *token.FileSet, f *doc.Func) FuncDoc {
 		Recv:      f.Recv,
 	}
 	for _, e := range f.Examples {
-		fd.Examples = append(fd.Examples, exampleDoc(fset, e))
+		fd.Examples = append(fd.Examples, exampleDoc(fset, e, previewsDir))
 	}
 	return fd
 }
 
-func exampleDoc(fset *token.FileSet, e *doc.Example) ExampleDoc {
+func exampleDoc(fset *token.FileSet, e *doc.Example, previewsDir string) ExampleDoc {
 	if e.Code == nil {
 		return ExampleDoc{Name: e.Suffix, Doc: e.Doc}
 	}
@@ -249,13 +257,29 @@ func exampleDoc(fset *token.FileSet, e *doc.Example) ExampleDoc {
 		code = strings.Join(lines, "\n")
 	}
 	code = strings.TrimSpace(code)
+	// strip "tree := " from display code — examples assign to tree for
+	// renderAndPrint but docs should show the constructor call directly
+	code = strings.Replace(code, "tree := ", "", 1)
 
-	return ExampleDoc{
+	ed := ExampleDoc{
 		Name:   e.Suffix,
 		Doc:    e.Doc,
 		Code:   code,
 		Output: e.Output,
 	}
+
+	// attach preview if available
+	if previewsDir != "" {
+		pfile := filepath.Join(previewsDir, e.Name+".json")
+		if data, err := os.ReadFile(pfile); err == nil {
+			var p Preview
+			if json.Unmarshal(data, &p) == nil && len(p.Lines) > 0 {
+				ed.Preview = &p
+			}
+		}
+	}
+
+	return ed
 }
 
 func funcSignature(fset *token.FileSet, decl *ast.FuncDecl) string {
