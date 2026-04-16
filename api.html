@@ -1452,7 +1452,7 @@ function copyInstall(el) {
           const desc = m ? m[2].trim() : '';
           const titleEl = document.createElement('div');
           titleEl.className = 'api-example-title';
-          titleEl.textContent = `#${window._exNum = (window._exNum||0)+1} ${title}`;
+          titleEl.textContent = title;
           prose.appendChild(titleEl);
           if (desc) {
             const descEl = document.createElement('div');
