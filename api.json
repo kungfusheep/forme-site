@@ -111,6 +111,74 @@
               "                    "
             ]
           }
+        },
+        {
+          "name": "color",
+          "doc": "Colour tween.\nAnimate works on Color pointers. The colour lerps through RGB space toward the target.\n",
+          "code": "fg := Red\nVBox.Border(BorderRounded)(\n\tText(\"status\").FG(Animate.Duration(500 * time.Millisecond)(\u0026fg)),\n)",
+          "output": "╭──────────────────╮\n│status            │\n╰──────────────────╯\n",
+          "preview": {
+            "w": 20,
+            "h": 3,
+            "lines": [
+              "╭──────────────────╮",
+              "│\u001b[0;31;49mstatus\u001b[0;39;49m            │",
+              "╰──────────────────╯"
+            ]
+          }
+        },
+        {
+          "name": "conditional",
+          "doc": "Conditional target.\nWrap a conditional in Animate — the tween triggers whenever the condition changes.\n",
+          "code": "expanded := true\nsmooth := Animate.Duration(300 * time.Millisecond).Ease(EaseOutCubic)\n\nVBox.Height(smooth(If(\u0026expanded).Then(int16(5)).Else(int16(1)))).Border(BorderRounded)(\n\tText(\"content\"),\n)",
+          "output": "╭──────────────────╮\n│content           │\n│                  │\n│                  │\n╰──────────────────╯\n",
+          "preview": {
+            "w": 20,
+            "h": 7,
+            "lines": [
+              "╭──────────────────╮",
+              "│content           │",
+              "│                  │",
+              "│                  │",
+              "╰──────────────────╯",
+              "                    ",
+              "                    "
+            ]
+          }
+        },
+        {
+          "name": "from",
+          "doc": "Appear animation.\nFrom sets the starting value. The element animates from that value to the target on first render.\n",
+          "code": "VBox.Height(\n\tAnimate.From(int16(0)).Duration(500 * time.Millisecond)(int16(3)),\n).Border(BorderRounded)(\n\tText(\"appears\"),\n)",
+          "output": "╭──────────────────╮\n│appears           │\n│                  │\n│                  │\n╰──────────────────╯\n",
+          "preview": {
+            "w": 20,
+            "h": 5,
+            "lines": [
+              "╭──────────────────╮",
+              "│appears           │",
+              "│                  │",
+              "│                  │",
+              "╰──────────────────╯"
+            ]
+          }
+        },
+        {
+          "name": "onComplete",
+          "doc": "Completion callback.\nOnComplete fires once when the animation reaches its target value.\n",
+          "code": "done := false\nVBox.Height(\n\tAnimate.Duration(200 * time.Millisecond).OnComplete(func() { done = true })(int16(3)),\n).Border(BorderRounded)(\n\tText(\"animating\"),\n)",
+          "output": "╭──────────────────╮\n│animating         │\n╰──────────────────╯\n",
+          "preview": {
+            "w": 20,
+            "h": 5,
+            "lines": [
+              "╭──────────────────╮",
+              "│animating         │",
+              "╰──────────────────╯",
+              "                    ",
+              "                    "
+            ]
+          }
         }
       ]
     },
