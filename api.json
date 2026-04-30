@@ -90,7 +90,7 @@
           "names": [
             "Animate"
           ],
-          "decl": "var Animate AnimateFn = func(target any) *tween {\n\treturn \u0026tween{\n\t\ttarget:   target,\n\t\tduration: 200 * time.Millisecond,\n\t}\n}"
+          "decl": "var Animate AnimateFn = func(target any) *tween {\n\treturn \u0026tween{\n\t\ttarget:   target,\n\t\tduration: 280 * time.Millisecond,\n\t\tease:     EaseOutQuart,\n\t}\n}"
         }
       ],
       "examples": [
@@ -143,23 +143,6 @@
               "╰──────────────────╯",
               "                    ",
               "                    "
-            ]
-          }
-        },
-        {
-          "name": "from",
-          "doc": "Appear animation.\nFrom sets the starting value. The element animates from that value to the target on first render.\n",
-          "code": "VBox.Height(\n\tAnimate.From(int16(0)).Duration(500 * time.Millisecond)(int16(3)),\n).Border(BorderRounded)(\n\tText(\"appears\"),\n)",
-          "output": "╭──────────────────╮\n│appears           │\n│                  │\n│                  │\n╰──────────────────╯\n",
-          "preview": {
-            "w": 20,
-            "h": 5,
-            "lines": [
-              "╭──────────────────╮",
-              "│appears           │",
-              "│                  │",
-              "│                  │",
-              "╰──────────────────╯"
             ]
           }
         },
@@ -7364,7 +7347,23 @@
     {
       "name": "In",
       "doc": "In marks the active value used while a conditional branch is present.\nPass a tween to animate in, or a plain value to snap in and only animate out.\n",
-      "signature": "func In(v any) *presence"
+      "signature": "func In(v any) *presence",
+      "examples": [
+        {
+          "doc": "Enter and exit transitions.\nWrap any property value with In for the entry and Out for the exit. Pass a\ntween to either side to animate it; pass a plain value to snap. Both sides\nare tied to the surrounding conditional, and Glyph keeps the outgoing branch\non screen until its Out tween completes.\n",
+          "code": "visible := true\nIf(\u0026visible).Then(\n\tVBox.Border(BorderRounded).\n\t\tWidth(\n\t\t\tIn(20).\n\t\t\tOut(Animate(0)),\n\t\t)(\n\t\t\tText(\"hello\"),\n\t\t),\n)",
+          "output": "╭──────────────────╮\n│hello             │\n╰──────────────────╯\n",
+          "preview": {
+            "w": 20,
+            "h": 3,
+            "lines": [
+              "╭──────────────────╮",
+              "│hello             │",
+              "╰──────────────────╯"
+            ]
+          }
+        }
+      ]
     },
     {
       "name": "Inverse",
@@ -7400,6 +7399,11 @@
       "name": "LeaderStr",
       "doc": "LeaderStr creates a dot-leader string: \"LABEL...........VALUE\"\nWidth is the total width including label and value.\nDeprecated: Use the Leader component for pointer binding support.\n",
       "signature": "func LeaderStr(label, value string, width int) string"
+    },
+    {
+      "name": "Linear",
+      "doc": "Linear is an identity easing function. Pass it to Ease to opt out of the\ndefault ease and run an animation at constant speed.\n",
+      "signature": "func Linear(t float64) float64"
     },
     {
       "name": "Meter",

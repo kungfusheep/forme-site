@@ -1746,6 +1746,8 @@ function copyInstall(el) {
       GenerateLabels: 'JumpC',
       // layout
       Arrange: 'VBoxFn', Define: 'VBoxFn',
+      // animation extras → Animate
+      In: 'AnimateFn', Linear: 'AnimateFn',
       // easing → Animate
       EaseInBack: 'AnimateFn', EaseInBounce: 'AnimateFn', EaseInCirc: 'AnimateFn',
       EaseInCubic: 'AnimateFn', EaseInExpo: 'AnimateFn', EaseInQuad: 'AnimateFn',
@@ -1773,7 +1775,7 @@ function copyInstall(el) {
     const uncategorisedFuncs = [];
     (data.funcs || []).forEach(fn => {
       const t = attachTo[fn.name];
-      if (t) addRelated(t, { sig: fn.signature, doc: fn.doc, id: fn.name });
+      if (t) addRelated(t, { sig: fn.signature, doc: fn.doc, id: fn.name, examples: fn.examples });
       else uncategorisedFuncs.push(fn);
     });
 
@@ -1800,6 +1802,10 @@ function copyInstall(el) {
     for (const el of typeElements) {
       const items = related[el._typeName];
       if (!items) continue;
+      // extend the type's search index with the names/docs of related items so
+      // promoted functions (e.g. EaseOut*, In, Linear) are findable via search.
+      const extra = items.map(it => `${it.id || ''} ${it.sig || ''} ${it.doc || ''}`).join(' ').toLowerCase();
+      el._searchText = (el._searchText || '') + ' ' + extra;
       const section = document.createElement('div');
       section.className = 'api-related-fns';
       const label = document.createElement('div');
@@ -1821,6 +1827,51 @@ function copyInstall(el) {
           d.className = 'api-method-doc';
           d.textContent = trimDoc(item.doc);
           me.appendChild(d);
+        }
+        if (item.examples && item.examples.length) {
+          const exContainer = document.createElement('div');
+          exContainer.className = 'api-examples';
+          item.examples.forEach(ex => {
+            const row = document.createElement('div');
+            row.className = 'api-example-row';
+
+            const prose = document.createElement('div');
+            prose.className = 'api-example-prose';
+            if (ex.doc) {
+              const raw = ex.doc.trim();
+              const m = raw.match(/^(.+?\.)\s*\n([\s\S]*)$/);
+              const title = (m ? m[1] : raw).replace(/\.$/, '');
+              const desc = m ? m[2].trim() : '';
+              const titleEl = document.createElement('div');
+              titleEl.className = 'api-example-title';
+              titleEl.textContent = title;
+              prose.appendChild(titleEl);
+              if (desc) {
+                const descEl = document.createElement('div');
+                descEl.className = 'api-example-desc';
+                descEl.textContent = desc;
+                prose.appendChild(descEl);
+              }
+            }
+            row.appendChild(prose);
+
+            const code = document.createElement('div');
+            code.className = 'api-example-code';
+            const pre = document.createElement('pre');
+            pre.innerHTML = highlightGo(ex.code);
+            code.appendChild(pre);
+            if (ex.preview) {
+              const wrap = document.createElement('div');
+              wrap.className = 'api-example-preview';
+              const canvas = document.createElement('canvas');
+              canvas.setAttribute('data-termdata', JSON.stringify(ex.preview));
+              wrap.appendChild(canvas);
+              code.appendChild(wrap);
+            }
+            row.appendChild(code);
+            exContainer.appendChild(row);
+          });
+          me.appendChild(exContainer);
         }
         list.appendChild(me);
       });
