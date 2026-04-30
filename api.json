@@ -470,8 +470,8 @@
         },
         {
           "name": "SetView",
-          "doc": "SetView sets a declarative view for fast rendering.\nPointers in the view are captured at compile time - just mutate your state.\n\nExample:\n\n\tstate := \u0026MyState{Title: \"Hello\", Progress: 50}\n\tapp.SetView(\n\t    Col{Children: []any{\n\t        Text{Content: \u0026state.Title},\n\t        Progress{Value: \u0026state.Progress},\n\t    }},\n\t)\n",
-          "signature": "func (a *App) SetView(view any) *App",
+          "doc": "SetView sets a declarative view for fast rendering.\nPointers in the view are captured at compile time - just mutate your state.\n\nExample:\n\n\tstate := \u0026MyState{Title: \"Hello\", Progress: 50}\n\tapp.SetView(\n\t    Col{Children: []Component{\n\t        Text{Content: \u0026state.Title},\n\t        Progress{Value: \u0026state.Progress},\n\t    }},\n\t)\n",
+          "signature": "func (a *App) SetView(view Component) *App",
           "recv": "*App"
         },
         {
@@ -513,13 +513,13 @@
         {
           "name": "UpdateView",
           "doc": "UpdateView recompiles a view with a new view definition.\nUse this when the view's structure changes and needs re-compilation.\n",
-          "signature": "func (a *App) UpdateView(name string, view any)",
+          "signature": "func (a *App) UpdateView(name string, view Component)",
           "recv": "*App"
         },
         {
           "name": "View",
           "doc": "View registers a named view for multi-view routing.\nReturns a builder for chaining Handle() calls.\n\nExample:\n\n\tapp.View(\"home\", homeView).\n\t    Handle(\"j\", moveDown).\n\t    Handle(\"s\", func(_ riffkey.Match) { app.Go(\"settings\") })\n",
-          "signature": "func (a *App) View(name string, view any) *ViewBuilder",
+          "signature": "func (a *App) View(name string, view Component) *ViewBuilder",
           "recv": "*App"
         },
         {
@@ -675,6 +675,12 @@
           "name": "Border",
           "doc": "Border sets the border style.\n",
           "signature": "func (t AutoTableC) Border(b BorderStyle) AutoTableC",
+          "recv": "AutoTableC"
+        },
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (a AutoTableC) Build() Component",
           "recv": "AutoTableC"
         },
         {
@@ -884,7 +890,15 @@
     {
       "name": "Box",
       "doc": "Box is a container with a custom layout function.\nUse this when HBox/VBox don't fit your needs.\n",
-      "decl": "type Box struct {\n\tLayout   LayoutFunc\n\tChildren []any\n}"
+      "decl": "type Box struct {\n\tLayout   LayoutFunc\n\tChildren []Component\n}",
+      "methods": [
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (b Box) Build() Component",
+          "recv": "Box"
+        }
+      ]
     },
     {
       "name": "Buffer",
@@ -1037,6 +1051,12 @@
           "recv": "*Buffer"
         },
         {
+          "name": "Row",
+          "doc": "Row returns a writer for row y with the style precomputed and the row marked dirty.\nIf y is out of bounds, Put calls on the returned writer are no-ops.\n",
+          "signature": "func (b *Buffer) Row(y int, style Style) RowWriter",
+          "recv": "*Buffer"
+        },
+        {
           "name": "RowDirty",
           "doc": "RowDirty returns true if the given row has been modified since last ClearDirtyFlags.\nIf allDirty is set (after Clear/Resize), all rows are considered dirty.\n",
           "signature": "func (b *Buffer) RowDirty(y int) bool",
@@ -1052,6 +1072,12 @@
           "name": "SetFast",
           "doc": "SetFast sets a cell without border merging. Use for text/progress where\nyou know the content isn't a border character.\n",
           "signature": "func (b *Buffer) SetFast(x, y int, c Cell)",
+          "recv": "*Buffer"
+        },
+        {
+          "name": "SetOpacity",
+          "doc": "SetOpacity composites c over the existing cell using glyph's terminal\nopacity rules. Default BG on c is treated as transparent and preserves the\nexisting cell BG; set an explicit BG when the source should fade a fill.\n",
+          "signature": "func (b *Buffer) SetOpacity(x, y int, c Cell, opacity float64, mode OpacityMode)",
           "recv": "*Buffer"
         },
         {
@@ -1140,7 +1166,7 @@
         },
         {
           "name": "WriteStringFast",
-          "doc": "WriteStringFast writes a string without border merging.\nWrites directly to the cell slice without border merging.\n",
+          "doc": "WriteStringFast writes a string without border merging.\nWrites directly to the cell slice without border merging.\nHandles double-width runes (emoji, CJK) by placing a Rune=0 placeholder\nin the trailing cell so the screen layer skips it when diffing.\n",
           "signature": "func (b *Buffer) WriteStringFast(x, y int, s string, style Style, maxWidth int)",
           "recv": "*Buffer"
         },
@@ -1240,12 +1266,12 @@
       "constructors": [
         {
           "name": "CheckList",
-          "doc": "CheckList creates a navigable checklist from a bound slice.\nItems should have struct tags `glyph:\"checked\"` and `glyph:\"render\"`,\nor use .Checked(func(*T) *bool) and .Render(func(*T) any) to configure manually.\n",
+          "doc": "CheckList creates a navigable checklist from a bound slice.\nItems should have struct tags `glyph:\"checked\"` and `glyph:\"render\"`,\nor use .Checked(func(*T) *bool) and .Render(func(*T) Component) to configure manually.\n",
           "signature": "func CheckList[T any](items *[]T) *CheckListC[T]",
           "examples": [
             {
               "doc": "Toggleable list.\nLike List, but each item has a toggleable checkbox. The Done field is toggled in place through the pointer.\n",
-              "code": "type Task struct {\n\tName string\n\tDone bool\n}\ntasks := []Task{{Name: \"Ship it\"}, {Name: \"Test it\"}}\n\nCheckList(\u0026tasks).Render(func(t *Task) any {\n\treturn Text(\u0026t.Name)\n}).BindNav(\"j\", \"k\").BindToggle(\" \")",
+              "code": "type Task struct {\n\tName string\n\tDone bool\n}\ntasks := []Task{{Name: \"Ship it\"}, {Name: \"Test it\"}}\n\nCheckList(\u0026tasks).Render(func(t *Task) Component {\n\treturn Text(\u0026t.Name)\n}).BindNav(\"j\", \"k\").BindToggle(\" \")",
               "output": "\u003e ☑ Ship it\n  ☐ Test it\n",
               "preview": {
                 "w": 20,
@@ -1294,6 +1320,12 @@
           "name": "BindVimNav",
           "doc": "BindVimNav wires the standard vim-style navigation keys:\nj/k for line movement, Ctrl-d/Ctrl-u for page, g/G for first/last.\n",
           "signature": "func (c *CheckListC[T]) BindVimNav() *CheckListC[T]",
+          "recv": "*CheckListC[T]"
+        },
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (c *CheckListC[T]) Build() Component",
           "recv": "*CheckListC[T]"
         },
         {
@@ -1400,8 +1432,8 @@
         },
         {
           "name": "Render",
-          "doc": "Render customises how each item appears after its checkbox.\nfn: func(item *T) any. return a component tree for the item content.\n",
-          "signature": "func (c *CheckListC[T]) Render(fn func(*T) any) *CheckListC[T]",
+          "doc": "Render customises how each item appears after its checkbox.\nfn: func(item *T) Component. return a component tree for the item content.\n",
+          "signature": "func (c *CheckListC[T]) Render(fn func(*T) Component) *CheckListC[T]",
           "recv": "*CheckListC[T]"
         },
         {
@@ -1465,6 +1497,12 @@
           "name": "BindToggle",
           "doc": "BindToggle registers a key binding to toggle the checked state.\n",
           "signature": "func (c *CheckboxC) BindToggle(key string) *CheckboxC",
+          "recv": "*CheckboxC"
+        },
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (c *CheckboxC) Build() Component",
           "recv": "*CheckboxC"
         },
         {
@@ -1789,7 +1827,28 @@
     {
       "name": "Component",
       "doc": "Component is the extension interface for custom components.\nExternal packages can implement this to create custom components\nthat expand to built-in primitives at compile time.\n",
-      "decl": "type Component interface {\n\tBuild() any\n}"
+      "decl": "type Component interface {\n\tBuild() Component\n}",
+      "constructors": [
+        {
+          "name": "Define",
+          "doc": "Define creates a scoped block for local component helpers and styles.\nThe function runs once at compile time (when SetView is called).\nPointers inside still provide dynamic values at render time.\n\n\tapp.SetView(\n\t    Define(func() Component {\n\t        dot := func(ok *bool) Component {\n\t            return If(ok).Then(Text(\"●\")).Else(Text(\"○\"))\n\t        }\n\t        return VBox(dot(\u0026a), dot(\u0026b), dot(\u0026c))\n\t    }),\n\t)\n",
+          "signature": "func Define(fn func() Component) Component",
+          "examples": [
+            {
+              "doc": "Scoped helpers.\nDefine scopes local helper functions inside the view tree. The function runs at build time and returns a component.\n",
+              "code": "a, b, c := true, false, true\nDefine(func() Component {\n\tdot := func(v *bool) Component {\n\t\treturn If(v).Then(Text(\"●\").FG(Green)).Else(Text(\"○\").FG(Red))\n\t}\n\treturn HBox.Gap(1)(dot(\u0026a), dot(\u0026b), dot(\u0026c))\n})",
+              "output": "● ○ ●\n",
+              "preview": {
+                "w": 10,
+                "h": 1,
+                "lines": [
+                  "\u001b[0;32;49m●\u001b[0;39;49m \u001b[0;31;49m○\u001b[0;39;49m \u001b[0;32;49m●\u001b[0;39;49m     "
+                ]
+              }
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "Condition",
@@ -1871,6 +1930,12 @@
       "decl": "type ConditionEval[T comparable] struct {\n\t// contains filtered or unexported fields\n}",
       "methods": [
         {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (c *ConditionEval[T]) Build() Component",
+          "recv": "*ConditionEval[T]"
+        },
+        {
           "name": "Else",
           "doc": "Else specifies what to render when false\n",
           "signature": "func (e *ConditionEval[T]) Else(node any) *ConditionEval[T]",
@@ -1940,6 +2005,14 @@
             }
           ]
         }
+      ],
+      "methods": [
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (c Custom) Build() Component",
+          "recv": "Custom"
+        }
       ]
     },
     {
@@ -1954,15 +2027,15 @@
           "examples": [
             {
               "doc": "Per-cell transform.\nThe fragment shader equivalent — define per-cell logic, iteration is handled.\n",
-              "code": "VBox(\n\tHBox(Text(\"row 0 \").FG(Cyan), Text(\"████\").FG(RGB(200, 100, 50))),\n\tHBox(Text(\"row 1 \").FG(Green), Text(\"████\").FG(RGB(50, 100, 200))),\n\tHBox(Text(\"row 2 \").FG(Yellow), Text(\"████\").FG(RGB(200, 50, 100))),\n\tHBox(Text(\"row 3 \").FG(Magenta), Text(\"████\").FG(RGB(100, 200, 50))),\n\tEachCell(func(x, y int, c Cell, ctx PostContext) Cell {\n\t\tif y%2 == 0 {\n\t\t\tc.Style.Attr = c.Style.Attr.With(AttrDim)\n\t\t}\n\t\treturn c\n\t}),\n)",
+              "code": "VBox(\n\tHBox(Text(\"row 0 \").FG(Cyan), Text(\"████\").FG(RGB(200, 100, 50))),\n\tHBox(Text(\"row 1 \").FG(Green), Text(\"████\").FG(RGB(50, 100, 200))),\n\tHBox(Text(\"row 2 \").FG(Yellow), Text(\"████\").FG(RGB(200, 50, 100))),\n\tHBox(Text(\"row 3 \").FG(Magenta), Text(\"████\").FG(RGB(100, 200, 50))),\n\tScreenEffect(EachCell(func(x, y int, c Cell, ctx PostContext) Cell {\n\t\tif y%2 == 0 {\n\t\t\tc.Style.Attr = c.Style.Attr.With(AttrDim)\n\t\t}\n\t\treturn c\n\t})),\n)",
               "output": "row 0 ████\nrow 1 ████\nrow 2 ████\nrow 3 ████\n",
               "preview": {
                 "w": 30,
                 "h": 4,
                 "lines": [
-                  "\u001b[0;36;49mrow 0 \u001b[0;38;2;200;100;50;49m████\u001b[0;39;49m                    ",
+                  "\u001b[0;2;36;49mrow 0 \u001b[0;2;38;2;200;100;50;49m████\u001b[0;2;39;49m                    \u001b[0m",
                   "\u001b[0;32;49mrow 1 \u001b[0;38;2;50;100;200;49m████\u001b[0;39;49m                    ",
-                  "\u001b[0;33;49mrow 2 \u001b[0;38;2;200;50;100;49m████\u001b[0;39;49m                    ",
+                  "\u001b[0;2;33;49mrow 2 \u001b[0;2;38;2;200;50;100;49m████\u001b[0;2;39;49m                    \u001b[0m",
                   "\u001b[0;35;49mrow 3 \u001b[0;38;2;100;200;50;49m████\u001b[0;39;49m                    "
                 ]
               }
@@ -2091,7 +2164,7 @@
     },
     {
       "name": "FilterListC",
-      "doc": "FilterListC is a drop-in filterable list. it composes an input, a\nfilter and a list into a single template node. the caller owns the\nsource slice; mutations happen through a [StreamWriter] obtained\nfrom [FilterListC.Stream].\n\nusage:\n\n\tFilterList(\u0026items, func(p *Profile) string { return p.Name }).\n\t    Placeholder(\"filter...\").\n\t    Render(func(p *Profile) any { return Text(p.Name) }).\n\t    MaxVisible(20).\n\t    Handle(\"\u003cEnter\u003e\", func(p *Profile) { ... })\n\nstreaming:\n\n\tw := fl.Stream(app.RequestRender)\n\tgo func() {\n\t    defer w.Close()\n\t    for p := range produce() {\n\t        w.Write(p)\n\t    }\n\t}()\n",
+      "doc": "FilterListC is a drop-in filterable list. it composes an input, a\nfilter and a list into a single template node. the caller owns the\nsource slice; mutations happen through a [StreamWriter] obtained\nfrom [FilterListC.Stream].\n\nusage:\n\n\tFilterList(\u0026items, func(p *Profile) string { return p.Name }).\n\t    Placeholder(\"filter...\").\n\t    Render(func(p *Profile) Component { return Text(p.Name) }).\n\t    MaxVisible(20).\n\t    Handle(\"\u003cEnter\u003e\", func(p *Profile) { ... })\n\nstreaming:\n\n\tw := fl.Stream(app.RequestRender)\n\tgo func() {\n\t    defer w.Close()\n\t    for p := range produce() {\n\t        w.Write(p)\n\t    }\n\t}()\n",
       "decl": "type FilterListC[T any] struct {\n\t// contains filtered or unexported fields\n}",
       "constructors": [
         {
@@ -2101,7 +2174,7 @@
           "examples": [
             {
               "doc": "Searchable list.\nThe extract function tells the filter which string to match against for each item.\n",
-              "code": "items := []string{\"Alpha\", \"Beta\", \"Gamma\"}\n\nFilterList(\u0026items, func(s *string) string { return *s }).\n\tRender(func(item *string) any {\n\t\treturn Text(item)\n\t})",
+              "code": "items := []string{\"Alpha\", \"Beta\", \"Gamma\"}\n\nFilterList(\u0026items, func(s *string) string { return *s }).\n\tRender(func(item *string) Component {\n\t\treturn Text(item)\n\t})",
               "output": "filter...\n\u003e Alpha\n  Beta\n  Gamma\n",
               "preview": {
                 "w": 20,
@@ -2134,6 +2207,12 @@
           "name": "Border",
           "doc": "Border sets the border style.\n",
           "signature": "func (fl *FilterListC[T]) Border(b BorderStyle) *FilterListC[T]",
+          "recv": "*FilterListC[T]"
+        },
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (f *FilterListC[T]) Build() Component",
           "recv": "*FilterListC[T]"
         },
         {
@@ -2234,8 +2313,8 @@
         },
         {
           "name": "Render",
-          "doc": "Render customises how each item appears in the list.\nfn: func(item *T) any. return a component tree for the item row.\n",
-          "signature": "func (fl *FilterListC[T]) Render(fn func(*T) any) *FilterListC[T]",
+          "doc": "Render customises how each item appears in the list.\nfn: func(item *T) Component. return a component tree for the item row.\n",
+          "signature": "func (fl *FilterListC[T]) Render(fn func(*T) Component) *FilterListC[T]",
           "recv": "*FilterListC[T]"
         },
         {
@@ -2334,6 +2413,12 @@
           "name": "BindVimNav",
           "doc": "BindVimNav wires vim-style scroll keys (overrides defaults).\n",
           "signature": "func (fl *FilterLogC) BindVimNav() *FilterLogC",
+          "recv": "*FilterLogC"
+        },
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (f *FilterLogC) Build() Component",
           "recv": "*FilterLogC"
         },
         {
@@ -2557,12 +2642,12 @@
       "constructors": [
         {
           "name": "ForEach",
-          "doc": "ForEach renders a template for each item in a slice.\ntemplate: func(item *T) any. return a component tree for each item.\nPointer fields inside *T are reactive; mutate and re-render to update.\n\n\tForEach(\u0026todos, func(t *Todo) any {\n\t    return HBox(Text(\u0026t.Name), Text(\u0026t.Status))\n\t})\n",
-          "signature": "func ForEach[T any](items *[]T, template func(item *T) any) ForEachC[T]",
+          "doc": "ForEach renders a template for each item in a slice.\ntemplate: func(item *T) Component. return a component tree for each item.\nPointer fields inside *T are reactive; mutate and re-render to update.\n\n\tForEach(\u0026todos, func(t *Todo) Component {\n\t    return HBox(Text(\u0026t.Name), Text(\u0026t.Status))\n\t})\n",
+          "signature": "func ForEach[T any](items *[]T, template func(item *T) Component) ForEachC[T]",
           "examples": [
             {
               "doc": "Slice iteration.\nIterate a slice with per-item templates. The callback is called once at build time to define the per-item template; glyph re-evaluates the slice pointer each frame.\n",
-              "code": "type Todo struct {\n\tTitle string\n\tDone  bool\n}\nitems := []Todo{{Title: \"Ship it\"}, {Title: \"Test it\"}}\n\nVBox(ForEach(\u0026items, func(item *Todo) any {\n\treturn Text(\u0026item.Title)\n}))",
+              "code": "type Todo struct {\n\tTitle string\n\tDone  bool\n}\nitems := []Todo{{Title: \"Ship it\"}, {Title: \"Test it\"}}\n\nVBox(ForEach(\u0026items, func(item *Todo) Component {\n\treturn Text(\u0026item.Title)\n}))",
               "output": "Ship it\nTest it\n",
               "preview": {
                 "w": 20,
@@ -2575,6 +2660,14 @@
             }
           ]
         }
+      ],
+      "methods": [
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (f ForEachC[T]) Build() Component",
+          "recv": "ForEachC[T]"
+        }
       ]
     },
     {
@@ -2582,6 +2675,12 @@
       "doc": "",
       "decl": "type FormC struct {\n\t// contains filtered or unexported fields\n}",
       "methods": [
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (f *FormC) Build() Component",
+          "recv": "*FormC"
+        },
         {
           "name": "FocusManager",
           "doc": "FocusManager returns the internal focus manager for external wiring.\n",
@@ -2604,7 +2703,7 @@
         {
           "name": "Field",
           "doc": "Field creates a form field pairing a label with any control component.\n",
-          "signature": "func Field(label string, control any) FormField"
+          "signature": "func Field(label string, control Component) FormField"
         }
       ],
       "examples": [
@@ -2794,12 +2893,20 @@
     {
       "name": "HBoxC",
       "doc": "",
-      "decl": "type HBoxC struct {\n\t// contains filtered or unexported fields\n}"
+      "decl": "type HBoxC struct {\n\t// contains filtered or unexported fields\n}",
+      "methods": [
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (h HBoxC) Build() Component",
+          "recv": "HBoxC"
+        }
+      ]
     },
     {
       "name": "HBoxFn",
       "doc": "",
-      "decl": "type HBoxFn func(children ...any) HBoxC",
+      "decl": "type HBoxFn func(children ...Component) HBoxC",
       "methods": [
         {
           "name": "Border",
@@ -2886,6 +2993,12 @@
           "recv": "HBoxFn"
         },
         {
+          "name": "OpacityMode",
+          "doc": "OpacityMode sets how rune ownership hands off during opacity fades.\n",
+          "signature": "func (f HBoxFn) OpacityMode(mode OpacityMode) HBoxFn",
+          "recv": "HBoxFn"
+        },
+        {
           "name": "Padding",
           "doc": "Padding sets uniform padding on all sides.\n",
           "signature": "func (f HBoxFn) Padding(all int16) HBoxFn",
@@ -2940,7 +3053,7 @@
           "names": [
             "HBox"
           ],
-          "decl": "var HBox HBoxFn = func(children ...any) HBoxC {\n\treturn HBoxC{children: children}\n}"
+          "decl": "var HBox HBoxFn = func(children ...Component) HBoxC {\n\treturn HBoxC{children: children}\n}"
         }
       ],
       "examples": [
@@ -3026,6 +3139,12 @@
           "name": "Bold",
           "doc": "Bold enables bold text.\n",
           "signature": "func (h HRuleC) Bold() HRuleC",
+          "recv": "HRuleC"
+        },
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (h HRuleC) Build() Component",
           "recv": "HRuleC"
         },
         {
@@ -3115,6 +3234,12 @@
           "name": "Bind",
           "doc": "Bind routes unmatched key input to this text field.\n",
           "signature": "func (i *InputC) Bind() *InputC",
+          "recv": "*InputC"
+        },
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (i *InputC) Build() Component",
           "recv": "*InputC"
         },
         {
@@ -3236,10 +3361,16 @@
         {
           "name": "Jump",
           "doc": "Jump wraps a child component as a jump target.\nWhen jump mode is active, a label appears at this position; typing it calls onSelect.\n",
-          "signature": "func Jump(child any, onSelect func()) JumpC"
+          "signature": "func Jump(child Component, onSelect func()) JumpC"
         }
       ],
       "methods": [
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (j JumpC) Build() Component",
+          "recv": "JumpC"
+        },
         {
           "name": "Margin",
           "doc": "Margin sets uniform margin on all sides.\n",
@@ -3421,6 +3552,12 @@
           "recv": "*Layer"
         },
         {
+          "name": "Invalidate",
+          "doc": "Invalidate marks the layer content dirty so Render runs on the next display\npass. This is a non-blocking signal; the render thread still owns the actual\nbuffer/template rebuild.\n",
+          "signature": "func (l *Layer) Invalidate()",
+          "recv": "*Layer"
+        },
+        {
           "name": "MaxScroll",
           "doc": "MaxScroll returns the maximum scroll position.\n",
           "signature": "func (l *Layer) MaxScroll() int",
@@ -3582,6 +3719,12 @@
       ],
       "methods": [
         {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (l LayerViewC) Build() Component",
+          "recv": "LayerViewC"
+        },
+        {
           "name": "Grow",
           "doc": "Grow sets the flex grow factor. Accepts float32, float64, int, or *float32 for dynamic values.\n",
           "signature": "func (l LayerViewC) Grow(g any) LayerViewC",
@@ -3697,6 +3840,12 @@
           "recv": "LeaderC"
         },
         {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (l LeaderC) Build() Component",
+          "recv": "LeaderC"
+        },
+        {
           "name": "FG",
           "doc": "FG sets the foreground color. Accepts Color, *Color, conditionNode, or tweenNode.\n",
           "signature": "func (l LeaderC) FG(c any) LeaderC",
@@ -3747,12 +3896,12 @@
       "constructors": [
         {
           "name": "List",
-          "doc": "List creates a navigable list from a bound slice.\nUse .Render(func(*T) any) to customize how items appear,\n.Handle(key, func(*T)) for per-item key actions,\nand .BindNav(\"j\",\"k\") or .BindVimNav() for keyboard navigation.\n",
+          "doc": "List creates a navigable list from a bound slice.\nUse .Render(func(*T) Component) to customize how items appear,\n.Handle(key, func(*T)) for per-item key actions,\nand .BindNav(\"j\",\"k\") or .BindVimNav() for keyboard navigation.\n",
           "signature": "func List[T any](items *[]T) *ListC[T]",
           "examples": [
             {
               "doc": "Navigable list.\nA list over a pointer to a slice. The Render callback receives a pointer to each item for in-place updates.\n",
-              "code": "items := []string{\"Alpha\", \"Beta\", \"Gamma\"}\n\nList(\u0026items).Render(func(item *string) any {\n\treturn Text(item)\n}).BindNav(\"j\", \"k\")",
+              "code": "items := []string{\"Alpha\", \"Beta\", \"Gamma\"}\n\nList(\u0026items).Render(func(item *string) Component {\n\treturn Text(item)\n}).BindNav(\"j\", \"k\")",
               "output": "\u003e Alpha\n  Beta\n  Gamma\n",
               "preview": {
                 "w": 20,
@@ -3796,6 +3945,12 @@
           "name": "BindVimNav",
           "doc": "BindVimNav wires the standard vim-style navigation keys:\nj/k for line movement, Ctrl-d/Ctrl-u for page, g/G for first/last.\n",
           "signature": "func (l *ListC[T]) BindVimNav() *ListC[T]",
+          "recv": "*ListC[T]"
+        },
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (l *ListC[T]) Build() Component",
           "recv": "*ListC[T]"
         },
         {
@@ -3902,8 +4057,8 @@
         },
         {
           "name": "Render",
-          "doc": "Render customises how each item appears in the list.\nfn: func(item *T) any. return a component tree for the item.\n",
-          "signature": "func (l *ListC[T]) Render(fn func(*T) any) *ListC[T]",
+          "doc": "Render customises how each item appears in the list.\nfn: func(item *T) Component. return a component tree for the item.\n",
+          "signature": "func (l *ListC[T]) Render(fn func(*T) Component) *ListC[T]",
           "recv": "*ListC[T]"
         },
         {
@@ -3996,6 +4151,12 @@
           "name": "BindVimNav",
           "doc": "BindVimNav wires standard vim-style scroll keys:\nj/k: line, Ctrl-d/u: half-page, g/G: top/bottom\n",
           "signature": "func (lv *LogC) BindVimNav() *LogC",
+          "recv": "*LogC"
+        },
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (l *LogC) Build() Component",
           "recv": "*LogC"
         },
         {
@@ -4197,6 +4358,12 @@
       ],
       "methods": [
         {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (m *MatchNode[T]) Build() Component",
+          "recv": "*MatchNode[T]"
+        },
+        {
           "name": "Default",
           "doc": "Default sets the fallback node when no case matches.\n",
           "signature": "func (m *MatchNode[T]) Default(node any) *MatchNode[T]",
@@ -4212,7 +4379,7 @@
     {
       "name": "Op",
       "doc": "Op represents a single compiled template instruction.\nThe template compiler produces a flat array of these; Execute walks them to render.\n",
-      "decl": "type Op struct {\n\tKind   OpKind\n\tDepth  int8  // tree depth (root children = 0)\n\tParent int16 // parent op index, -1 for root children\n\n\t// Layout hints\n\tWidth        int16   // explicit width\n\tHeight       int16   // explicit height\n\tPercentWidth float32 // 0.0-1.0\n\tFlexGrow     float32 // share of remaining space\n\tGap          int8    // gap between children\n\tContentSized bool    // has fixed-width children (don't implicit flex)\n\tFitContent   bool    // size to content instead of filling available space\n\n\t// Container\n\tIsRow        bool        // true=HBox, false=VBox\n\tBorder       BorderStyle // border style\n\tBorderFG     *Color      // border foreground color\n\tBorderBG     *Color      // border background color\n\tTitle        string      // border title\n\tChildStart   int16       // first child op index\n\tChildEnd     int16       // last child op index (exclusive)\n\tCascadeStyle *Style      // style inherited by children (pointer for dynamic themes)\n\tLocalStyle   *Style      // style for this container only (not inherited)\n\tFill         Color       // container fill color (fills entire area)\n\tMargin       [4]int16    // outer margin: top, right, bottom, left\n\tPadding      [4]int16    // inner padding: top, right, bottom, left\n\tNodeRef      *NodeRef    // if set, populated with rendered screen bounds each frame\n\n\t// kind-specific data — type-assert based on Kind.\n\t// we use a Kind switch + type assertion instead of interface dispatch because\n\t// concrete method calls after assertion are inlinable. interface calls are not,\n\t// and cause parameters to escape to heap. verified via go build -gcflags='-m -m'.\n\tExt any\n\n\t// dynamic layout property overrides — nil for static ops\n\tDyn *OpDyn\n}"
+      "decl": "type Op struct {\n\tKind   OpKind\n\tDepth  int8  // tree depth (root children = 0)\n\tParent int16 // parent op index, -1 for root children\n\n\t// Layout hints\n\tWidth        int16   // explicit width\n\tHeight       int16   // explicit height\n\tPercentWidth float32 // 0.0-1.0\n\tFlexGrow     float32 // share of remaining space\n\tGap          int8    // gap between children\n\tContentSized bool    // has fixed-width children (don't implicit flex)\n\tFitContent   bool    // size to content instead of filling available space\n\n\t// Container\n\tIsRow        bool        // true=HBox, false=VBox\n\tBorder       BorderStyle // border style\n\tBorderFG     *Color      // border foreground color\n\tBorderBG     *Color      // border background color\n\tTitle        string      // border title\n\tChildStart   int16       // first child op index\n\tChildEnd     int16       // last child op index (exclusive)\n\tCascadeStyle *Style      // style inherited by children (pointer for dynamic themes)\n\tLocalStyle   *Style      // style for this container only (not inherited)\n\tFill         Color       // container fill color (fills entire area)\n\tMargin       [4]int16    // outer margin: top, right, bottom, left\n\tPadding      [4]int16    // inner padding: top, right, bottom, left\n\tNodeRef      *NodeRef    // if set, populated with rendered screen bounds each frame\n\tOpacityMode  OpacityMode // rune handoff strategy when OpDyn.Opacity is set\n\n\t// kind-specific data — type-assert based on Kind.\n\t// we use a Kind switch + type assertion instead of interface dispatch because\n\t// concrete method calls after assertion are inlinable. interface calls are not,\n\t// and cause parameters to escape to heap. verified via go build -gcflags='-m -m'.\n\tExt any\n\n\t// dynamic layout property overrides — nil for static ops\n\tDyn *OpDyn\n}"
     },
     {
       "name": "OpDyn",
@@ -4258,6 +4425,22 @@
             "OpScreenEffect"
           ],
           "decl": "const (\n\tOpText     OpKind = iota // Text (data in Ext)\n\tOpProgress               // Progress bar (data in Ext)\n\tOpRichText               // RichText (data in Ext)\n\tOpLeader                 // Leader dots (data in Ext)\n\tOpCounter                // Counter (data in Ext)\n\n\tOpContainer // VBox or HBox (determined by IsRow)\n\n\tOpIf\n\tOpForEach\n\tOpSwitch\n\tOpMatch\n\n\tOpCustom // Custom renderer\n\tOpLayout // Custom layout\n\tOpLayer  // LayerView (data in Ext)\n\n\tOpSelectionList // SelectionList (data in Ext)\n\n\tOpTable     // Table (data in Ext)\n\tOpAutoTable // AutoTable (data in Ext)\n\n\tOpSparkline // Sparkline (data in Ext)\n\n\tOpHRule        // Horizontal line (data in Ext)\n\tOpVRule        // Vertical line (data in Ext)\n\tOpSpacer       // Empty space (data in Ext)\n\tOpSpinner      // Animated spinner (data in Ext)\n\tOpScrollbar    // Scroll indicator (data in Ext)\n\tOpTextBlock    // Multi-line wrapped text (data in Ext)\n\tOpTabs         // Tab headers (data in Ext)\n\tOpTreeView     // Hierarchical tree (data in Ext)\n\tOpJump         // Jump target wrapper (data in Ext)\n\tOpTextInput    // Single-line text input (data in Ext)\n\tOpOverlay      // Floating overlay/modal (data in Ext)\n\tOpScreenEffect // Full-screen post-processing effect (data in Ext)\n)"
+        }
+      ]
+    },
+    {
+      "name": "OpacityMode",
+      "doc": "OpacityMode controls how terminal cells hand off rune ownership as opacity\nfades. Colours always blend; runes are necessarily discrete.\n",
+      "decl": "type OpacityMode uint8",
+      "consts": [
+        {
+          "doc": "",
+          "names": [
+            "OpacitySmooth",
+            "OpacityDither",
+            "OpacityPaint"
+          ],
+          "decl": "const (\n\t// OpacitySmooth blends colours across the full range, then swaps runes at\n\t// a single threshold. This is the calm default.\n\tOpacitySmooth OpacityMode = iota\n\t// OpacityDither blends colours and swaps runes through a stable ordered\n\t// dither pattern during the middle of the fade.\n\tOpacityDither\n\t// OpacityPaint treats the source rune as foreground paint rather than\n\t// semantic text. It keeps paint solid while mostly opaque, then hands back\n\t// to backing runes earlier in the fade.\n\tOpacityPaint\n)"
         }
       ]
     },
@@ -4331,6 +4514,12 @@
       "decl": "type OrdConditionEval[T cmp.Ordered] struct {\n\t// contains filtered or unexported fields\n}",
       "methods": [
         {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (c *OrdConditionEval[T]) Build() Component",
+          "recv": "*OrdConditionEval[T]"
+        },
+        {
           "name": "Else",
           "doc": "Else specifies what to render when false\n",
           "signature": "func (e *OrdConditionEval[T]) Else(node any) *OrdConditionEval[T]",
@@ -4347,12 +4536,20 @@
     {
       "name": "OverlayC",
       "doc": "",
-      "decl": "type OverlayC struct {\n\t// contains filtered or unexported fields\n}"
+      "decl": "type OverlayC struct {\n\t// contains filtered or unexported fields\n}",
+      "methods": [
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (o OverlayC) Build() Component",
+          "recv": "OverlayC"
+        }
+      ]
     },
     {
       "name": "OverlayFn",
       "doc": "",
-      "decl": "type OverlayFn func(children ...any) OverlayC",
+      "decl": "type OverlayFn func(children ...Component) OverlayC",
       "methods": [
         {
           "name": "Above",
@@ -4403,9 +4600,27 @@
           "recv": "OverlayFn"
         },
         {
+          "name": "Offset",
+          "doc": "Offset translates the overlay from its resolved position. Accepts int, int16,\n*int16, conditionNode, or tweenNode for each axis.\n",
+          "signature": "func (f OverlayFn) Offset(x, y any) OverlayFn",
+          "recv": "OverlayFn"
+        },
+        {
           "name": "OnTop",
           "doc": "OnTop positions the overlay covering the referenced node exactly.\n",
           "signature": "func (f OverlayFn) OnTop(ref *NodeRef) OverlayFn",
+          "recv": "OverlayFn"
+        },
+        {
+          "name": "Opacity",
+          "doc": "Opacity sets the overlay opacity (0.0 = backing cells, 1.0 = fully visible).\nAccepts float64, *float64, conditionNode, or tweenNode.\n",
+          "signature": "func (f OverlayFn) Opacity(o any) OverlayFn",
+          "recv": "OverlayFn"
+        },
+        {
+          "name": "OpacityMode",
+          "doc": "OpacityMode sets how rune ownership hands off during opacity fades.\n",
+          "signature": "func (f OverlayFn) OpacityMode(mode OpacityMode) OverlayFn",
           "recv": "OverlayFn"
         },
         {
@@ -4427,7 +4642,7 @@
           "names": [
             "Overlay"
           ],
-          "decl": "var Overlay OverlayFn = func(children ...any) OverlayC {\n\treturn OverlayC{children: children}\n}"
+          "decl": "var Overlay OverlayFn = func(children ...Component) OverlayC {\n\treturn OverlayC{children: children}\n}"
         }
       ],
       "examples": [
@@ -4470,7 +4685,15 @@
     {
       "name": "OverlayNode",
       "doc": "OverlayNode displays content floating above the main view.\nUse for modals, dialogs, and floating windows.\nControl visibility with glyph.If:\n\n\tglyph.If(\u0026showModal).Eq(true).Then(glyph.Overlay{Child: ...})\n",
-      "decl": "type OverlayNode struct {\n\tCentered   bool  // true = center on screen (default behavior if X/Y not set)\n\tX, Y       int   // explicit position (used if Centered is false)\n\tWidth      int   // explicit width (0 = auto from content)\n\tHeight     int   // explicit height (0 = auto from content)\n\tBackdrop   bool  // draw dimmed backdrop behind overlay\n\tBackdropFG Color // backdrop dim color (default: BrightBlack)\n\tBG         Color // background color for overlay content area (fills before rendering child)\n\tChild      any   // overlay content\n}"
+      "decl": "type OverlayNode struct {\n\tCentered   bool      // true = center on screen (default behavior if X/Y not set)\n\tX, Y       int       // explicit position (used if Centered is false)\n\tWidth      int       // explicit width (0 = auto from content)\n\tHeight     int       // explicit height (0 = auto from content)\n\tBackdrop   bool      // draw dimmed backdrop behind overlay\n\tBackdropFG Color     // backdrop dim color (default: BrightBlack)\n\tBG         Color     // background color for overlay content area (fills before rendering child)\n\tChild      Component // overlay content\n}",
+      "methods": [
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (o OverlayNode) Build() Component",
+          "recv": "OverlayNode"
+        }
+      ]
     },
     {
       "name": "PostContext",
@@ -4513,6 +4736,12 @@
           "name": "Bold",
           "doc": "Bold enables bold text.\n",
           "signature": "func (p ProgressC) Bold() ProgressC",
+          "recv": "ProgressC"
+        },
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (p ProgressC) Build() Component",
           "recv": "ProgressC"
         },
         {
@@ -4590,6 +4819,12 @@
           "name": "BindNav",
           "doc": "BindNav registers key bindings for cycling selection.\n",
           "signature": "func (r *RadioC) BindNav(next, prev string) *RadioC",
+          "recv": "*RadioC"
+        },
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (r *RadioC) Build() Component",
           "recv": "*RadioC"
         },
         {
@@ -4675,7 +4910,7 @@
     {
       "name": "Rect",
       "doc": "Rect represents a positioned rectangle.\n",
-      "decl": "type Rect struct {\n\tX, Y, W, H int\n}"
+      "decl": "type Rect struct {\n\tX, Y, W, H int\n\t// Opacity is the effective rendered opacity for this node after inherited\n\t// container/overlay opacity has been applied. Effects that target a NodeRef\n\t// can use it to fade with the node they are attached to.\n\tOpacity float64\n\t// contains filtered or unexported fields\n}"
     },
     {
       "name": "Region",
@@ -4747,7 +4982,7 @@
     {
       "name": "Renderer",
       "doc": "Renderer is the extension interface for components that render directly.\nUnlike Component (which expands to primitives), Renderer draws to the\nbuffer itself. This is useful for custom widgets like charts, sparklines, etc.\n",
-      "decl": "type Renderer interface {\n\t// MinSize returns the minimum dimensions needed by this component.\n\t// Called during layout phase.\n\tMinSize() (width, height int)\n\n\t// Render draws the component to the buffer at the given position.\n\t// w and h are the allocated dimensions (may be larger than MinSize).\n\tRender(buf *Buffer, x, y, w, h int)\n}"
+      "decl": "type Renderer interface {\n\tComponent\n\n\t// MinSize returns the minimum dimensions needed by this component.\n\t// Called during layout phase.\n\tMinSize() (width, height int)\n\n\t// Render draws the component to the buffer at the given position.\n\t// w and h are the allocated dimensions (may be larger than MinSize).\n\tRender(buf *Buffer, x, y, w, h int)\n}"
     },
     {
       "name": "RichTextNode",
@@ -4777,6 +5012,27 @@
           "name": "Textf",
           "doc": "Textf composes inline formatted text from mixed parts.\nAccepts string, *string, Span, TextC (from Bold/Italic with *string), and styled helpers.\nWorks with ForEach via per-span pointer offset rewriting.\n\nusage:\n\n\tTextf(\"Hello \", Bold(\"world\"), \"!\")\n\tTextf(\"Name: \", Bold(\u0026it.Name), \" Status: \", \u0026it.Status)  // ForEach compatible\n",
           "signature": "func Textf(parts ...any) RichTextNode"
+        }
+      ],
+      "methods": [
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (r RichTextNode) Build() Component",
+          "recv": "RichTextNode"
+        }
+      ]
+    },
+    {
+      "name": "RowWriter",
+      "doc": "RowWriter writes cells to a single row with per-row work hoisted once:\nthe default style merge, dirty tracking, and base index computation.\nUse when writing many runes to the same row — avoids per-cell overhead.\n",
+      "decl": "type RowWriter struct {\n\t// contains filtered or unexported fields\n}",
+      "methods": [
+        {
+          "name": "Put",
+          "doc": "Put writes a rune at column x. Out-of-bounds columns are silently dropped.\n",
+          "signature": "func (rw *RowWriter) Put(x int, r rune)",
+          "recv": "*RowWriter"
         }
       ]
     },
@@ -4895,6 +5151,12 @@
           "recv": "*Screen"
         },
         {
+          "name": "ResetTerminalBG",
+          "doc": "ResetTerminalBG restores the terminal's default background (OSC 111).\n",
+          "signature": "func (s *Screen) ResetTerminalBG()",
+          "recv": "*Screen"
+        },
+        {
           "name": "ResizeChan",
           "doc": "ResizeChan returns a channel that receives size updates on terminal resize.\n",
           "signature": "func (s *Screen) ResizeChan() \u003c-chan Size",
@@ -4904,6 +5166,12 @@
           "name": "SetCursorShape",
           "doc": "SetCursorShape changes the cursor shape.\n",
           "signature": "func (s *Screen) SetCursorShape(shape CursorShape)",
+          "recv": "*Screen"
+        },
+        {
+          "name": "SetTerminalBG",
+          "doc": "SetTerminalBG changes the terminal's default background colour via OSC 11.\nTakes effect for both the main and alternate screen buffers. Use this to\nmake unfilled terminal rows (e.g. partial bottom row below our rendered\ncontent) match the app's background instead of showing the shell's BG.\nUnder tmux, the sequence is wrapped in DCS passthrough so it reaches the\nouter terminal. Call ResetTerminalBG on exit to restore the user's\noriginal background.\n",
+          "signature": "func (s *Screen) SetTerminalBG(c Color)",
           "recv": "*Screen"
         },
         {
@@ -4982,6 +5250,14 @@
           ]
         }
       ],
+      "methods": [
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (s ScreenEffectNode) Build() Component",
+          "recv": "ScreenEffectNode"
+        }
+      ],
       "examples": [
         {
           "doc": "Post-processing node.\nScreenEffectNode holds one or more screen effects. Place anywhere in the tree — it takes zero layout space.\n",
@@ -5006,6 +5282,12 @@
       "decl": "type ScrollViewC struct {\n\t// contains filtered or unexported fields\n}",
       "methods": [
         {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (s *ScrollViewC) Build() Component",
+          "recv": "*ScrollViewC"
+        },
+        {
           "name": "Layer",
           "doc": "Layer returns the underlying layer for scroll control wiring.\n",
           "signature": "func (sv *ScrollViewC) Layer() *Layer",
@@ -5020,7 +5302,7 @@
         {
           "name": "SetChildren",
           "doc": "SetChildren replaces the children and marks for re-render.\n",
-          "signature": "func (sv *ScrollViewC) SetChildren(children ...any)",
+          "signature": "func (sv *ScrollViewC) SetChildren(children ...Component)",
           "recv": "*ScrollViewC"
         }
       ]
@@ -5028,7 +5310,7 @@
     {
       "name": "ScrollViewFn",
       "doc": "",
-      "decl": "type ScrollViewFn func(children ...any) *ScrollViewC",
+      "decl": "type ScrollViewFn func(children ...Component) *ScrollViewC",
       "methods": [
         {
           "name": "Grow",
@@ -5061,7 +5343,7 @@
           "names": [
             "ScrollView"
           ],
-          "decl": "var ScrollView ScrollViewFn = func(children ...any) *ScrollViewC {\n\tsv := \u0026ScrollViewC{\n\t\tlayer:    NewLayer(),\n\t\tchildren: children,\n\t}\n\tsv.layer.Render = sv.render\n\treturn sv\n}"
+          "decl": "var ScrollView ScrollViewFn = func(children ...Component) *ScrollViewC {\n\tsv := \u0026ScrollViewC{\n\t\tlayer:    NewLayer(),\n\t\tchildren: children,\n\t}\n\tsv.layer.Render = sv.render\n\treturn sv\n}"
         }
       ],
       "examples": [
@@ -5109,6 +5391,12 @@
         }
       ],
       "methods": [
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (s ScrollbarC) Build() Component",
+          "recv": "ScrollbarC"
+        },
         {
           "name": "Horizontal",
           "doc": "Horizontal renders the scrollbar horizontally instead of vertically.\n",
@@ -5168,8 +5456,14 @@
     {
       "name": "SelectionList",
       "doc": "SelectionList displays a list of items with selection marker.\nItems must be a pointer to a slice (*[]T).\nSelected must be a pointer to an int (*int) tracking the selected index.\nRender is optional - if nil, items are rendered using fmt.Sprintf(\"%v\", item).\nMarker defaults to \"\u003e \" if not specified.\n",
-      "decl": "type SelectionList struct {\n\tItems            any      // *[]T - pointer to slice of items\n\tSelected         *int     // pointer to selected index\n\tMarker           string   // selection marker (default \"\u003e \", use \" \" for no visible marker)\n\tMarkerStyle      Style    // style for marker text (merged with SelectedStyle.BG for selected rows)\n\tRender           any      // func(*T) any - optional, renders each item\n\tMaxVisible       int      // max items to show (0 = all)\n\tStyle            Style    // default style for non-selected rows\n\tSelectedStyle    Style    // style for selected row\n\tStyleDyn         any      // dynamic value (compiled eval writes into Style)\n\tSelectedStyleDyn any      // dynamic value (compiled eval writes into SelectedStyle)\n\tSelectedRef      *NodeRef // tracks position of the selected row each frame\n\t// contains filtered or unexported fields\n}",
+      "decl": "type SelectionList struct {\n\tItems            any      // *[]T - pointer to slice of items\n\tSelected         *int     // pointer to selected index\n\tMarker           string   // selection marker (default \"\u003e \", use \" \" for no visible marker)\n\tMarkerStyle      Style    // style for marker text (merged with SelectedStyle.BG for selected rows)\n\tRender           any      // func(*T) Component - optional, renders each item\n\tMaxVisible       int      // max items to show (0 = all)\n\tStyle            Style    // default style for non-selected rows\n\tSelectedStyle    Style    // style for selected row\n\tStyleDyn         any      // dynamic value (compiled eval writes into Style)\n\tSelectedStyleDyn any      // dynamic value (compiled eval writes into SelectedStyle)\n\tSelectedRef      *NodeRef // tracks position of the selected row each frame\n\t// contains filtered or unexported fields\n}",
       "methods": [
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (s SelectionList) Build() Component",
+          "recv": "SelectionList"
+        },
         {
           "name": "Down",
           "doc": "Down moves selection down by one. Safe to use directly with app.Handle.\n",
@@ -5210,7 +5504,7 @@
       "examples": [
         {
           "doc": "Low-level selection list.\nSelectionList renders items with a selection marker. Use List() for the ergonomic generic wrapper.\n",
-          "code": "items := []string{\"Alpha\", \"Beta\", \"Gamma\"}\nselected := 1\n\u0026SelectionList{\n\tItems:    \u0026items,\n\tSelected: \u0026selected,\n\tMarker:   \"\u003e \",\n\tRender: func(s *string) any {\n\t\treturn Text(s)\n\t},\n}",
+          "code": "items := []string{\"Alpha\", \"Beta\", \"Gamma\"}\nselected := 1\n\u0026SelectionList{\n\tItems:    \u0026items,\n\tSelected: \u0026selected,\n\tMarker:   \"\u003e \",\n\tRender: func(s *string) Component {\n\t\treturn Text(s)\n\t},\n}",
           "output": "  Alpha\n\u003e Beta\n  Gamma\n",
           "preview": {
             "w": 20,
@@ -5297,6 +5591,12 @@
         }
       ],
       "methods": [
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (s SpacerC) Build() Component",
+          "recv": "SpacerC"
+        },
         {
           "name": "Char",
           "doc": "Char sets the display character.\n",
@@ -5405,6 +5705,12 @@
           "recv": "SparklineC"
         },
         {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (s SparklineC) Build() Component",
+          "recv": "SparklineC"
+        },
+        {
           "name": "FG",
           "doc": "FG sets the foreground color. Accepts Color, *Color, conditionNode, or tweenNode.\n",
           "signature": "func (s SparklineC) FG(c any) SparklineC",
@@ -5490,6 +5796,12 @@
           "name": "Bold",
           "doc": "Bold enables bold text.\n",
           "signature": "func (s SpinnerC) Bold() SpinnerC",
+          "recv": "SpinnerC"
+        },
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (s SpinnerC) Build() Component",
           "recv": "SpinnerC"
         },
         {
@@ -5779,12 +6091,28 @@
     {
       "name": "SwitchNode",
       "doc": "SwitchNode is the compiled form of a Switch, ready for template evaluation.\n",
-      "decl": "type SwitchNode[T comparable] struct {\n\t// contains filtered or unexported fields\n}"
+      "decl": "type SwitchNode[T comparable] struct {\n\t// contains filtered or unexported fields\n}",
+      "methods": [
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (s *SwitchNode[T]) Build() Component",
+          "recv": "*SwitchNode[T]"
+        }
+      ]
     },
     {
       "name": "Table",
       "doc": "Table displays tabular data with columns and optional headers.\nUses pointer bindings for dynamic data updates.\n",
       "decl": "type Table struct {\n\tColumns     []TableColumn // column definitions\n\tRows        any           // *[][]string - pointer to row data\n\tShowHeader  bool          // show header row\n\tHeaderStyle Style         // style for header row\n\tRowStyle    Style         // style for data rows\n\tAltRowStyle Style         // style for alternating rows (if non-zero)\n}",
+      "methods": [
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (t Table) Build() Component",
+          "recv": "Table"
+        }
+      ],
       "examples": [
         {
           "doc": "Manual table.\nTable renders tabular data with explicit column definitions, widths, and alignment.\n",
@@ -5855,6 +6183,12 @@
           "recv": "TabsC"
         },
         {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (t TabsC) Build() Component",
+          "recv": "TabsC"
+        },
+        {
           "name": "Gap",
           "doc": "Gap sets the spacing between children. Accepts int8, int, or *int8 for dynamic values.\n",
           "signature": "func (t TabsC) Gap(g any) TabsC",
@@ -5895,7 +6229,15 @@
     {
       "name": "TabsNode",
       "doc": "TabsNode displays a row of tab headers with active tab indicator.\n",
-      "decl": "type TabsNode struct {\n\tLabels        []string  // tab labels\n\tSelected      *int      // pointer to selected tab index\n\tStyle         TabsStyle // visual style\n\tGap           int       // gap between tabs (default: 2)\n\tActiveStyle   Style     // style for active tab\n\tInactiveStyle Style     // style for inactive tabs\n}"
+      "decl": "type TabsNode struct {\n\tLabels        []string  // tab labels\n\tSelected      *int      // pointer to selected tab index\n\tStyle         TabsStyle // visual style\n\tGap           int       // gap between tabs (default: 2)\n\tActiveStyle   Style     // style for active tab\n\tInactiveStyle Style     // style for inactive tabs\n}",
+      "methods": [
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (t TabsNode) Build() Component",
+          "recv": "TabsNode"
+        }
+      ]
     },
     {
       "name": "TabsStyle",
@@ -5935,7 +6277,7 @@
         {
           "name": "Build",
           "doc": "Build compiles a declarative UI tree into a Template ready for Execute.\nAll reflection happens here at compile time; Execute is pure pointer reads.\n",
-          "signature": "func Build(ui any) *Template",
+          "signature": "func Build(ui Component) *Template",
           "examples": [
             {
               "doc": "Compile a template.\nBuild compiles a UI tree into a Template. This is the same step that SetView performs internally. Useful for rendering into a Layer or for headless testing.\n",
@@ -6017,6 +6359,18 @@
           "recv": "TextBlockC"
         },
         {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (t TextBlockC) Build() Component",
+          "recv": "TextBlockC"
+        },
+        {
+          "name": "CharWrap",
+          "doc": "",
+          "signature": "func (t TextBlockC) CharWrap() TextBlockC",
+          "recv": "TextBlockC"
+        },
+        {
           "name": "Dim",
           "doc": "",
           "signature": "func (t TextBlockC) Dim() TextBlockC",
@@ -6045,14 +6399,14 @@
         {
           "doc": "Word-wrapped text.\nTextBlock renders multi-line text inline with automatic word wrapping. Unlike TextView, it has no scroll layer.\n",
           "code": "VBox(\n\tTextBlock(\"hello world this is a long line that wraps\"),\n\tText(\"---\"),\n)",
-          "output": "hello world this is\na long line that wra\nps\n---\n",
+          "output": "hello world this is\na long line that\nwraps\n---\n",
           "preview": {
             "w": 20,
             "h": 4,
             "lines": [
               "hello world this is ",
-              "a long line that wra",
-              "ps                  ",
+              "a long line that    ",
+              "wraps               ",
               "---                 "
             ]
           }
@@ -6130,6 +6484,12 @@
           "recv": "TextC"
         },
         {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (t TextC) Build() Component",
+          "recv": "TextC"
+        },
+        {
           "name": "Dim",
           "doc": "Dim enables dim text.\n",
           "signature": "func (t TextC) Dim() TextC",
@@ -6172,6 +6532,18 @@
           "recv": "TextC"
         },
         {
+          "name": "Opacity",
+          "doc": "Opacity sets the text opacity (0.0 = backing cell, 1.0 = fully visible).\nAccepts float64, *float64, conditionNode, or tweenNode.\n",
+          "signature": "func (t TextC) Opacity(o any) TextC",
+          "recv": "TextC"
+        },
+        {
+          "name": "OpacityMode",
+          "doc": "OpacityMode sets how rune ownership hands off during opacity fades.\n",
+          "signature": "func (t TextC) OpacityMode(mode OpacityMode) TextC",
+          "recv": "TextC"
+        },
+        {
           "name": "Strikethrough",
           "doc": "Strikethrough enables strikethrough text.\n",
           "signature": "func (t TextC) Strikethrough() TextC",
@@ -6200,7 +6572,15 @@
     {
       "name": "TextInput",
       "doc": "TextInput is a single-line text input field.\nWire up input handling via riffkey.NewTextHandler or riffkey.NewFieldHandler.\n\nExample with InputState + FocusGroup (recommended for forms):\n\n\tname := tui.InputState{}\n\tfocus := tui.FocusGroup{}\n\ttui.TextInput{Field: \u0026name, FocusGroup: \u0026focus, FocusIndex: 0}\n\nExample with separate pointers (for single fields):\n\n\ttui.TextInput{Value: \u0026query, Cursor: \u0026cursor, Placeholder: \"Search...\"}\n",
-      "decl": "type TextInput struct {\n\t// Field-based API (recommended for forms)\n\tField      *InputState // Bundles Value + Cursor in one struct\n\tFocusGroup *FocusGroup // Shared focus tracker - cursor shows when FocusGroup.Current == FocusIndex\n\tFocusIndex int         // This field's index in the focus group\n\n\t// Pointer-based API (for single fields)\n\tValue   *string // Bound text value (ignored if Field is set)\n\tCursor  *int    // Cursor position (ignored if Field is set)\n\tFocused *bool   // Show cursor only when true (ignored if FocusGroup is set)\n\n\t// Common options\n\tPlaceholder      string // Shown when value is empty\n\tWidth            int    // Field width (0 = fill available)\n\tMask             rune   // Password mask character (0 = none)\n\tStyle            Style  // Text style\n\tPlaceholderStyle Style  // Placeholder style (zero = dim text)\n\tCursorStyle      Style  // Cursor style (zero = reverse video)\n}"
+      "decl": "type TextInput struct {\n\t// Field-based API (recommended for forms)\n\tField      *InputState // Bundles Value + Cursor in one struct\n\tFocusGroup *FocusGroup // Shared focus tracker - cursor shows when FocusGroup.Current == FocusIndex\n\tFocusIndex int         // This field's index in the focus group\n\n\t// Pointer-based API (for single fields)\n\tValue   *string // Bound text value (ignored if Field is set)\n\tCursor  *int    // Cursor position (ignored if Field is set)\n\tFocused *bool   // Show cursor only when true (ignored if FocusGroup is set)\n\n\t// Common options\n\tPlaceholder      string // Shown when value is empty\n\tWidth            int    // Field width (0 = fill available)\n\tMask             rune   // Password mask character (0 = none)\n\tStyle            Style  // Text style\n\tPlaceholderStyle Style  // Placeholder style (zero = dim text)\n\tCursorStyle      Style  // Cursor style (zero = reverse video)\n}",
+      "methods": [
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (t TextInput) Build() Component",
+          "recv": "TextInput"
+        }
+      ]
     },
     {
       "name": "TextTransform",
@@ -6255,6 +6635,12 @@
           "name": "BindScroll",
           "doc": "BindScroll registers keys for line-by-line scrolling.\n",
           "signature": "func (tv *TextViewC) BindScroll(down, up string) *TextViewC",
+          "recv": "*TextViewC"
+        },
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (t *TextViewC) Build() Component",
           "recv": "*TextViewC"
         },
         {
@@ -6367,6 +6753,14 @@
       "name": "TreeView",
       "doc": "TreeView displays a hierarchical tree structure.\n",
       "decl": "type TreeView struct {\n\tRoot          *TreeNode // root node (can be hidden)\n\tShowRoot      bool      // whether to display the root node\n\tIndent        int       // indentation per level (default: 2)\n\tShowLines     bool      // show connecting lines (├ └ │)\n\tExpandedChar  rune      // character for expanded nodes (default: '▼')\n\tCollapsedChar rune      // character for collapsed nodes (default: '▶')\n\tLeafChar      rune      // character for leaf nodes (default: ' ')\n\tStyle         Style     // styling for labels\n}",
+      "methods": [
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (t TreeView) Build() Component",
+          "recv": "TreeView"
+        }
+      ],
       "examples": [
         {
           "doc": "Collapsible tree.\nTreeView renders a collapsible tree from TreeNode structs. Set Expanded to control which nodes start open.\n",
@@ -6389,12 +6783,20 @@
     {
       "name": "VBoxC",
       "doc": "",
-      "decl": "type VBoxC struct {\n\t// contains filtered or unexported fields\n}"
+      "decl": "type VBoxC struct {\n\t// contains filtered or unexported fields\n}",
+      "methods": [
+        {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (v VBoxC) Build() Component",
+          "recv": "VBoxC"
+        }
+      ]
     },
     {
       "name": "VBoxFn",
       "doc": "",
-      "decl": "type VBoxFn func(children ...any) VBoxC",
+      "decl": "type VBoxFn func(children ...Component) VBoxC",
       "methods": [
         {
           "name": "Border",
@@ -6481,6 +6883,12 @@
           "recv": "VBoxFn"
         },
         {
+          "name": "OpacityMode",
+          "doc": "OpacityMode sets how rune ownership hands off during opacity fades.\n",
+          "signature": "func (f VBoxFn) OpacityMode(mode OpacityMode) VBoxFn",
+          "recv": "VBoxFn"
+        },
+        {
           "name": "Padding",
           "doc": "Padding sets uniform padding on all sides.\n",
           "signature": "func (f VBoxFn) Padding(all int16) VBoxFn",
@@ -6535,7 +6943,7 @@
           "names": [
             "VBox"
           ],
-          "decl": "var VBox VBoxFn = func(children ...any) VBoxC {\n\treturn VBoxC{children: children}\n}"
+          "decl": "var VBox VBoxFn = func(children ...Component) VBoxC {\n\treturn VBoxC{children: children}\n}"
         }
       ],
       "examples": [
@@ -6650,6 +7058,12 @@
           "recv": "VRuleC"
         },
         {
+          "name": "Build",
+          "doc": "",
+          "signature": "func (v VRuleC) Build() Component",
+          "recv": "VRuleC"
+        },
+        {
           "name": "Char",
           "doc": "Char sets the display character.\n",
           "signature": "func (v VRuleC) Char(c rune) VRuleC",
@@ -6760,7 +7174,7 @@
     {
       "name": "Arrange",
       "doc": "Arrange creates a container with a custom layout function.\nThe layout function receives child sizes and available space, returns positions.\n\n\tArrange(Grid(3, 20, 5))(\n\t    Text(\"A\"), Text(\"B\"), Text(\"C\"),\n\t    Text(\"D\"), Text(\"E\"), Text(\"F\"),\n\t)\n",
-      "signature": "func Arrange(layout LayoutFunc) func(children ...any) Box",
+      "signature": "func Arrange(layout LayoutFunc) func(children ...Component) Box",
       "examples": [
         {
           "doc": "Custom layout.\nArrange lets you define a fully custom layout function. It receives child sizes and available space, returns rects.\n",
@@ -6796,25 +7210,6 @@
       "name": "Bold",
       "doc": "Bold creates a bold styled part.\nAccepts string or *string. Returns Span for string, TextC for *string.\n",
       "signature": "func Bold(text any) any"
-    },
-    {
-      "name": "Define",
-      "doc": "Define creates a scoped block for local component helpers and styles.\nThe function runs once at compile time (when SetView is called).\nPointers inside still provide dynamic values at render time.\n\n\tapp.SetView(\n\t    Define(func() any {\n\t        dot := func(ok *bool) any {\n\t            return If(ok).Then(Text(\"●\")).Else(Text(\"○\"))\n\t        }\n\t        return VBox(dot(\u0026a), dot(\u0026b), dot(\u0026c))\n\t    }),\n\t)\n",
-      "signature": "func Define(fn func() any) any",
-      "examples": [
-        {
-          "doc": "Scoped helpers.\nDefine scopes local helper functions inside the view tree. The function runs at build time and returns a component.\n",
-          "code": "a, b, c := true, false, true\nDefine(func() any {\n\tdot := func(v *bool) any {\n\t\treturn If(v).Then(Text(\"●\").FG(Green)).Else(Text(\"○\").FG(Red))\n\t}\n\treturn HBox.Gap(1)(dot(\u0026a), dot(\u0026b), dot(\u0026c))\n})",
-          "output": "● ○ ●\n",
-          "preview": {
-            "w": 10,
-            "h": 1,
-            "lines": [
-              "\u001b[0;32;49m●\u001b[0;39;49m \u001b[0;31;49m○\u001b[0;39;49m \u001b[0;32;49m●\u001b[0;39;49m     "
-            ]
-          }
-        }
-      ]
     },
     {
       "name": "Dim",
@@ -6967,6 +7362,11 @@
       "signature": "func GenerateLabels(n int) []string"
     },
     {
+      "name": "In",
+      "doc": "In marks the active value used while a conditional branch is present.\nPass a tween to animate in, or a plain value to snap in and only animate out.\n",
+      "signature": "func In(v any) *presence"
+    },
+    {
       "name": "Inverse",
       "doc": "Inverse creates an inverse styled part.\nAccepts string or *string. Returns Span for string, TextC for *string.\n",
       "signature": "func Inverse(text any) any"
@@ -7005,6 +7405,16 @@
       "name": "Meter",
       "doc": "Meter returns an analog-style meter: ├──●──────┤\n",
       "signature": "func Meter(value, max, width int) string"
+    },
+    {
+      "name": "RuneCount",
+      "doc": "RuneCount returns the number of runes in s. Use this when you need a\ncharacter count (e.g. indexing into a rune slice), not a display width.\n",
+      "signature": "func RuneCount(s string) int"
+    },
+    {
+      "name": "RuneWidth",
+      "doc": "RuneWidth returns the display-cell width of a rune. ASCII is width 1 on the\nfast path; anything above U+1100 defers to the runewidth table. Zero-width\nrunes (combining marks) are reported as 1 because terminals treat them as\nadvancing the cursor by 1 in most cases.\n",
+      "signature": "func RuneWidth(r rune) int"
     },
     {
       "name": "SEBloom",
@@ -7321,6 +7731,11 @@
       "signature": "func SEScreenShake(amplitude float64) screenShakeEffect"
     },
     {
+      "name": "SESpinGlow",
+      "doc": "SESpinGlow creates a rotating radial halo around a focus node. Pass zero\ncolours for the default palette, or one+ colours to define a conic gradient\nof stops that rotates with time.\n\n\tSESpinGlow(\u0026ref)                                 // default palette\n\tSESpinGlow(\u0026ref, RGB(255, 80, 120))              // single-tint hotspot\n\tSESpinGlow(\u0026ref, RGB(255,80,120), RGB(150,100,255)) // two-stop swirl\n",
+      "signature": "func SESpinGlow(focus *NodeRef, palette ...Color) spinGlowEffect"
+    },
+    {
       "name": "SETint",
       "doc": "SETint shifts all RGB colours toward a target colour.\nThink colour grading: warm/cool/moody tones in one line.\nDefault strength 0.15 — tasteful tint out of the box.\n",
       "signature": "func SETint(color Color) tintEffect",
@@ -7436,6 +7851,11 @@
       ]
     },
     {
+      "name": "StringWidth",
+      "doc": "StringWidth returns the total display-cell width of s.\n",
+      "signature": "func StringWidth(s string) int"
+    },
+    {
       "name": "Styled",
       "doc": "Styled creates a span with the given style.\nAccepts string or *string. Returns Span for string, TextC for *string.\n",
       "signature": "func Styled(text any, style Style) any"
@@ -7519,7 +7939,7 @@
         "BorderDouble",
         "BorderSoft"
       ],
-      "decl": "var (\n\tBorderSingle = BorderStyle{\n\t\tHorizontal:  BoxHorizontal,\n\t\tVertical:    BoxVertical,\n\t\tTopLeft:     BoxTopLeft,\n\t\tTopRight:    BoxTopRight,\n\t\tBottomLeft:  BoxBottomLeft,\n\t\tBottomRight: BoxBottomRight,\n\t}\n\tBorderRounded = BorderStyle{\n\t\tHorizontal:  BoxHorizontal,\n\t\tVertical:    BoxVertical,\n\t\tTopLeft:     BoxRoundedTopLeft,\n\t\tTopRight:    BoxRoundedTopRight,\n\t\tBottomLeft:  BoxRoundedBottomLeft,\n\t\tBottomRight: BoxRoundedBottomRight,\n\t}\n\tBorderDouble = BorderStyle{\n\t\tHorizontal:  BoxDoubleHorizontal,\n\t\tVertical:    BoxDoubleVertical,\n\t\tTopLeft:     BoxDoubleTopLeft,\n\t\tTopRight:    BoxDoubleTopRight,\n\t\tBottomLeft:  BoxDoubleBottomLeft,\n\t\tBottomRight: BoxDoubleBottomRight,\n\t}\n\tBorderSoft = BorderStyle{\n\t\tTop:         '▀',\n\t\tBottom:      '▄',\n\t\tLeft:        '▌',\n\t\tRight:       '▐',\n\t\tTopLeft:     '▛',\n\t\tTopRight:    '▜',\n\t\tBottomLeft:  '▙',\n\t\tBottomRight: '▟',\n\t}\n)"
+      "decl": "var (\n\tBorderSingle = BorderStyle{\n\t\tHorizontal:  BoxHorizontal,\n\t\tVertical:    BoxVertical,\n\t\tTopLeft:     BoxTopLeft,\n\t\tTopRight:    BoxTopRight,\n\t\tBottomLeft:  BoxBottomLeft,\n\t\tBottomRight: BoxBottomRight,\n\t}\n\tBorderRounded = BorderStyle{\n\t\tHorizontal:  BoxHorizontal,\n\t\tVertical:    BoxVertical,\n\t\tTopLeft:     BoxRoundedTopLeft,\n\t\tTopRight:    BoxRoundedTopRight,\n\t\tBottomLeft:  BoxRoundedBottomLeft,\n\t\tBottomRight: BoxRoundedBottomRight,\n\t}\n\tBorderDouble = BorderStyle{\n\t\tHorizontal:  BoxDoubleHorizontal,\n\t\tVertical:    BoxDoubleVertical,\n\t\tTopLeft:     BoxDoubleTopLeft,\n\t\tTopRight:    BoxDoubleTopRight,\n\t\tBottomLeft:  BoxDoubleBottomLeft,\n\t\tBottomRight: BoxDoubleBottomRight,\n\t}\n\t// BorderSoft uses half-block characters. Top/Bottom are half-cell tall\n\t// (▀ / ▄); Left/Right are full-cell wide (█) so their visual thickness\n\t// matches top/bottom — terminal cells are ~2:1 tall:wide, so a full-width\n\t// column equals a half-height row in rendered pixels. Corners are full\n\t// blocks to keep the vertical columns visually continuous through the\n\t// corner cell.\n\tBorderSoft = BorderStyle{\n\t\tTop:         '▀',\n\t\tBottom:      '▄',\n\t\tLeft:        '█',\n\t\tRight:       '█',\n\t\tTopLeft:     '█',\n\t\tTopRight:    '█',\n\t\tBottomLeft:  '█',\n\t\tBottomRight: '█',\n\t}\n)"
     },
     {
       "doc": "Standard basic colours for convenience.\n",

@@ -1222,7 +1222,6 @@
       <li><a href="/start.html">Get Started</a></li>
       <li><a href="/concepts.html" class="active">Concepts</a></li>
       <li><a href="/api.html">API</a></li>
-      <li><a href="https://github.com/kungfusheep/glyph" style="display:flex;align-items:center" aria-label="GitHub"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a></li>
       <li><a href="https://discord.gg/HWJ5XnNeMP" style="display:flex;align-items:center" aria-label="Discord"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg></a></li>
       <li><button class="nav-search" onclick="window.openOmni?.()" aria-label="Search API"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button></li>
     </ul>
@@ -1240,6 +1239,8 @@
   <a href="#layers" class="sidenav-link">Layers & Scrolling</a>
   <a href="#effects" class="sidenav-link">Screen Effects</a>
   <a href="#animation" class="sidenav-link">Animation</a>
+  <a href="#exit" class="sidenav-link">Enter &amp; Exit</a>
+  <a href="#extend" class="sidenav-link">Custom Components</a>
 </nav>
 
 <nav class="topnav">
@@ -1254,6 +1255,8 @@
   <a href="#layers" class="topnav-link">Layers</a>
   <a href="#effects" class="topnav-link">Effects</a>
   <a href="#animation" class="topnav-link">Animation</a>
+  <a href="#exit" class="topnav-link">In/Out</a>
+  <a href="#extend" class="topnav-link">Extend</a>
 </nav>
 
 <main id="main-content">
@@ -2354,13 +2357,145 @@ app.Handle("v", func() { vignetteOn = !vignetteOn })</div>
 
   <div class="concept-prose">
     Built-in easing functions cover Quad, Cubic, Quart, Quint,
-    Sine, Expo, Circ, Back, and Bounce. Each has In, Out, and InOut variants. Linear
-    is the default. Any <code>func(float64) float64</code> works as a custom easing.
+    Sine, Expo, Circ, Back, and Bounce. Each has In, Out, and InOut variants.
+    <code>EaseOutQuart</code> is the default. Pass <code>Linear</code> for constant-speed
+    motion, or any <code>func(float64) float64</code> for a custom curve.
   </div>
 
   <div class="concept-prose">
     Colors and styles interpolate. An animated <code>FG</code> lerps through RGB space.
     An animated <code>Style</code> interpolates foreground, background, and fill colours simultaneously.
+  </div>
+
+</div>
+
+<div class="concept" id="exit">
+  <div class="section-head">
+    <div class="section-num">12</div>
+    <div class="section-meta">
+      <div class="section-label">Motion</div>
+      <div class="section-title">Enter &amp; Exit</div>
+    </div>
+  </div>
+
+  <div class="concept-prose">
+    A conditional branch has two transitions: when it appears, and when it goes away.
+    Wrap any property value with <code>In</code> for the entry value or animation
+    and <code>Out</code> for an exit animation. Glyph holds the outgoing branch on
+    screen until its <code>Out</code> tweens finish, then drops it.
+  </div>
+
+  <div class="code code-raw">// vignette fades in when armed, fades back to nothing on disarm
+If(&armed).Then(
+    SEVignette().Strength(
+        In(Animate(0.8)).
+        Out(Animate(0.0)),
+    ),
+)</div>
+
+  <div class="concept-prose">
+    Drop <code>In</code>/<code>Out</code> on as many properties as you like. Each
+    one is automatically tied to the surrounding conditional, and runs on its own
+    curve.
+  </div>
+
+  <div class="code code-raw">If(&visible).Then(
+    VBox.Border(BorderSingle).
+        Opacity(
+            In(Animate(1.0)).
+            Out(Animate(0.0)),
+        ).
+        Width(
+            In(Animate(int16(40))).
+            Out(Animate(int16(0))),
+        )(
+            Text("hello"),
+        ),
+)</div>
+
+  <div class="concept-prose">
+    Each side is a normal animation declaration with its own duration and easing.
+    <code>In</code> on its own snaps the value in and animates only the exit.
+    <code>tween.Out(other)</code> is shorthand when the entry is already a tween.
+  </div>
+
+  <div class="concept-prose">
+    The pattern composes with any conditional branching primitive
+    (<code>If</code>, <code>Switch</code>, <code>Match</code>). The branch is retained,
+    not the data. Pointer values keep updating right up to the final frame.
+  </div>
+
+</div>
+
+<div class="concept" id="extend">
+  <div class="section-head">
+    <div class="section-num">13</div>
+    <div class="section-meta">
+      <div class="section-label">Extension</div>
+      <div class="section-title">Custom Components</div>
+    </div>
+  </div>
+
+  <div class="concept-prose">
+    Most of the time a plain function that returns built-in primitives is enough.
+    Call it from anywhere in your view tree and the result composes as if it had
+    been written inline.
+  </div>
+
+  <div class="code code-raw">func badge(label string, on *bool) Component {
+    return If(on).
+        Then(Text(label).FG(Green)).
+        Else(Text(label).FG(Gray))
+}
+
+VBox(
+    badge("live", &online),
+    badge("armed", &armed),
+)</div>
+
+  <div class="concept-prose">
+    When you want a named type with its own methods or fields, satisfy the
+    <code>Component</code> interface. <code>Build</code> returns a sub-tree of
+    existing primitives. Glyph expands it at compile time, so it costs the same
+    as the equivalent inline tree.
+  </div>
+
+  <div class="code code-raw">type Component interface {
+    Build() Component
+}
+
+type Badge struct {
+    Label string
+    On    *bool
+}
+
+func (b Badge) Build() Component {
+    return If(b.On).
+        Then(Text(b.Label).FG(Green)).
+        Else(Text(b.Label).FG(Gray))
+}
+
+VBox(
+    Badge{Label: "live", On: &online},
+    Badge{Label: "armed", On: &armed},
+)</div>
+
+  <div class="concept-prose">
+    For widgets that need raw cell access (charts, sparklines, ASCII art),
+    implement <code>Renderer</code>. Glyph calls <code>MinSize</code> during
+    layout and <code>Render</code> with the final rectangle.
+  </div>
+
+  <div class="code code-raw">type Renderer interface {
+    Component
+    MinSize() (width, height int)
+    Render(buf *Buffer, x, y, w, h int)
+}</div>
+
+  <div class="concept-prose">
+    A <code>Renderer</code> still returns itself from <code>Build()</code>. Glyph
+    recognises the additional methods and routes drawing to <code>Render</code>
+    directly, instead of expanding to primitives.
   </div>
 
 </div>
@@ -2374,7 +2509,7 @@ app.Handle("v", func() { vignetteOn = !vignetteOn })</div>
 
     <div class="hero-install" onclick="copyInstall(this)">
       <span class="prompt">$</span>
-      go get github.com/kungfusheep/glyph@latest
+      go get github.com/kungfusheep/glyph@v0.6.0
       <span class="copied">copied</span>
     </div>
 
@@ -2404,7 +2539,7 @@ app.Handle("v", func() { vignetteOn = !vignetteOn })</div>
 
 <script>
 function copyInstall(el) {
-  const cmd = 'go get github.com/kungfusheep/glyph@latest';
+  const cmd = 'go get github.com/kungfusheep/glyph@v0.6.0';
   const badge = el.querySelector('.copied');
   function flash() {
     badge.classList.add('show');
