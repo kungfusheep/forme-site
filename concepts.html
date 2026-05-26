@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>glyph — Concepts</title>
+<title>glyph - Concepts</title>
 <meta name="description" content="Core concepts behind glyph: layout composition, the render cycle, state binding, viewport scrolling, and more.">
 <meta name="keywords" content="go,golang,tui,terminal,ui,framework,layout,composition,render,concepts">
 <meta name="author" content="Pete Griffiths">
@@ -14,7 +14,7 @@
 
 <!-- open graph -->
 <meta property="og:type" content="article">
-<meta property="og:title" content="glyph — Concepts">
+<meta property="og:title" content="glyph - Concepts">
 <meta property="og:image" content="https://useglyph.sh/og.png">
 <meta property="og:description" content="Core concepts behind glyph: layout composition, the render cycle, state binding, viewport scrolling, and more.">
 <meta property="og:url" content="https://useglyph.sh/concepts.html">
@@ -24,7 +24,7 @@
 <!-- twitter -->
 <meta name="twitter:site" content="@kungfusheep">
 <meta name="twitter:creator" content="@kungfusheep">
-<meta name="twitter:title" content="glyph — Concepts">
+<meta name="twitter:title" content="glyph - Concepts">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://useglyph.sh/og.png">
 <meta name="twitter:description" content="Core concepts behind glyph: layout composition, the render cycle, state binding, viewport scrolling, and more.">
@@ -147,10 +147,10 @@
   }
 
   /* ============================================================
-     FLOW DIAGRAMS — CSS grid pipeline
+     FLOW DIAGRAMS - CSS grid pipeline
      ============================================================ */
 
-  /* horizontal pipeline — use flexbox with forced equal widths via percentage */
+  /* horizontal pipeline - use flexbox with forced equal widths via percentage */
   .flow {
     display: flex;
     align-items: stretch;
@@ -249,7 +249,7 @@
     padding: 2px 0;
   }
 
-  /* cascade sweep animation — shared base styles */
+  /* cascade sweep animation - shared base styles */
   .cascade-render,
   .cascade-dynamic {
     isolation: isolate;
@@ -261,7 +261,7 @@
     background: var(--bg-dark);
   }
 
-  /* border ring — masked gradient blob */
+  /* border ring - masked gradient blob */
   .cascade-render .cascade-step::before,
   .cascade-dynamic .cascade-step::before {
     content: '';
@@ -276,7 +276,7 @@
     pointer-events: none;
     opacity: var(--sweep-vis);
   }
-  /* glow — unmasked blurred blob that follows the same position */
+  /* glow - unmasked blurred blob that follows the same position */
   .cascade-render .cascade-step::after,
   .cascade-dynamic .cascade-step::after {
     content: '';
@@ -289,7 +289,7 @@
     opacity: var(--sweep-vis);
   }
 
-  /* direction label gradient overlay — scaled to match step-relative --sweep */
+  /* direction label gradient overlay - scaled to match step-relative --sweep */
   .cascade-render .cascade-phase-dir,
   .cascade-dynamic .cascade-phase-dir {
     position: relative;
@@ -568,7 +568,7 @@
   .code .tp  { color: #a088b8; }
   .code .nr  { color: #c488a8; }
 
-  /* key path diagram — horizontal flow with key labels */
+  /* key path diagram - horizontal flow with key labels */
   .keypath {
     display: flex;
     align-items: center;
@@ -803,7 +803,7 @@
   .lc-hbox .lc-item { flex: 1; }
 
   /* ============================================================
-     SIDE NAV — desktop
+     SIDE NAV - desktop
      ============================================================ */
   /* ============================================================
      GLOBAL NAV
@@ -898,7 +898,7 @@
 
 
   /* ============================================================
-     TOP NAV — mobile
+     TOP NAV - mobile
      ============================================================ */
   .topnav {
     display: none;
@@ -1427,7 +1427,7 @@
   <!-- VBox vs HBox -->
   <div class="layout-compare">
     <div class="layout-compare-col">
-      <div class="layout-compare-label">VBox — vertical</div>
+      <div class="layout-compare-label">VBox - vertical</div>
       <div class="lc-vbox">
         <div class="lc-item">Child A</div>
         <div class="lc-item">Child B</div>
@@ -1435,7 +1435,7 @@
       </div>
     </div>
     <div class="layout-compare-col">
-      <div class="layout-compare-label">HBox — horizontal</div>
+      <div class="layout-compare-label">HBox - horizontal</div>
       <div class="lc-hbox">
         <div class="lc-item">A</div>
         <div class="lc-item">B</div>
@@ -1779,7 +1779,7 @@ title = "World"               // next render shows "World"</div>
   </div>
 
 <div class="show-grid">
-  <div class="code code-raw" style="margin:0">ForEach(&items, func(item *Item) any {
+  <div class="code code-raw" style="margin:0">ForEach(&items, func(item *Item) Component {
     return HBox.Gap(2)(
         Text(&item.Name),
         Text(&item.Status).FG(
@@ -1853,15 +1853,18 @@ title = "World"               // next render shows "World"</div>
     </div>
   </div>
 
-  <div class="code code-raw">app.Handle("q", app.Stop)          // single key
-app.Handle("gg", goToTop)          // multi-key sequence
-app.Handle("<C-w>j", focusDown)    // chord + key
-app.Handle("dd", deleteItem)
+  <div class="code code-raw">On(
+    Key("q", app.Stop),          // single key
+    Key("gg", goToTop),          // multi-key sequence
+    Key("<C-w>j", focusDown),    // chord + key
+    Key("dd", deleteItem),
+)
 
-// modal: push router for confirm dialog
-app.Push(confirmRouter)
-// ...later
-app.Pop()</div>
+// modal: route keys while the dialog is active
+On.Modal(
+    Key("<Esc>", closeDialog),
+    Key("<Enter>", confirm),
+)</div>
 </div>
 
 <!-- ============================================================
@@ -1918,7 +1921,7 @@ app.SetView(
     ),
 )</div>
   <div class="show-text">
-    <canvas data-term="concepts-jump" data-termdata="{&quot;w&quot;:24,&quot;h&quot;:7,&quot;lines&quot;:[&quot;\u001b[0;1;35;49ma\u001b[0;39;49mnbox                   &quot;,&quot;                        &quot;,&quot;\u001b[0;1;35;49ms\u001b[0;39;49mrafts                  &quot;,&quot;                        &quot;,&quot;\u001b[0;1;35;49md\u001b[0;39;49ment                    &quot;]}" style="max-width:318px"></canvas>
+    <canvas data-term="concepts-jump" data-termdata="{&quot;w&quot;:24,&quot;h&quot;:7,&quot;lines&quot;:[&quot;Inbox                   &quot;,&quot;                        &quot;,&quot;Drafts                  &quot;,&quot;                        &quot;,&quot;Sent                    &quot;]}" style="max-width:318px"></canvas>
   </div>
 </div>
 
@@ -1990,11 +1993,13 @@ app.SetView(
   <div class="code code-raw">app.View("list", VBox(
     Text("Items"),
     List(&items).BindNav("j", "k"),
-)).Handle("n", func() { app.Go("detail") })
+    On(Key("n", func() { app.Go("detail") })),
+))
 
 app.View("detail", VBox(
     Text(&detail),
-)).Handle("b", func() { app.Go("list") })
+    On(Key("b", func() { app.Go("list") })),
+))
 
 app.RunFrom("list")</div>
 </div>
@@ -2210,7 +2215,7 @@ ScreenEffect(
 
 
   <div class="show-grid">
-    <div class="code code-raw" style="margin:0">// wave — shift each row by a sine offset (full-buffer effect)
+    <div class="code code-raw" style="margin:0">// wave - shift each row by a sine offset (full-buffer effect)
 type waveEffect struct{ phase *float64 }
 
 func (w waveEffect) Apply(buf *Buffer, ctx PostContext) {
@@ -2225,7 +2230,7 @@ func (w waveEffect) Apply(buf *Buffer, ctx PostContext) {
   </div>
 
   <div class="show-grid">
-    <div class="code code-raw" style="margin:0">// collapse — radial block fill from center
+    <div class="code code-raw" style="margin:0">// collapse - radial block fill from center
 ScreenEffect(
     EachCell(func(x, y int, c Cell, ctx PostContext) Cell {
     dx := (float64(x) - float64(ctx.Width)/2) / float64(ctx.Width/2)
@@ -2282,13 +2287,12 @@ app.SetView(
         If(&dimmed).Then(
             ScreenEffect(
                 SEDesaturate(),
-                SEDimAll(),
+                SEDim(),
             ),
         ),
+        On(Key("d", func() { dimmed = !dimmed })),
     ),
-)
-
-app.Handle("d", func() { dimmed = !dimmed })</div>
+)</div>
 </div>
 
 <!-- ============================================================
@@ -2353,12 +2357,12 @@ SEVignette().Strength(
     ),
 )
 
-app.Handle("v", func() { vignetteOn = !vignetteOn })</div>
+On(Key("v", func() { vignetteOn = !vignetteOn }))</div>
 
   <div class="concept-prose">
     Built-in easing functions cover Quad, Cubic, Quart, Quint,
     Sine, Expo, Circ, Back, and Bounce. Each has In, Out, and InOut variants.
-    <code>EaseOutQuart</code> is the default. Pass <code>Linear</code> for constant-speed
+    <code>EaseOutQuart</code> is the default. Pass <code>EaseLinear</code> for constant-speed
     motion, or any <code>func(float64) float64</code> for a custom curve.
   </div>
 
@@ -2500,6 +2504,54 @@ VBox(
 
 </div>
 
+<!-- ============================================================
+     14. MIGRATION & DEPRECATIONS
+     ============================================================ -->
+<div class="concept" id="migration">
+  <div class="section-head">
+    <div class="section-num">14</div>
+    <div class="section-meta">
+      <div class="section-label">Tooling</div>
+      <div class="section-title">Migration &amp; Deprecations</div>
+    </div>
+  </div>
+
+  <div class="concept-prose">
+    When glyph renames an identifier we keep the old name working as a deprecated
+    alias. Your code keeps building. Your editor warns on uses. Run
+    <code>go fix</code> when you want the migration applied.
+  </div>
+
+  <div class="code code-raw">// Deprecated: use Filter instead.
+//
+//go:fix inline
+func NewFilter[T any](source *[]T, extract func(*T) string) *FilterC[T] {
+    return Filter(source, extract)
+}</div>
+
+  <div class="concept-prose">
+    The <code>//go:fix inline</code> directive (Go 1.26+) marks a function or
+    type alias for source-level inlining. <code>gopls</code> shows a deprecation
+    warning at every call site; <code>go fix</code> rewrites those call sites to
+    the inlined target.
+  </div>
+
+  <div class="code code-raw">$ go fix -diff ./...
+
+-    f := glyph.NewFilter(&items, extract)
++    f := glyph.Filter(&items, extract)</div>
+
+  <div class="concept-prose">
+    Type-rename collisions can't be aliased automatically when the new name is
+    now a function. <code>Filter[T]</code> (old type) became <code>FilterC[T]</code>
+    because <code>Filter</code> is now the constructor function. Same applied to
+    <code>Custom</code>. Type references like <code>*glyph.Filter[Item]</code> need
+    a manual rewrite to <code>*glyph.FilterC[Item]</code>. Everything else
+    auto-migrates.
+  </div>
+
+</div>
+
 </div><!-- .page -->
 
 <div class="page">
@@ -2509,7 +2561,7 @@ VBox(
 
     <div class="hero-install" onclick="copyInstall(this)">
       <span class="prompt">$</span>
-      go get github.com/kungfusheep/glyph@v0.6.0
+      go get github.com/kungfusheep/glyph@v0.7.0
       <span class="copied">copied</span>
     </div>
 
@@ -2539,7 +2591,7 @@ VBox(
 
 <script>
 function copyInstall(el) {
-  const cmd = 'go get github.com/kungfusheep/glyph@v0.6.0';
+  const cmd = 'go get github.com/kungfusheep/glyph@v0.7.0';
   const badge = el.querySelector('.copied');
   function flash() {
     badge.classList.add('show');
@@ -2654,7 +2706,7 @@ function copyInstall(el) {
     });
   }
 
-  // intersection observer — suppressed during programmatic scrolls
+  // intersection observer - suppressed during programmatic scrolls
   const observer = new IntersectionObserver(entries => {
     if (jumping) return;
     for (const entry of entries) {

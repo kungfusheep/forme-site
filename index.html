@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>glyph — Go TUI Framework</title>
+<title>glyph - Go TUI Framework</title>
 <meta name="description" content="Batteries-included terminal UI framework for Go. Declarative composition. Your data structures. Keyboard-first. Fast.">
 <meta name="keywords" content="go,golang,tui,terminal,ui,framework,cli,declarative,keyboard">
 <meta name="author" content="Pete Griffiths">
@@ -14,7 +14,7 @@
 
 <!-- open graph -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="glyph — Go TUI Framework">
+<meta property="og:title" content="glyph - Go TUI Framework">
 <meta property="og:image" content="https://useglyph.sh/og.png">
 <meta property="og:description" content="Batteries-included terminal UI framework for Go. Declarative composition. Your data structures. Keyboard-first. Fast.">
 <meta property="og:url" content="https://useglyph.sh/">
@@ -24,7 +24,7 @@
 <!-- twitter -->
 <meta name="twitter:site" content="@kungfusheep">
 <meta name="twitter:creator" content="@kungfusheep">
-<meta name="twitter:title" content="glyph — Go TUI Framework">
+<meta name="twitter:title" content="glyph - Go TUI Framework">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://useglyph.sh/og.png">
 <meta name="twitter:description" content="Batteries-included terminal UI framework for Go. Declarative composition. Your data structures. Keyboard-first. Fast.">
@@ -469,7 +469,7 @@
   .code .nr  { color: #c488a8; }
 
   /* ============================================================
-     FEATURE CARDS — explanation left, code right
+     FEATURE CARDS - explanation left, code right
      ============================================================ */
   .features {
     padding-bottom: var(--s7);
@@ -534,7 +534,7 @@
   }
 
   /* ============================================================
-     SHOW GRID — code left, text right
+     SHOW GRID - code left, text right
      ============================================================ */
   .show-section {
     padding-bottom: var(--s3);
@@ -706,7 +706,7 @@
     margin-bottom: var(--s7);
   }
 
-  /* option a — bulleted */
+  /* option a - bulleted */
   .principle-item {
     font-family: var(--mono);
     font-size: 13px;
@@ -721,7 +721,7 @@
     flex-shrink: 0;
   }
 
-  /* option b — statementy (swap class on .principle-list to try) */
+  /* option b - statementy (swap class on .principle-list to try) */
   .principle-list.statements .principle-item {
     font-family: var(--akz);
     font-weight: 700;
@@ -894,7 +894,7 @@
         Declarative composition. Your data structures. Keyboard-first. Fast.</div>
       <div class="hero-install" onclick="copyInstall(this)" role="button" tabindex="0" aria-label="Copy install command">
         <span class="prompt">$</span>
-        go get github.com/kungfusheep/glyph@v0.6.0
+        go get github.com/kungfusheep/glyph@v0.7.0
         <span class="copied">copied</span>
       </div>
       <div class="start-links">
@@ -908,11 +908,11 @@
 </div>
 
 <!-- ============================================================
-     DARK ZONE — everything below the hero
+     DARK ZONE - everything below the hero
      ============================================================ -->
 <div class="zone-dark" id="start">
 
-  <!-- 01 — FIRST APP -->
+  <!-- 01 - FIRST APP -->
   <div class="zone-inner">
     <div class="show-section">
       <div class="section-head">
@@ -936,11 +936,13 @@ func main() {
 		VBox(
 			Text(&count),
 			Text("↑/↓ to count, enter to quit"),
+			On(
+				Key("&lt;Up&gt;", func() { count++ }),
+				Key("&lt;Down&gt;", func() { count-- }),
+				Key("&lt;Enter&gt;", app.Stop),
+			),
 		),
 	).
-		Handle("&lt;Up&gt;", func() { count++ }).
-		Handle("&lt;Down&gt;", func() { count-- }).
-		Handle("&lt;Enter&gt;", app.Stop).
 		ClearOnExit(true).
 		Run()
 
@@ -948,10 +950,10 @@ func main() {
 }</div>
         <div class="show-text">
           <div class="feature-preview">
-            <canvas data-termdata="{&quot;w&quot;:30,&quot;h&quot;:3,&quot;lines&quot;:[&quot;7                             &quot;,&quot;↑/↓ to count, enter to quit   &quot;]}"></canvas>
+            <canvas data-term="first-app" data-termdata="{&quot;w&quot;:30,&quot;h&quot;:3,&quot;lines&quot;:[&quot;7                             &quot;,&quot;↑/↓ to count, enter to quit   &quot;]}"></canvas>
           </div>
           <div class="show-aside">
-            A glyph app is a tree of plain functions. VBox stacks its children, Text renders a value. Pass a pointer; glyph reads the current value every update. Keyboard handlers take plain function callbacks. Run starts the event loop and blocks until the app exits.
+            A glyph app is a tree of plain functions. VBox stacks its children, Text renders a value. Pass a pointer; glyph reads the current value every update. On declares key bindings in the tree. Run starts the event loop and blocks until the app exits.
           </div>
           <a href="/start.html" style="font-family: var(--mono); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #d85050; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#f06060'" onmouseout="this.style.color='#d85050'">Follow the full guide &rarr;</a>
         </div>
@@ -983,7 +985,7 @@ func main() {
 
   <div class="section-rule"></div>
 
-  <!-- 02 — SHOWCASE -->
+  <!-- 02 - SHOWCASE -->
   <div class="zone-inner">
     <div class="features">
       <div class="section-head">
@@ -1017,7 +1019,7 @@ func main() {
 	),
 )</div>
           <div class="feature-preview">
-            <canvas data-termdata="{&quot;w&quot;:60,&quot;h&quot;:10,&quot;lines&quot;:[&quot;╭──────────────────╮╭──────────────────────────────────────╮&quot;,&quot;│\u003e main.go         ││package main                          │&quot;,&quot;│  go.mod          ││                                      │&quot;,&quot;│  go.sum          ││import (                              │&quot;,&quot;│  README.md       ││    \&quot;fmt\&quot;                             │&quot;,&quot;│  config.toml     ││)                                     │&quot;,&quot;│  Makefile        ││                                      │&quot;,&quot;│                  ││func main() {                         │&quot;,&quot;│                  ││    fmt.Println(\&quot;hello\&quot;)              │&quot;,&quot;╰──────────────────╯╰──────────────────────────────────────╯&quot;]}"></canvas>
+            <canvas data-term="file-browser" data-termdata="{&quot;w&quot;:60,&quot;h&quot;:10,&quot;lines&quot;:[&quot;╭──────────────────╮╭──────────────────────────────────────╮&quot;,&quot;│\u003e main.go         ││package main                          │&quot;,&quot;│  go.mod          ││                                      │&quot;,&quot;│  go.sum          ││import (                              │&quot;,&quot;│  README.md       ││    \&quot;fmt\&quot;                             │&quot;,&quot;│  config.toml     ││)                                     │&quot;,&quot;│  Makefile        ││                                      │&quot;,&quot;│                  ││func main() {                         │&quot;,&quot;│                  ││    fmt.Println(\&quot;hello\&quot;)              │&quot;,&quot;╰──────────────────╯╰──────────────────────────────────────╯&quot;]}"></canvas>
           </div>
 
         </div>
@@ -1038,7 +1040,7 @@ func main() {
 	AutoTable(&procs).Sortable().Scrollable(20).BindVimNav(),
 )</div>
           <div class="feature-preview">
-            <canvas data-termdata="{&quot;w&quot;:60,&quot;h&quot;:10,&quot;lines&quot;:[&quot;CPU    █████████████████████\u001b[0;39;48;2;60;60;60m▌        \u001b[0;39;49m    Mem    ████████████&quot;,&quot;                                                            &quot;,&quot;\u001b[0;1;39;49m        PID\u001b[0;39;49m \u001b[0;1;39;49mCommand               \u001b[0;39;49m \u001b[0;1;39;49mCPU        \u001b[0;39;49m \u001b[0;1;39;49mMem        \u001b[0;39;49m  &quot;,&quot;       1234 api-server             7.2%        240M         &quot;,&quot;       1235 postgres               3.8%        1.2G         &quot;,&quot;       1236 redis                  19.5%       380M         &quot;,&quot;       1237 worker                 4.9%        190M         &quot;,&quot;       1238 nginx                  1.1%        42M          &quot;]}"></canvas>
+            <canvas data-term="process-monitor" data-termdata="{&quot;w&quot;:60,&quot;h&quot;:10,&quot;lines&quot;:[&quot;CPU    █████████████████████\u001b[0;39;48;2;60;60;60m▌        \u001b[0;39;49m    Mem    ████████████&quot;,&quot;                                                            &quot;,&quot;\u001b[0;1;39;49m        PID\u001b[0;39;49m \u001b[0;1;39;49mCommand               \u001b[0;39;49m \u001b[0;1;39;49mCPU        \u001b[0;39;49m \u001b[0;1;39;49mMem        \u001b[0;39;49m  &quot;,&quot;       1234 api-server             7.2%        240M         &quot;,&quot;       1235 postgres               3.8%        1.2G         &quot;,&quot;       1236 redis                  19.5%       380M         &quot;,&quot;       1237 worker                 4.9%        190M         &quot;,&quot;       1238 nginx                  1.1%        42M          &quot;]}"></canvas>
           </div>
 
         </div>
@@ -1061,7 +1063,7 @@ func main() {
 	If(&done).Then(Text(&result).Bold().FG(Green)),
 )</div>
           <div class="feature-preview">
-            <canvas data-termdata="{&quot;w&quot;:50,&quot;h&quot;:8,&quot;lines&quot;:[&quot;╭─ deploy ───────────────────────────────────────╮&quot;,&quot;│\u001b[0;36;49m⠋\u001b[0;39;49m  \u001b[0;1;39;49mdeploying...\u001b[0;39;49m  █████████████\u001b[0;39;48;2;60;60;60m       \u001b[0;39;49m           │&quot;,&quot;│\u001b[0;90;49muploading build artifacts...\u001b[0;39;49m                    │&quot;,&quot;│\u001b[0;90;49mstarting containers...\u001b[0;39;49m                          │&quot;,&quot;│\u001b[0;90;49mrunning health checks...\u001b[0;39;49m                        │&quot;,&quot;│\u001b[0;90;49mmigrating database (3/5)...\u001b[0;39;49m                     │&quot;,&quot;│                                                │&quot;,&quot;╰────────────────────────────────────────────────╯&quot;]}"></canvas>
+            <canvas data-term="deploy-log" data-termdata="{&quot;w&quot;:50,&quot;h&quot;:8,&quot;lines&quot;:[&quot;╭─ deploy ───────────────────────────────────────╮&quot;,&quot;│\u001b[0;36;49m⠋\u001b[0;39;49m  \u001b[0;1;39;49mdeploying...\u001b[0;39;49m  █████████████\u001b[0;39;48;2;60;60;60m       \u001b[0;39;49m           │&quot;,&quot;│\u001b[0;90;49muploading build artifacts...\u001b[0;39;49m                    │&quot;,&quot;│\u001b[0;90;49mstarting containers...\u001b[0;39;49m                          │&quot;,&quot;│\u001b[0;90;49mrunning health checks...\u001b[0;39;49m                        │&quot;,&quot;│\u001b[0;90;49mmigrating database (3/5)...\u001b[0;39;49m                     │&quot;,&quot;│                                                │&quot;,&quot;╰────────────────────────────────────────────────╯&quot;]}"></canvas>
           </div>
 
         </div>
@@ -1076,14 +1078,14 @@ func main() {
           </div>
           <div class="code code-raw">FilterList(&packages, func(p *Pkg) string { return p.Name }).
 	Placeholder("search packages...").
-	Render(func(p *Pkg) any {
+	Render(func(p *Pkg) Component {
 		return HBox.Gap(2)(
 			Text(&p.Name).Bold(),
 			Text(&p.Desc).FG(BrightBlack),
 		)
 	}).MaxVisible(15).Border(BorderRounded).Title("packages")</div>
           <div class="feature-preview">
-            <canvas data-termdata="{&quot;w&quot;:50,&quot;h&quot;:11,&quot;lines&quot;:[&quot;╭─ packages ─────────────────────────────────────╮&quot;,&quot;│\u001b[0;1;39;49m\u003e \u001b[0;7;39;49ms\u001b[0;2;39;49mearch packages...\u001b[0;39;49m                            │&quot;,&quot;│\u001b[0;2;39;49m  7/7\u001b[0;39;49m                                           │&quot;,&quot;│\u003e \u001b[0;1;39;49mglyph\u001b[0;39;49m  \u001b[0;90;49mterminal UI framework\u001b[0;39;49m                  │&quot;,&quot;│  \u001b[0;1;39;49mcobra\u001b[0;39;49m  \u001b[0;90;49mCLI command framework\u001b[0;39;49m                  │&quot;,&quot;│  \u001b[0;1;39;49mviper\u001b[0;39;49m  \u001b[0;90;49mconfiguration management\u001b[0;39;49m               │&quot;,&quot;│  \u001b[0;1;39;49mzap\u001b[0;39;49m  \u001b[0;90;49mstructured logging\u001b[0;39;49m                       │&quot;,&quot;│  \u001b[0;1;39;49mchi\u001b[0;39;49m  \u001b[0;90;49mHTTP router\u001b[0;39;49m                              │&quot;,&quot;│  \u001b[0;1;39;49msqlc\u001b[0;39;49m  \u001b[0;90;49mtype-safe SQL\u001b[0;39;49m                           │&quot;,&quot;│  \u001b[0;1;39;49ment\u001b[0;39;49m  \u001b[0;90;49mentity framework\u001b[0;39;49m                         │&quot;,&quot;╰────────────────────────────────────────────────╯&quot;]}"></canvas>
+            <canvas data-term="fuzzy-finder" data-termdata="{&quot;w&quot;:50,&quot;h&quot;:11,&quot;lines&quot;:[&quot;╭─ packages ─────────────────────────────────────╮&quot;,&quot;│\u001b[0;1;39;49m\u003e \u001b[0;7;39;49ms\u001b[0;2;39;49mearch packages...\u001b[0;39;49m                            │&quot;,&quot;│\u001b[0;2;39;49m  7/7\u001b[0;39;49m                                           │&quot;,&quot;│\u003e \u001b[0;1;39;49mglyph\u001b[0;39;49m  \u001b[0;90;49mterminal UI framework\u001b[0;39;49m                  │&quot;,&quot;│  \u001b[0;1;39;49mcobra\u001b[0;39;49m  \u001b[0;90;49mCLI command framework\u001b[0;39;49m                  │&quot;,&quot;│  \u001b[0;1;39;49mviper\u001b[0;39;49m  \u001b[0;90;49mconfiguration management\u001b[0;39;49m               │&quot;,&quot;│  \u001b[0;1;39;49mzap\u001b[0;39;49m  \u001b[0;90;49mstructured logging\u001b[0;39;49m                       │&quot;,&quot;│  \u001b[0;1;39;49mchi\u001b[0;39;49m  \u001b[0;90;49mHTTP router\u001b[0;39;49m                              │&quot;,&quot;│  \u001b[0;1;39;49msqlc\u001b[0;39;49m  \u001b[0;90;49mtype-safe SQL\u001b[0;39;49m                           │&quot;,&quot;│  \u001b[0;1;39;49ment\u001b[0;39;49m  \u001b[0;90;49mentity framework\u001b[0;39;49m                         │&quot;,&quot;╰────────────────────────────────────────────────╯&quot;]}"></canvas>
           </div>
 
         </div>
@@ -1110,7 +1112,7 @@ func main() {
 	Log(events).Grow(1).MaxLines(200),
 )</div>
           <div class="feature-preview">
-            <canvas data-termdata="{&quot;w&quot;:60,&quot;h&quot;:8,&quot;lines&quot;:[&quot;╭─ requests/s ──────────────╮ ╭─ p99 latency ──────────────╮&quot;,&quot;│\u001b[0;32;49m█████▇▆▅▄▃▂▁▁▁▁▁▂▃▅▆▇█████▇\u001b[0;39;49m│ │\u001b[0;33;49m▆▇██████▇▆▅▄▃▂▁▁▁▁▁▁▂▂▃▄▅▆▇█\u001b[0;39;49m│&quot;,&quot;│\u001b[0;90;49m1,204 req/s\u001b[0;39;49m                │ │\u001b[0;90;49m12ms\u001b[0;39;49m                        │&quot;,&quot;╰───────────────────────────╯ ╰────────────────────────────╯&quot;,&quot;\u001b[0;90;49m18:42:05  GET  /api/users        200  11ms\u001b[0;39;49m                  &quot;,&quot;\u001b[0;90;49m18:42:06  POST /api/sessions     200  23ms\u001b[0;39;49m                  &quot;,&quot;\u001b[0;90;49m18:42:06  GET  /api/health       200   4ms\u001b[0;39;49m                  &quot;]}"></canvas>
+            <canvas data-term="live-dashboard" data-termdata="{&quot;w&quot;:60,&quot;h&quot;:8,&quot;lines&quot;:[&quot;╭─ requests/s ──────────────╮ ╭─ p99 latency ──────────────╮&quot;,&quot;│\u001b[0;32;49m█████▇▆▅▄▃▂▁▁▁▁▁▂▃▅▆▇█████▇\u001b[0;39;49m│ │\u001b[0;33;49m▆▇██████▇▆▅▄▃▂▁▁▁▁▁▁▂▂▃▄▅▆▇█\u001b[0;39;49m│&quot;,&quot;│\u001b[0;90;49m1,204 req/s\u001b[0;39;49m                │ │\u001b[0;90;49m12ms\u001b[0;39;49m                        │&quot;,&quot;╰───────────────────────────╯ ╰────────────────────────────╯&quot;,&quot;\u001b[0;90;49m18:42:05  GET  /api/users        200  11ms\u001b[0;39;49m                  &quot;,&quot;\u001b[0;90;49m18:42:06  POST /api/sessions     200  23ms\u001b[0;39;49m                  &quot;,&quot;\u001b[0;90;49m18:42:06  GET  /api/health       200   4ms\u001b[0;39;49m                  &quot;]}"></canvas>
           </div>
 
         </div>
@@ -1123,14 +1125,16 @@ func main() {
               validation. Errors surface on blur or submit, as configured.
             </div>
           </div>
-          <div class="code code-raw">Form.LabelBold().OnSubmit(register)(
+          <div class="code code-raw">register := func(*FormC) {}
+
+Form.LabelBold().OnSubmit(register)(
 	Field("Name", Input(&name).Validate(VRequired, VOnBlur)),
 	Field("Email", Input(&email).Validate(VEmail, VOnBlur)),
 	Field("Role", Radio(&role, "Admin", "User", "Guest")),
 	Field("Terms", Checkbox(&agree, "I accept").Validate(VTrue, VOnSubmit)),
 )</div>
           <div class="feature-preview">
-            <canvas data-termdata="{&quot;w&quot;:40,&quot;h&quot;:10,&quot;lines&quot;:[&quot;╭─ register ───────────────────────────╮&quot;,&quot;│▸ \u001b[0;1;39;49mName:\u001b[0;39;49m \u001b[0;7;39;49mP\u001b[0;39;49mete                          │&quot;,&quot;│ \u001b[0;1;39;49mEmail:\u001b[0;39;49m pete@example.com              │&quot;,&quot;│  \u001b[0;1;39;49mRole:\u001b[0;39;49m ◉ Admin                       │&quot;,&quot;│        ○ User                        │&quot;,&quot;│        ○ Guest                       │&quot;,&quot;│ \u001b[0;1;39;49mTerms:\u001b[0;39;49m ☑ I accept                    │&quot;,&quot;│                                      │&quot;,&quot;│                                      │&quot;,&quot;╰──────────────────────────────────────╯&quot;]}"></canvas>
+            <canvas data-term="registration-form" data-termdata="{&quot;w&quot;:40,&quot;h&quot;:10,&quot;lines&quot;:[&quot;╭─ register ───────────────────────────╮&quot;,&quot;│▸ \u001b[0;1;39;49mName:\u001b[0;39;49m \u001b[0;7;39;49mP\u001b[0;39;49mete                          │&quot;,&quot;│ \u001b[0;1;39;49mEmail:\u001b[0;39;49m pete@example.com              │&quot;,&quot;│  \u001b[0;1;39;49mRole:\u001b[0;39;49m ◉ Admin                       │&quot;,&quot;│        ○ User                        │&quot;,&quot;│        ○ Guest                       │&quot;,&quot;│ \u001b[0;1;39;49mTerms:\u001b[0;39;49m ☑ I accept                    │&quot;,&quot;│                                      │&quot;,&quot;│                                      │&quot;,&quot;╰──────────────────────────────────────╯&quot;]}"></canvas>
           </div>
 
         </div>
@@ -1141,7 +1145,7 @@ func main() {
 
   <div class="section-rule"></div>
 
-  <!-- 03 — BATTERIES INCLUDED -->
+  <!-- 03 - BATTERIES INCLUDED -->
   <div class="zone-inner">
     <div class="batteries">
       <div class="section-head">
@@ -1257,7 +1261,7 @@ func main() {
 
   <div class="section-rule"></div>
 
-  <!-- 04 — PRINCIPLES -->
+  <!-- 04 - PRINCIPLES -->
   <div class="zone-inner">
     <div class="section-head">
       <div class="section-num">04</div>
@@ -1281,7 +1285,7 @@ func main() {
 
   <div class="section-rule"></div>
 
-  <!-- 05 — GET STARTED -->
+  <!-- 05 - GET STARTED -->
   <div class="zone-inner">
     <div class="section-head">
       <div class="section-num">05</div>
@@ -1293,7 +1297,7 @@ func main() {
 
     <div class="hero-install" onclick="copyInstall(this)" role="button" tabindex="0" aria-label="Copy install command">
       <span class="prompt">$</span>
-      go get github.com/kungfusheep/glyph@v0.6.0
+      go get github.com/kungfusheep/glyph@v0.7.0
       <span class="copied">copied</span>
     </div>
 
@@ -1463,7 +1467,7 @@ function highlightGo(raw) {
 
 // click-to-copy install command
 function copyInstall(el) {
-  const cmd = 'go get github.com/kungfusheep/glyph@v0.6.0';
+  const cmd = 'go get github.com/kungfusheep/glyph@v0.7.0';
   const badge = el.querySelector('.copied');
   function flash() {
     badge.classList.add('show');

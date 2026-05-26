@@ -1,4 +1,4 @@
-// fzf.js — shared fuzzy search scorer
+// fzf.js - shared fuzzy search scorer
 // used by api.html inline search and omni.js popover
 
 function fzfFuzzy(needle, haystack) {

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>API Reference — glyph</title>
+<title>API Reference - glyph</title>
 <meta name="description" content="Complete API reference for glyph: types, constructors, methods, and usage examples for every component in the framework.">
 <meta name="keywords" content="go,golang,tui,terminal,ui,framework,api,reference,documentation">
 <meta name="author" content="Pete Griffiths">
@@ -14,7 +14,7 @@
 
 <!-- open graph -->
 <meta property="og:type" content="article">
-<meta property="og:title" content="API Reference — glyph">
+<meta property="og:title" content="API Reference - glyph">
 <meta property="og:image" content="https://useglyph.sh/og.png">
 <meta property="og:description" content="Complete API reference for glyph: types, constructors, methods, and usage examples for every component in the framework.">
 <meta property="og:url" content="https://useglyph.sh/api.html">
@@ -24,7 +24,7 @@
 <!-- twitter -->
 <meta name="twitter:site" content="@kungfusheep">
 <meta name="twitter:creator" content="@kungfusheep">
-<meta name="twitter:title" content="API Reference — glyph">
+<meta name="twitter:title" content="API Reference - glyph">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://useglyph.sh/og.png">
 <meta name="twitter:description" content="Complete API reference for glyph: types, constructors, methods, and usage examples for every component in the framework.">
@@ -386,7 +386,7 @@
 
   .sidebar-method:hover { color: var(--dk-3); }
 
-  /* floating sidebar toggle — hidden on desktop */
+  /* floating sidebar toggle - hidden on desktop */
   .sidebar-fab {
     display: none;
     position: fixed;
@@ -639,7 +639,7 @@
     max-width: 620px;
   }
 
-  /* methods — stacked list, collapsible */
+  /* methods - stacked list, collapsible */
   .api-methods-label {
     font-family: var(--akz);
     font-weight: 700;
@@ -744,7 +744,7 @@
   .api-category.collapsed .cat-chevron { transform: rotate(0deg); }
   .api-category:not(.collapsed) .cat-chevron { transform: rotate(90deg); }
 
-  /* examples — rounded cards, split pane on desktop, stacked on mobile */
+  /* examples - rounded cards, split pane on desktop, stacked on mobile */
   .api-examples {
     display: flex;
     flex-direction: column;
@@ -1124,7 +1124,7 @@
         Space(),
         Text("items"),
     ),
-    List(&items).Render(func(item *string) any {
+    List(&items).Render(func(item *string) Component {
         return Text(item)
     }).BindNav("j", "k"),
 )</div>
@@ -1149,7 +1149,7 @@
 
       <div class="hero-install" onclick="copyInstall(this)" role="button" tabindex="0" aria-label="Copy install command">
         <span class="prompt">$</span>
-        go get github.com/kungfusheep/glyph@v0.6.0
+        go get github.com/kungfusheep/glyph@v0.7.0
         <span class="copied">copied</span>
       </div>
 
@@ -1182,7 +1182,7 @@
      ============================================================ -->
 <script>
 function copyInstall(el) {
-  const cmd = 'go get github.com/kungfusheep/glyph@v0.6.0';
+  const cmd = 'go get github.com/kungfusheep/glyph@v0.7.0';
   const badge = el.querySelector('.copied');
   function flash() {
     badge.classList.add('show');
@@ -1207,7 +1207,7 @@ function copyInstall(el) {
 <script src="fzf.js"></script>
 <script>
 // ============================================================
-// API REFERENCE — fetch api.json + render (function-first)
+// API REFERENCE - fetch api.json + render (function-first)
 // ============================================================
 (function() {
 
@@ -2141,9 +2141,9 @@ function copyInstall(el) {
     for (const tok of tokens) {
       const s = scoreField(tok, el);
       if (tok.inverse) {
-        if (s > 0) return 0; // inverse matched — exclude
+        if (s > 0) return 0; // inverse matched - exclude
       } else {
-        if (s === 0) return 0; // required token didn't match — exclude
+        if (s === 0) return 0; // required token didn't match - exclude
         total += s;
       }
     }
@@ -2198,7 +2198,7 @@ function copyInstall(el) {
     const scored = typeElements.map(el => ({ el, score: scoreElement(el, tokens) }));
     scored.sort((a, b) => b.score - a.score);
 
-    // hide all categories — results go in a flat container
+    // hide all categories - results go in a flat container
     document.querySelectorAll('.api-category').forEach(cat => {
       cat.style.display = 'none';
     });

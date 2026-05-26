@@ -12,9 +12,9 @@ import (
 )
 
 type example struct {
-	view   any
-	w, h   int
-	pad    int // extra rows below content for fade clearance
+	view Component
+	w, h int
+	pad  int // extra rows below content for fade clearance
 }
 
 func examples() map[string]example {
@@ -168,7 +168,7 @@ func examples() map[string]example {
 		email := "pete@example.com"
 		role := 0
 		agree := true
-		register := func() {}
+		register := func(*FormC) {}
 
 		m["form-demo"] = example{
 			w: 36, h: 9,
@@ -474,7 +474,7 @@ func examples() map[string]example {
 			w: 50, h: 11,
 			view: FilterList(&packages, func(p *pkg) string { return p.Name }).
 				Placeholder("search packages...").
-				Render(func(p *pkg) any {
+				Render(func(p *pkg) Component {
 					return HBox.Gap(2)(
 						Text(&p.Name).Bold(),
 						Text(&p.Desc).FG(BrightBlack),
@@ -520,7 +520,7 @@ func examples() map[string]example {
 		email := "pete@example.com"
 		role := 0
 		agree := true
-		register := func() {}
+		register := func(*FormC) {}
 
 		m["registration-form"] = example{
 			w: 40, h: 10,
@@ -670,17 +670,17 @@ func examples() map[string]example {
 		}
 	}
 
-	// concepts-effect-wave (rendered manually — needs full-buffer access)
+	// concepts-effect-wave (rendered manually - needs full-buffer access)
 	{
 		m["concepts-effect-wave"] = example{w: 34, h: 9, pad: 2, view: nil}
 	}
 
-	// concepts-effect-scatter (rendered manually — needs hash-based buffer writes)
+	// concepts-effect-scatter (rendered manually - needs hash-based buffer writes)
 	{
 		m["concepts-effect-scatter"] = example{w: 34, h: 9, pad: 2, view: nil}
 	}
 
-	// concepts-effect-collapse (rendered manually — needs radial distance calc)
+	// concepts-effect-collapse (rendered manually - needs radial distance calc)
 	{
 		m["concepts-effect-collapse"] = example{w: 34, h: 9, pad: 2, view: nil}
 	}
@@ -725,7 +725,7 @@ func examples() map[string]example {
 func renderModal() termData {
 	w, h := 40, 10
 
-	// render background — a file list
+	// render background - a file list
 	items := []string{"server.go", "handler.go", "middleware.go", "routes.go", "config.go", "main.go", "db.go", "auth.go"}
 	bgView := VBox.Border(BorderRounded).Title("files")(
 		List(&items),
@@ -754,7 +754,7 @@ func renderModal() termData {
 		}
 	}
 
-	// render modal dialog — lighter background, no border, just padding
+	// render modal dialog - lighter background, no border, just padding
 	onConfirm := func() {}
 	onCancel := func() {}
 	modalBG := RGB(50, 50, 48)
@@ -804,7 +804,7 @@ func renderModal() termData {
 	// blit modal onto vignetted background
 	buf.Blit(modalBuf, 0, 0, ox, oy, modalW, modalH)
 
-	// return all lines (no trim — vignette sets explicit BG on every cell)
+	// return all lines (no trim - vignette sets explicit BG on every cell)
 	td := termData{Width: w, Height: h + 3}
 	for y := 0; y < h; y++ {
 		td.Lines = append(td.Lines, buf.GetLineStyled(y))

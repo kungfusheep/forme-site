@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>glyph — Get Started</title>
+<title>glyph - Get Started</title>
 <meta name="description" content="Build your first terminal UI in Go with glyph. Step-by-step tutorial from install to styled, interactive app.">
 <meta name="keywords" content="go,golang,tui,terminal,ui,framework,tutorial,getting-started">
 <meta name="author" content="Pete Griffiths">
@@ -14,7 +14,7 @@
 
 <!-- open graph -->
 <meta property="og:type" content="article">
-<meta property="og:title" content="glyph — Get Started">
+<meta property="og:title" content="glyph - Get Started">
 <meta property="og:image" content="https://useglyph.sh/og.png">
 <meta property="og:description" content="Build your first terminal UI in Go with glyph. Step-by-step tutorial from install to styled, interactive app.">
 <meta property="og:url" content="https://useglyph.sh/start.html">
@@ -24,7 +24,7 @@
 <!-- twitter -->
 <meta name="twitter:site" content="@kungfusheep">
 <meta name="twitter:creator" content="@kungfusheep">
-<meta name="twitter:title" content="glyph — Get Started">
+<meta name="twitter:title" content="glyph - Get Started">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://useglyph.sh/og.png">
 <meta name="twitter:description" content="Build your first terminal UI in Go with glyph. Step-by-step tutorial from install to styled, interactive app.">
@@ -483,7 +483,7 @@
 
 <div class="code code-raw">$ mkdir myapp && cd myapp
 $ go mod init myapp
-$ go get github.com/kungfusheep/glyph@v0.6.0</div>
+$ go get github.com/kungfusheep/glyph@v0.7.0</div>
 
   <div class="concept-prose">
     The dot import is optional, but used throughout these examples.
@@ -510,7 +510,7 @@ import . "github.com/kungfusheep/glyph"</div>
 
   <div class="concept-prose">
     State lives in plain Go variables. Any type, any structure.
-    Pass a pointer and the framework reads current values on each update. Keyboard handlers are plain functions.
+    Pass a pointer; glyph reads the current value every update. Declare key bindings in the tree with <code>On(Key(...))</code>.
   </div>
 
 <div class="show-grid">
@@ -526,18 +526,20 @@ func main() {
 		VBox(
 			Text(&count),
 			Text("↑/↓ to count, enter to quit"),
+			On(
+				Key("&lt;Up&gt;", func() { count++ }),
+				Key("&lt;Down&gt;", func() { count-- }),
+				Key("&lt;Enter&gt;", app.Stop),
+			),
 		),
 	).
-		Handle("&lt;Up&gt;", func() { count++ }).
-		Handle("&lt;Down&gt;", func() { count-- }).
-		Handle("&lt;Enter&gt;", app.Stop).
 		ClearOnExit(true).
 		Run()
 
 	println("You selected", count)
 }</div>
   <div class="show-text">
-    <canvas data-termdata="{&quot;w&quot;:30,&quot;h&quot;:3,&quot;lines&quot;:[&quot;7                             &quot;,&quot;↑/↓ to count, enter to quit   &quot;]}"></canvas>
+    <canvas data-term="first-app" data-termdata="{&quot;w&quot;:30,&quot;h&quot;:3,&quot;lines&quot;:[&quot;7                             &quot;,&quot;↑/↓ to count, enter to quit   &quot;]}"></canvas>
   </div>
 </div>
 
@@ -553,7 +555,7 @@ func main() {
   </div>
 
   <div class="concept-prose">
-    <strong><code>Handle(key, fn)</code></strong> registers a global key binding.
+    <strong><code>On(Key(pattern, fn))</code></strong> declares key bindings in the component tree.
     Plain characters (<code>"q"</code>), special keys (<code>"&lt;Up&gt;"</code>, <code>"&lt;Esc&gt;"</code>, <code>"&lt;Enter&gt;"</code>),
     modifiers (<code>"&lt;C-c&gt;"</code>). The callback runs on keypress and glyph re-renders.
   </div>
@@ -587,7 +589,7 @@ func main() {
 	),
 )</div>
   <div class="show-text">
-    <canvas data-termdata="{&quot;w&quot;:50,&quot;h&quot;:5,&quot;lines&quot;:[&quot;╭─ left ───────╮╭─ right ────────────────────────╮&quot;,&quot;│panel one     ││panel two takes 2/3 width       │&quot;,&quot;│              ││                                │&quot;,&quot;│              ││                                │&quot;,&quot;╰──────────────╯╰────────────────────────────────╯&quot;]}" style="max-width:318px"></canvas>
+    <canvas data-term="layout-panels" data-termdata="{&quot;w&quot;:50,&quot;h&quot;:5,&quot;lines&quot;:[&quot;╭─ left ───────╮╭─ right ────────────────────────╮&quot;,&quot;│panel one     ││panel two takes 2/3 width       │&quot;,&quot;│              ││                                │&quot;,&quot;│              ││                                │&quot;,&quot;╰──────────────╯╰────────────────────────────────╯&quot;]}" style="max-width:318px"></canvas>
   </div>
 </div>
 
@@ -614,7 +616,7 @@ func main() {
 	Text("q: quit").FG(BrightBlack),
 )</div>
   <div class="show-text">
-    <canvas data-termdata="{&quot;w&quot;:40,&quot;h&quot;:2,&quot;lines&quot;:[&quot;\u001b[0;32;49mready\u001b[0;39;49m  \u001b[0;1;39;49m3 tasks\u001b[0;39;49m                   \u001b[0;90;49mq: quit\u001b[0m&quot;]}" style="max-width:318px"></canvas>
+    <canvas data-term="layout-statusbar" data-termdata="{&quot;w&quot;:40,&quot;h&quot;:2,&quot;lines&quot;:[&quot;\u001b[0;32;49mready\u001b[0;39;49m  \u001b[0;1;39;49m3 tasks\u001b[0;39;49m                   \u001b[0;90;49mq: quit\u001b[0m&quot;]}" style="max-width:318px"></canvas>
   </div>
 </div>
 
@@ -649,7 +651,7 @@ grid(
 	VBox.Border(BorderRounded)(Text("zeta")),
 )</div>
   <div class="show-text">
-    <canvas data-termdata="{&quot;w&quot;:42,&quot;h&quot;:7,&quot;lines&quot;:[&quot;╭────────────╮╭────────────╮╭────────────╮&quot;,&quot;│alpha       ││beta        ││gamma       │&quot;,&quot;╰────────────╯╰────────────╯╰────────────╯&quot;,&quot;╭────────────╮╭────────────╮╭────────────╮&quot;,&quot;│delta       ││epsilon     ││zeta        │&quot;,&quot;╰────────────╯╰────────────╯╰────────────╯&quot;]}" style="max-width:318px"></canvas>
+    <canvas data-term="layout-arrange" data-termdata="{&quot;w&quot;:42,&quot;h&quot;:7,&quot;lines&quot;:[&quot;╭────────────╮╭────────────╮╭────────────╮&quot;,&quot;│alpha       ││beta        ││gamma       │&quot;,&quot;╰────────────╯╰────────────╯╰────────────╯&quot;,&quot;╭────────────╮╭────────────╮╭────────────╮&quot;,&quot;│delta       ││epsilon     ││zeta        │&quot;,&quot;╰────────────╯╰────────────╯╰────────────╯&quot;]}" style="max-width:318px"></canvas>
   </div>
 </div>
 
@@ -681,7 +683,7 @@ If(&online).Then(
 	Text("● offline").FG(Red),
 )</div>
   <div class="show-text">
-    <canvas data-termdata="{&quot;w&quot;:30,&quot;h&quot;:5,&quot;lines&quot;:[&quot;╭─ status ───────────────────╮&quot;,&quot;│\u001b[0;32;49m● connected\u001b[0;39;49m                 │&quot;,&quot;│\u001b[0;33;49mmode: edit\u001b[0;39;49m                  │&quot;,&quot;│                            │&quot;,&quot;╰────────────────────────────╯&quot;]}" style="max-width:318px"></canvas>
+    <canvas data-term="control-flow" data-termdata="{&quot;w&quot;:30,&quot;h&quot;:5,&quot;lines&quot;:[&quot;╭─ status ───────────────────╮&quot;,&quot;│\u001b[0;32;49m● connected\u001b[0;39;49m                 │&quot;,&quot;│\u001b[0;33;49mmode: edit\u001b[0;39;49m                  │&quot;,&quot;│                            │&quot;,&quot;╰────────────────────────────╯&quot;]}" style="max-width:318px"></canvas>
   </div>
 </div>
 
@@ -757,7 +759,7 @@ Match(&query,
     Conditions work per-item. Style, show, or hide based on each element's state.
   </div>
 
-<div class="code code-raw">ForEach(&items, func(item *Todo) any {
+<div class="code code-raw">ForEach(&items, func(item *Todo) Component {
 	return HBox.Gap(2)(
 		Checkbox(&item.Done, ""),
 		If(&item.Done).Then(
@@ -811,7 +813,7 @@ func main() {
 	fmt.Println("opening", choice)
 }</div>
   <div class="show-text">
-    <canvas data-termdata="{&quot;w&quot;:24,&quot;h&quot;:7,&quot;lines&quot;:[&quot;╭─ open ───────────────╮&quot;,&quot;│\u003e main.go             │&quot;,&quot;│  go.mod              │&quot;,&quot;│  README.md           │&quot;,&quot;│  config.toml         │&quot;,&quot;│  Makefile            │&quot;,&quot;╰──────────────────────╯&quot;]}" style="max-width:318px"></canvas>
+    <canvas data-term="file-picker" data-termdata="{&quot;w&quot;:24,&quot;h&quot;:7,&quot;lines&quot;:[&quot;╭─ open ───────────────╮&quot;,&quot;│\u003e main.go             │&quot;,&quot;│  go.mod              │&quot;,&quot;│  README.md           │&quot;,&quot;│  config.toml         │&quot;,&quot;│  Makefile            │&quot;,&quot;╰──────────────────────╯&quot;]}" style="max-width:318px"></canvas>
     <div class="show-aside">
       <strong><code>.BindVimNav()</code></strong> adds j/k, <code>&lt;C-d&gt;</code>/<code>&lt;C-u&gt;</code> to page, g/G for start/end.
       <strong><code>FilterList</code></strong> wraps the same API with a built-in fuzzy search input.
@@ -833,30 +835,39 @@ func main() {
   </div>
 
   <div class="concept-prose">
-    <strong><code>app.Handle(key, fn)</code></strong> registers global key bindings, active regardless of focus.
+    <strong><code>On(Key(pattern, fn))</code></strong> declares key bindings alongside the UI they control.
     Plain characters, special names, and modifier combos all work.
   </div>
 
-<div class="code code-raw">app.Handle("q", app.Stop)
-app.Handle("&lt;C-c&gt;", app.Stop)
-app.Handle("&lt;Esc&gt;", app.Stop)
+<div class="code code-raw">On(
+	Key("q", app.Stop),
+	Key("&lt;C-c&gt;", app.Stop),
+	Key("&lt;Esc&gt;", app.Stop),
 
-app.Handle("a", func() { /* add item */ })
-app.Handle("d", func() { /* delete item */ })
-app.Handle("&lt;C-s&gt;", func() { /* save */ })</div>
+	Key("a", func() { /* add item */ }),
+	Key("d", func() { /* delete item */ }),
+	Key("&lt;C-s&gt;", func() { /* save */ }),
+)</div>
 
   <div class="concept-prose">
-    <strong><code>List.Handle(key, fn)</code></strong> fires with the selected item already resolved. No index to track.
+    <strong><code>List.Selected()</code></strong> returns the selected item for declarative handlers.
   </div>
 
-<div class="code code-raw">List(&tasks).Render(func(t *Task) any {
-	return HBox.Gap(1)(
-		If(&t.Done).Then(Text("[x]")).Else(Text("[ ]")),
-		Text(&t.Title),
-	)
-}).Handle("&lt;Space&gt;", func(t *Task) {
-	t.Done = !t.Done
-}).BindVimNav()</div>
+<div class="code code-raw">var taskList *ListC[Task]
+
+VBox(
+	List(&tasks).Render(func(t *Task) Component {
+		return HBox.Gap(1)(
+			If(&t.Done).Then(Text("[x]")).Else(Text("[ ]")),
+			Text(&t.Title),
+		)
+	}).BindVimNav().Ref(func(l *ListC[Task]) { taskList = l }),
+	On(Key("&lt;Space&gt;", func() {
+		if task := taskList.Selected(); task != nil {
+			task.Done = !task.Done
+		}
+	})),
+)</div>
 
   <div class="concept-prose">
     <strong><code>.BindVimNav()</code></strong> wires j/k, <code>&lt;C-d&gt;</code>/<code>&lt;C-u&gt;</code>, and g/G in a single call.
@@ -891,6 +902,7 @@ app.Handle("&lt;C-s&gt;", func() { /* save */ })</div>
 email := "pete@example.com"
 role := 0
 agree := true
+register := func(*FormC) {}
 
 Form.LabelBold().OnSubmit(register)(
 	Field("Name", Input(&name).
@@ -903,7 +915,7 @@ Form.LabelBold().OnSubmit(register)(
 		"I accept")),
 )</div>
   <div class="show-text">
-    <canvas data-termdata="{&quot;w&quot;:36,&quot;h&quot;:9,&quot;lines&quot;:[&quot;╭─ register ───────────────────────╮&quot;,&quot;│▸ \u001b[0;1;39;49mName:\u001b[0;39;49m \u001b[0;7;39;49mP\u001b[0;39;49mete                      │&quot;,&quot;│ \u001b[0;1;39;49mEmail:\u001b[0;39;49m pete@example.com          │&quot;,&quot;│  \u001b[0;1;39;49mRole:\u001b[0;39;49m ◉ Admin                   │&quot;,&quot;│        ○ User                    │&quot;,&quot;│        ○ Guest                   │&quot;,&quot;│ \u001b[0;1;39;49mTerms:\u001b[0;39;49m ☑ I accept                │&quot;,&quot;│                                  │&quot;,&quot;╰──────────────────────────────────╯&quot;]}" style="max-width:318px"></canvas>
+    <canvas data-term="form-demo" data-termdata="{&quot;w&quot;:36,&quot;h&quot;:9,&quot;lines&quot;:[&quot;╭─ register ───────────────────────╮&quot;,&quot;│▸ \u001b[0;1;39;49mName:\u001b[0;39;49m \u001b[0;7;39;49mP\u001b[0;39;49mete                      │&quot;,&quot;│ \u001b[0;1;39;49mEmail:\u001b[0;39;49m pete@example.com          │&quot;,&quot;│  \u001b[0;1;39;49mRole:\u001b[0;39;49m ◉ Admin                   │&quot;,&quot;│        ○ User                    │&quot;,&quot;│        ○ Guest                   │&quot;,&quot;│ \u001b[0;1;39;49mTerms:\u001b[0;39;49m ☑ I accept                │&quot;,&quot;│                                  │&quot;,&quot;╰──────────────────────────────────╯&quot;]}" style="max-width:318px"></canvas>
   </div>
 </div>
 
@@ -950,7 +962,7 @@ AutoTable(&services).
 	Scrollable(10).
 	BindVimNav()</div>
   <div class="show-text">
-    <canvas data-termdata="{&quot;w&quot;:40,&quot;h&quot;:7,&quot;lines&quot;:[&quot;\u001b[0;1;39;49mName          \u001b[0;39;49m \u001b[0;1;39;49mStatus          \u001b[0;39;49m \u001b[0;1;39;49mCPU    \u001b[0;39;49m &quot;,&quot;api            running          12%     &quot;,&quot;worker         running          8%      &quot;,&quot;cache          stopped          0%      &quot;,&quot;db             running          23%     &quot;]}" style="max-width:318px"></canvas>
+    <canvas data-term="table-demo" data-termdata="{&quot;w&quot;:40,&quot;h&quot;:7,&quot;lines&quot;:[&quot;\u001b[0;1;39;49mName          \u001b[0;39;49m \u001b[0;1;39;49mStatus          \u001b[0;39;49m \u001b[0;1;39;49mCPU    \u001b[0;39;49m &quot;,&quot;api            running          12%     &quot;,&quot;worker         running          8%      &quot;,&quot;cache          stopped          0%      &quot;,&quot;db             running          23%     &quot;]}" style="max-width:318px"></canvas>
   </div>
 </div>
 
@@ -984,7 +996,7 @@ Text("muted").FG(BrightBlack).Dim()
 Text("success").FG(Green)
 Text("warning").FG(Yellow).Bold()</div>
   <div class="show-text">
-    <canvas data-termdata="{&quot;w&quot;:30,&quot;h&quot;:4,&quot;lines&quot;:[&quot;\u001b[0;1;31;49merror\u001b[0;39;49m                         &quot;,&quot;\u001b[0;2;90;49mmuted\u001b[0;39;49m                         &quot;,&quot;\u001b[0;32;49msuccess\u001b[0;39;49m                       &quot;,&quot;\u001b[0;1;33;49mwarning\u001b[0;39;49m                       &quot;]}" style="max-width:318px"></canvas>
+    <canvas data-term="styled-text" data-termdata="{&quot;w&quot;:30,&quot;h&quot;:4,&quot;lines&quot;:[&quot;\u001b[0;1;31;49merror\u001b[0;39;49m                         &quot;,&quot;\u001b[0;2;90;49mmuted\u001b[0;39;49m                         &quot;,&quot;\u001b[0;32;49msuccess\u001b[0;39;49m                       &quot;,&quot;\u001b[0;1;33;49mwarning\u001b[0;39;49m                       &quot;]}" style="max-width:318px"></canvas>
   </div>
 </div>
 
@@ -1023,7 +1035,7 @@ VBox.CascadeStyle(&theme.Base).Border(BorderRounded).BorderFG(theme.Border.FG)(
 	Text("error!").Style(theme.Error),
 )</div>
   <div class="show-text">
-    <canvas data-termdata="{&quot;w&quot;:30,&quot;h&quot;:7,&quot;lines&quot;:[&quot;\u001b[0;90;49m╭────────────────────────────╮\u001b[0m&quot;,&quot;\u001b[0;90;49m│\u001b[0;37;49mnormal text\u001b[0;39;49m                 \u001b[0;90;49m│\u001b[0m&quot;,&quot;\u001b[0;90;49m│muted\u001b[0;39;49m                       \u001b[0;90;49m│\u001b[0m&quot;,&quot;\u001b[0;90;49m│\u001b[0;96;49maccent\u001b[0;39;49m                      \u001b[0;90;49m│\u001b[0m&quot;,&quot;\u001b[0;90;49m│\u001b[0;91;49merror!\u001b[0;39;49m                      \u001b[0;90;49m│\u001b[0m&quot;,&quot;\u001b[0;90;49m│\u001b[0;39;49m                            \u001b[0;90;49m│\u001b[0m&quot;,&quot;\u001b[0;90;49m╰────────────────────────────╯\u001b[0m&quot;]}" style="max-width:318px"></canvas>
+    <canvas data-term="theme-demo" data-termdata="{&quot;w&quot;:30,&quot;h&quot;:7,&quot;lines&quot;:[&quot;\u001b[0;90;49m╭────────────────────────────╮\u001b[0m&quot;,&quot;\u001b[0;90;49m│\u001b[0;37;49mnormal text\u001b[0;39;49m                 \u001b[0;90;49m│\u001b[0m&quot;,&quot;\u001b[0;90;49m│muted\u001b[0;39;49m                       \u001b[0;90;49m│\u001b[0m&quot;,&quot;\u001b[0;90;49m│\u001b[0;96;49maccent\u001b[0;39;49m                      \u001b[0;90;49m│\u001b[0m&quot;,&quot;\u001b[0;90;49m│\u001b[0;91;49merror!\u001b[0;39;49m                      \u001b[0;90;49m│\u001b[0m&quot;,&quot;\u001b[0;90;49m│\u001b[0;39;49m                            \u001b[0;90;49m│\u001b[0m&quot;,&quot;\u001b[0;90;49m╰────────────────────────────╯\u001b[0m&quot;]}" style="max-width:318px"></canvas>
   </div>
 </div>
 
@@ -1049,7 +1061,7 @@ VBox.CascadeStyle(&theme.Base).Border(BorderRounded).BorderFG(theme.Border.FG)(
 
   <div class="concept-sub">Custom Rendering</div>
   <div class="concept-prose">
-    <strong><code>Widget</code></strong> is the escape hatch for fully custom rendering.
+    <strong><code>Custom</code></strong> is the escape hatch for fully custom rendering.
     Provide a measure function and a render function. glyph calls them during layout and draw.
   </div>
 
@@ -1063,7 +1075,7 @@ VBox.CascadeStyle(&theme.Base).Border(BorderRounded).BorderFG(theme.Border.FG)(
 	HRule(),
 	HBox(
 		VBox.Grow(1).Border(BorderRounded).Title("chart")(
-			Widget(
+			Custom(
 				func(availW int16) (w, h int16) {
 					return availW, 4
 				},
@@ -1080,7 +1092,7 @@ VBox.CascadeStyle(&theme.Base).Border(BorderRounded).BorderFG(theme.Border.FG)(
 	),
 )</div>
   <div class="show-text">
-    <canvas data-termdata="{&quot;w&quot;:50,&quot;h&quot;:10,&quot;lines&quot;:[&quot;╭─ dashboard ────────────────────────────────────╮&quot;,&quot;│\u001b[0;1;39;49mmetrics\u001b[0;39;49m                                     \u001b[0;32;49mlive\u001b[0;39;49m│&quot;,&quot;│────────────────────────────────────────────────│&quot;,&quot;│╭─ chart ──────────────╮╭─ status ─────────────╮│&quot;,&quot;││    \u001b[0;32;49m█\u001b[0;39;49m     \u001b[0;32;49m█\u001b[0;39;49m           ││uptime...........99.9%││&quot;,&quot;││\u001b[0;32;49m█\u001b[0;39;49m   \u001b[0;32;49m█\u001b[0;39;49m   \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m     \u001b[0;32;49m█\u001b[0;39;49m     ││errors...............0││&quot;,&quot;││\u001b[0;32;49m█\u001b[0;39;49m   \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m   \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m   ││latency...........12ms││&quot;,&quot;││\u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m   ││                      ││&quot;,&quot;│╰──────────────────────╯╰──────────────────────╯│&quot;,&quot;╰────────────────────────────────────────────────╯&quot;]}" style="max-width:318px"></canvas>
+    <canvas data-term="layout-compose" data-termdata="{&quot;w&quot;:50,&quot;h&quot;:10,&quot;lines&quot;:[&quot;╭─ dashboard ────────────────────────────────────╮&quot;,&quot;│\u001b[0;1;39;49mmetrics\u001b[0;39;49m                                     \u001b[0;32;49mlive\u001b[0;39;49m│&quot;,&quot;│────────────────────────────────────────────────│&quot;,&quot;│╭─ chart ──────────────╮╭─ status ─────────────╮│&quot;,&quot;││    \u001b[0;32;49m█\u001b[0;39;49m     \u001b[0;32;49m█\u001b[0;39;49m           ││uptime...........99.9%││&quot;,&quot;││\u001b[0;32;49m█\u001b[0;39;49m   \u001b[0;32;49m█\u001b[0;39;49m   \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m     \u001b[0;32;49m█\u001b[0;39;49m     ││errors...............0││&quot;,&quot;││\u001b[0;32;49m█\u001b[0;39;49m   \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m   \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m   ││latency...........12ms││&quot;,&quot;││\u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m \u001b[0;32;49m█\u001b[0;39;49m   ││                      ││&quot;,&quot;│╰──────────────────────╯╰──────────────────────╯│&quot;,&quot;╰────────────────────────────────────────────────╯&quot;]}" style="max-width:318px"></canvas>
   </div>
 </div>
 </div>

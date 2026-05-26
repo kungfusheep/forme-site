@@ -257,7 +257,7 @@ func exampleDoc(fset *token.FileSet, e *doc.Example, previewsDir string) Example
 		code = strings.Join(lines, "\n")
 	}
 	code = strings.TrimSpace(code)
-	// strip "tree := " from display code — examples assign to tree for
+	// strip "tree := " from display code - examples assign to tree for
 	// renderAndPrint but docs should show the constructor call directly
 	code = strings.Replace(code, "tree := ", "", 1)
 

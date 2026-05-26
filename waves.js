@@ -99,7 +99,7 @@
       Math.sin(x * wave.freq * 0.6 + t * wave.speed * 0.007 + n * 3 + i * 2) * wave.amp * 0.5 * dpr
   }
 
-  // keyboard toggles (dev only — remove before shipping)
+  // keyboard toggles (dev only - remove before shipping)
   const keyMap = {
     a: 'ripple', s: 'breathingWeight', d: 'dash', f: 'echo', g: 'pulse',
     h: 'mist', j: 'thread', k: 'fog', l: 'refract',
@@ -119,7 +119,7 @@
   const WARMUP_FRAMES = 20
 
   function warmup(t) {
-    // draw real frames but keep canvases invisible — lets the browser JIT + allocate GPU textures
+    // draw real frames but keep canvases invisible - lets the browser JIT + allocate GPU textures
     for (let n = 0; n < instances.length; n++) {
       const inst = instances[n]
       if (!inst.visible) continue

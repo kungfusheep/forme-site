@@ -1,7 +1,7 @@
-// omni.js — site-wide search popover
+// omni.js - site-wide search popover
 // self-contained: injects CSS, lazily loads api.json, builds UI
 (function() {
-  // skip on the api page — it has its own inline search
+  // skip on the api page - it has its own inline search
   if (location.pathname.endsWith('api.html') || location.pathname.endsWith('api')) return;
 
   // fzf scorer functions loaded from fzf.js (global scope)

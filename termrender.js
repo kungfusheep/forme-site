@@ -1,4 +1,4 @@
-// terminal canvas renderer — parses ANSI escape codes and paints to <canvas>
+// terminal canvas renderer - parses ANSI escape codes and paints to <canvas>
 // usage: <canvas data-term="img/example.json"></canvas>
 (function () {
   const BG = '#1a1a18'
@@ -114,7 +114,7 @@
     ctx.scale(dpr, dpr)
     ctx.translate(SHADOW_PAD, SHADOW_PAD)
 
-    // macOS-style drop shadow — single pass, cached per size
+    // macOS-style drop shadow - single pass, cached per size
     const shadowKey = totalW + 'x' + totalH
     let shadowCanvas = shadowCache.get(shadowKey)
     if (!shadowCanvas) {
@@ -242,7 +242,7 @@
       case '━': ctx.lineWidth = 2; line(ctx, x, cy, x + w, cy); return true
       case '┃': ctx.lineWidth = 2; line(ctx, cx, y, cx, y + h); return true
 
-      // rounded corners — connect midpoints of edges with a quarter-circle
+      // rounded corners - connect midpoints of edges with a quarter-circle
       case '╭': corner(ctx, cx, cy, x + w, cy, cx, y + h, 3); return true
       case '╮': corner(ctx, cx, cy, x, cy, cx, y + h, 3); return true
       case '╰': corner(ctx, cx, cy, x + w, cy, cx, y, 3); return true
@@ -270,10 +270,10 @@
       case '╝': line(ctx, cx + 2, y, cx + 2, cy + 2); line(ctx, cx - 2, y, cx - 2, cy - 2); line(ctx, x, cy + 2, cx + 2, cy + 2); line(ctx, x, cy - 2, cx - 2, cy - 2); return true
 
       // horizontal rule
-      case '—': line(ctx, x, cy, x + w, cy); return true
+      case '\u2014': line(ctx, x, cy, x + w, cy); return true
       case '–': line(ctx, x, cy, x + w, cy); return true
 
-      // block elements — vertical fills (bottom up)
+      // block elements - vertical fills (bottom up)
       case '▁': ctx.fillStyle = color; ctx.fillRect(x, y + h * 7/8, w + 0.5, h * 1/8 + 0.5); return true
       case '▂': ctx.fillStyle = color; ctx.fillRect(x, y + h * 3/4, w + 0.5, h * 1/4 + 0.5); return true
       case '▃': ctx.fillStyle = color; ctx.fillRect(x, y + h * 5/8, w + 0.5, h * 3/8 + 0.5); return true
@@ -283,10 +283,10 @@
       case '▇': ctx.fillStyle = color; ctx.fillRect(x, y + h * 1/8, w + 0.5, h * 7/8 + 0.5); return true
       case '█': ctx.fillStyle = color; ctx.fillRect(x, y, w + 0.5, h + 0.5); return true
 
-      // block elements — top fills (top down)
+      // block elements - top fills (top down)
       case '▀': ctx.fillStyle = color; ctx.fillRect(x, y, w + 0.5, h / 2 + 0.5); return true
 
-      // block elements — horizontal fills (left to right)
+      // block elements - horizontal fills (left to right)
       case '▏': ctx.fillStyle = color; ctx.fillRect(x, y, w * 1/8 + 0.5, h + 0.5); return true
       case '▎': ctx.fillStyle = color; ctx.fillRect(x, y, w * 1/4 + 0.5, h + 0.5); return true
       case '▍': ctx.fillStyle = color; ctx.fillRect(x, y, w * 3/8 + 0.5, h + 0.5); return true
@@ -295,7 +295,7 @@
       case '▊': ctx.fillStyle = color; ctx.fillRect(x, y, w * 3/4 + 0.5, h + 0.5); return true
       case '▉': ctx.fillStyle = color; ctx.fillRect(x, y, w * 7/8 + 0.5, h + 0.5); return true
 
-      // block elements — right fills
+      // block elements - right fills
       case '▐': ctx.fillStyle = color; ctx.fillRect(x + w / 2, y, w / 2 + 0.5, h + 0.5); return true
 
       // shade blocks
