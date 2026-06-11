@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -187,6 +188,7 @@ func main() {
 
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "  ")
+	enc.SetEscapeHTML(false)
 	if err := enc.Encode(out); err != nil {
 		fmt.Fprintf(os.Stderr, "error encoding json: %v\n", err)
 		os.Exit(1)
@@ -270,16 +272,48 @@ func exampleDoc(fset *token.FileSet, e *doc.Example, previewsDir string) Example
 
 	// attach preview if available
 	if previewsDir != "" {
-		pfile := filepath.Join(previewsDir, e.Name+".json")
-		if data, err := os.ReadFile(pfile); err == nil {
-			var p Preview
-			if json.Unmarshal(data, &p) == nil && len(p.Lines) > 0 {
-				ed.Preview = &p
+		for _, previewName := range previewNames(e) {
+			pfile := filepath.Join(previewsDir, previewName+".json")
+			if data, err := os.ReadFile(pfile); err == nil {
+				var p Preview
+				if json.Unmarshal(data, &p) == nil && len(p.Lines) > 0 {
+					ed.Preview = &p
+					break
+				}
 			}
 		}
 	}
 
 	return ed
+}
+
+func previewNames(e *doc.Example) []string {
+	names := []string{e.Name}
+	seen := map[string]bool{e.Name: true}
+
+	ast.Inspect(e.Code, func(n ast.Node) bool {
+		call, ok := n.(*ast.CallExpr)
+		if !ok {
+			return true
+		}
+		fn, ok := call.Fun.(*ast.Ident)
+		if !ok || (fn.Name != "renderAndPrint" && fn.Name != "renderWithEffects") || len(call.Args) == 0 {
+			return true
+		}
+		lit, ok := call.Args[0].(*ast.BasicLit)
+		if !ok || lit.Kind != token.STRING {
+			return true
+		}
+		name, err := strconv.Unquote(lit.Value)
+		if err != nil || name == "" || seen[name] {
+			return true
+		}
+		seen[name] = true
+		names = append(names, name)
+		return true
+	})
+
+	return names
 }
 
 func funcSignature(fset *token.FileSet, decl *ast.FuncDecl) string {
