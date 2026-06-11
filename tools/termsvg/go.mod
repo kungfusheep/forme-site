@@ -17,3 +17,5 @@ require (
 )
 
 replace github.com/kungfusheep/glyph => /Users/petegriffiths/code/go/src/tui
+
+replace github.com/kungfusheep/riffkey => /Users/petegriffiths/code/go/src/riffkey

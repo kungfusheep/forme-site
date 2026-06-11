@@ -1668,6 +1668,13 @@ title = "World"               // next render shows "World"</div>
   </div>
 
   <div class="concept-prose">
+    The template layer is a <strong>stateful serializer</strong>, not an orchestrator.
+    It owns viewing state like selection, scroll, focus, cursors, and animation phases.
+    Domain state and data acquisition live upstream in handlers and goroutines; render functions,
+    conditions, and <code>OnBeforeRender</code> read the state that already exists.
+  </div>
+
+  <div class="concept-prose">
     Nothing stops you building reactive patterns on top. An observer that calls <code>RequestRender()</code> when a channel
     fires is often just a few lines of code.
   </div>
@@ -1714,6 +1721,13 @@ title = "World"               // next render shows "World"</div>
     field pointer is stored instead of the pointer itself.
   </div>
 
+  <div class="concept-prose">
+    The configured form, <code>ForEach(&items).Limit(n).Remaining(&more)(render)</code>, keeps
+    UI caps in the template. <code>Limit</code> accepts an <code>int</code> or <code>*int</code>;
+    <code>Remaining</code> writes the number of excluded items each frame, so an overflow row
+    can be rendered with <code>IfOrd(&more).Gt(0)</code> without app-side display slices.
+  </div>
+
   <div class="cascade cascade-dynamic">
     <div class="cascade-step sweep-down">
       <div class="cascade-phase">
@@ -1734,6 +1748,7 @@ title = "World"               // next render shows "World"</div>
       </div>
       <div class="cascade-body">
         Read live slice header (<code>Data</code>, <code>Len</code>) via <code>unsafe.Pointer</code>.
+        Apply any configured <code>Limit</code> and update <code>Remaining</code>.
         For each item: swap <code>elemBase</code> to the real element, run
         <code>distributeWidths</code> + <code>layout</code> on the sub-template.
         Store position in <code>iterGeoms[i]</code>. The sub-template's geom is scratch.

@@ -21,7 +21,7 @@
     HRuleC: 'HRule', VRuleC: 'VRule', LeaderC: 'Leader',
     SpacerC: 'Spacer', AutoTableC: 'AutoTable',
     SparklineC: 'Sparkline', ProgressC: 'Progress', SpinnerC: 'Spinner',
-    ForEachC: 'ForEach', Condition: 'If', OrdCondition: 'IfOrd',
+    ForEachC: 'ForEach', ForEachFn: 'ForEach', Condition: 'If', OrdCondition: 'IfOrd',
     SwitchBuilder: 'Switch', MatchNode: 'Match', MatchCase: 'MatchCase',
     RichTextNode: 'Rich',
     Custom: 'Widget', ThemeEx: 'Theme',

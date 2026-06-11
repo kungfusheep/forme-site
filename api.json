@@ -3170,8 +3170,8 @@
       "constructors": [
         {
           "name": "ForEach",
-          "doc": "ForEach renders a template for each item in a slice.\ntemplate: func(item *T) Component. return a component tree for each item.\nPointer fields inside *T are reactive; mutate and re-render to update.\n\n\tForEach(&todos, func(t *Todo) Component {\n\t    return HBox(Text(&t.Name), Text(&t.Status))\n\t})\n",
-          "signature": "func ForEach[T any](items *[]T, template func(item *T) Component) ForEachC[T]",
+          "doc": "ForEach renders a template for each item in a slice.\nrender: func(item *T) Component. return a component tree for each item.\nPointer fields inside *T are reactive; mutate and re-render to update.\n\n\tForEach(&todos, func(t *Todo) Component {\n\t    return HBox(Text(&t.Name), Text(&t.Status))\n\t})\n\nOmit the render func to configure first, then supply it with the final call:\n\n\tForEach(&todos).Limit(&visible).Remaining(&more)(func(t *Todo) Component {\n\t    return Text(&t.Name)\n\t})\n",
+          "signature": "func ForEach[T any](items *[]T, render ...func(item *T) Component) ForEachC[T]",
           "examples": [
             {
               "doc": "Slice iteration.\nIterate a slice with per-item templates. The callback is called once at build time to define the per-item template; glyph re-evaluates the slice pointer each frame.\n",
@@ -3195,6 +3195,37 @@
           "doc": "",
           "signature": "func (f ForEachC[T]) Build() Component",
           "recv": "ForEachC[T]"
+        },
+        {
+          "name": "Limit",
+          "doc": "Limit caps how many items render. Accepts int or *int (re-read every frame).\n0 renders none; negative means unlimited.\n",
+          "signature": "func (f ForEachC[T]) Limit(n any) ForEachFn[T]",
+          "recv": "ForEachC[T]"
+        },
+        {
+          "name": "Remaining",
+          "doc": "Remaining binds an *int written each frame with the count of items the\nlimit excluded. Inside a parent ForEach, bind a field on the parent item\nfor a per-item count.\n",
+          "signature": "func (f ForEachC[T]) Remaining(c *int) ForEachFn[T]",
+          "recv": "ForEachC[T]"
+        }
+      ]
+    },
+    {
+      "name": "ForEachFn",
+      "doc": "ForEachFn is the configured form of ForEach: call it with the render func\nto complete the component. Config methods decorate it, VBoxFn-style.\n",
+      "decl": "type ForEachFn[T any] func(render func(item *T) Component) ForEachC[T]",
+      "methods": [
+        {
+          "name": "Limit",
+          "doc": "Limit caps how many items render. Accepts int or *int (re-read every frame).\n0 renders none; negative means unlimited.\n",
+          "signature": "func (f ForEachFn[T]) Limit(n any) ForEachFn[T]",
+          "recv": "ForEachFn[T]"
+        },
+        {
+          "name": "Remaining",
+          "doc": "Remaining binds an *int written each frame with the count of items the\nlimit excluded.\n",
+          "signature": "func (f ForEachFn[T]) Remaining(c *int) ForEachFn[T]",
+          "recv": "ForEachFn[T]"
         }
       ]
     },
@@ -7478,7 +7509,7 @@
       "constructors": [
         {
           "name": "TextView",
-          "doc": "TextView creates a scrollable multi-line text display with word wrapping.\nContent is re-wrapped automatically when the text or viewport width changes.\n",
+          "doc": "TextView creates a scrollable multi-line text display. Lines wrap at the\nviewport width, breaking mid-word by default; WordWrap() switches to\nword-boundary wrapping. Content is re-wrapped automatically when the text\nor viewport width changes.\n",
           "signature": "func TextView(content *string) *TextViewC"
         }
       ],
@@ -7529,6 +7560,12 @@
           "name": "MarginVH",
           "doc": "MarginVH sets vertical and horizontal margin.\n",
           "signature": "func (tv *TextViewC) MarginVH(v, h int16) *TextViewC",
+          "recv": "*TextViewC"
+        },
+        {
+          "name": "WordWrap",
+          "doc": "WordWrap switches wrapping to word boundaries \u2014 use for prose. The default\nbreaks at the exact viewport width, preserving runs and indentation.\n",
+          "signature": "func (tv *TextViewC) WordWrap() *TextViewC",
           "recv": "*TextViewC"
         }
       ],

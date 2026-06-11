@@ -757,6 +757,7 @@ Match(&query,
   <div class="concept-prose">
     <strong><code>ForEach</code></strong> iterates a slice. The callback receives a pointer to each item.
     Conditions work per-item. Style, show, or hide based on each element's state.
+    Use the configured form when the UI should show only part of a slice and expose an overflow count.
   </div>
 
 <div class="code code-raw">ForEach(&items, func(item *Todo) Component {
@@ -769,6 +770,16 @@ Match(&query,
 		),
 	)
 })</div>
+
+<div class="code code-raw">visible := 3
+more := 0
+
+VBox(
+	ForEach(&items).Limit(&visible).Remaining(&more)(func(item *Todo) Component {
+		return Text(&item.Title)
+	}),
+	IfOrd(&more).Gt(0).Then(Textf(&more, " more").Dim()),
+)</div>
 </div>
 
 <!-- ============================================================
