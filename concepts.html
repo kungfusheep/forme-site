@@ -1240,6 +1240,7 @@
   <a href="#effects" class="sidenav-link">Screen Effects</a>
   <a href="#animation" class="sidenav-link">Animation</a>
   <a href="#exit" class="sidenav-link">Enter &amp; Exit</a>
+  <a href="#osc" class="sidenav-link">Oscillators</a>
   <a href="#extend" class="sidenav-link">Custom Components</a>
 </nav>
 
@@ -1256,6 +1257,7 @@
   <a href="#effects" class="topnav-link">Effects</a>
   <a href="#animation" class="topnav-link">Animation</a>
   <a href="#exit" class="topnav-link">In/Out</a>
+  <a href="#osc" class="topnav-link">Osc</a>
   <a href="#extend" class="topnav-link">Extend</a>
 </nav>
 
@@ -1405,6 +1407,12 @@
     Flex grow is a separate phase because it needs the parent's final size, which flows top-down
     from the screen dimensions. <code>layout()</code> runs once, saves each node's natural size,
     and flex grow distributes the remaining space without re-running layout.
+  </div>
+
+  <div class="concept-prose">
+    The initial terminal size is delivered as a resize event before the first frame,
+    so <code>OnResize</code> callbacks observe the real dimensions immediately and the
+    first render is always at full size &mdash; there is no zero-sized frame to guard against.
   </div>
 </div>
 
@@ -2444,11 +2452,103 @@ If(&armed).Then(
     not the data. Pointer values keep updating right up to the final frame.
   </div>
 
+  <div class="concept-prose">
+    It also works per item inside a <code>ForEach</code> &mdash; branch state is keyed
+    per element, so each row runs its own exit independently. Wrap the row in an
+    <code>If</code> carrying an <code>Out</code> tween, flip the flag to start the fade,
+    and remove the item when the exit completes:
+  </div>
+
+  <div class="code code-raw">type Toast struct {
+    Msg   string
+    Alive bool
+}
+toasts := []Toast{{Msg: "saved", Alive: true}}
+
+ForEach(&amp;toasts, func(to *Toast) Component {
+    return If(&amp;to.Alive).Then(
+        HBox.Opacity(In(1.0).Out(
+            Animate.Duration(700 * time.Millisecond).
+                OnComplete(func() { removeDead(&amp;toasts) })(0.0),
+        ))(Text(&amp;to.Msg)),
+    )
+})</div>
+
+  <div class="concept-prose">
+    The removal event sets <code>Alive = false</code>; glyph holds the row's layout
+    slot while it fades and fires <code>OnComplete</code> exactly once per item. The item
+    stays in the bound slice for the whole fade &mdash; the slice remains the single source
+    of truth, and survivors reflow at true removal.
+  </div>
+
+  <div class="concept-prose">
+    <code>OnComplete</code> fires after the frame's <code>Execute</code> finishes, so the
+    callback may mutate bound state directly &mdash; including removing the completed item
+    from the very slice its <code>ForEach</code> iterates, as above. The mutation lands on
+    the next frame; glyph requests it for you.
+  </div>
+
+</div>
+
+<div class="concept" id="osc">
+  <div class="section-head">
+    <div class="section-num">13</div>
+    <div class="section-meta">
+      <div class="section-label">Motion</div>
+      <div class="section-title">Oscillators</div>
+    </div>
+  </div>
+
+  <div class="concept-prose">
+    An oscillator is a periodic value derived purely from the frame clock:
+    <code>Osc(hz)</code> produces a waveform you bind anywhere a dynamic value is
+    accepted &mdash; <code>FG</code>, <code>BG</code>, <code>Fill</code>,
+    <code>Opacity</code>, <code>Width</code>, effect <code>Strength</code>. No state
+    to declare, no ticker to run; like all glyph animation it only ticks while visible.
+  </div>
+
+  <div class="code code-raw">// an LED that breathes between two colours, forever
+dim, green := Hex(0x4A4A4A), Hex(0x66BB6A)
+Text("●").FG(Osc(0.25).Sine().Lerp(dim, green))
+
+// a vignette that slowly pulses
+SEVignette().Strength(Osc(0.1).Sine().Range(0.05, 0.35))</div>
+
+  <div class="concept-prose">
+    Five waveforms shape the cycle: <code>.Sine()</code> (the default, starting from its
+    trough), <code>.Triangle()</code>, <code>.Saw()</code>, <code>.Square(duty)</code>,
+    and <code>.Steps(n)</code>. The raw output runs 0 to 1; <code>.Range(min, max)</code>
+    scales it to numbers and <code>.Lerp(a, b)</code> sweeps it through colour space.
+    <code>.Ease(fn)</code> reshapes the curve with any easing function.
+  </div>
+
+  <div class="concept-prose">
+    <code>.Phase(p)</code> offsets where in the cycle an oscillator starts. Give each
+    element a phase derived from its position and a single declaration becomes a
+    travelling wave:
+  </div>
+
+  <div class="code code-raw">// 36 cells, one wave rolling across them
+dim, cyan := Hex(0x4A4A4A), Hex(0x4DD0E1)
+cells := make([]Component, 0, 36)
+for i := 0; i &lt; 36; i++ {
+    cells = append(cells,
+        Text("█").FG(Osc(0.4).Sine().Phase(float64(i)/36).Lerp(dim, cyan)))
+}
+HBox(cells...)</div>
+
+  <div class="concept-prose">
+    <code>.Speed(&amp;hz)</code> binds the frequency to live state, so the rate itself
+    responds to the app &mdash; throttle a sweep up under load, slow a pulse when idle.
+    <code>Spinner()</code> is the same idea packaged as a component: zero-arg,
+    self-animating from the frame clock, with <code>.Fps(n)</code> to set its rate.
+  </div>
+
 </div>
 
 <div class="concept" id="extend">
   <div class="section-head">
-    <div class="section-num">13</div>
+    <div class="section-num">14</div>
     <div class="section-meta">
       <div class="section-label">Extension</div>
       <div class="section-title">Custom Components</div>
@@ -2524,7 +2624,7 @@ VBox(
      ============================================================ -->
 <div class="concept" id="migration">
   <div class="section-head">
-    <div class="section-num">14</div>
+    <div class="section-num">15</div>
     <div class="section-meta">
       <div class="section-label">Tooling</div>
       <div class="section-title">Migration &amp; Deprecations</div>

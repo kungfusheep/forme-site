@@ -1,0 +1,23 @@
+import { chromium } from 'playwright';
+const browser = await chromium.launch();
+const page = await browser.newPage();
+const errors = [];
+page.on('pageerror', e => errors.push(String(e)));
+await page.goto('http://localhost:8080/concepts.html', { waitUntil: 'networkidle' });
+await page.waitForTimeout(500);
+const checks = await page.evaluate(() => {
+  const r = {};
+  r.oscSection = !!document.querySelector('#osc .section-title');
+  r.oscTitle = document.querySelector('#osc .section-title')?.innerText;
+  r.sidenavOsc = !!document.querySelector('a.sidenav-link[href="#osc"]');
+  r.topnavOsc = !!document.querySelector('a.topnav-link[href="#osc"]');
+  r.nums = [...document.querySelectorAll('.section-num')].map(n => n.innerText);
+  const exit = document.querySelector('#exit')?.innerText || '';
+  r.exitHasForEach = exit.includes('ForEach') && exit.includes('OnComplete');
+  const render = document.querySelector('#render')?.innerText || '';
+  r.renderHasResize = render.includes('resize event before the first frame');
+  return r;
+});
+console.log(JSON.stringify(checks, null, 1));
+console.log('page errors:', errors.length ? errors : 'none');
+await browser.close();
