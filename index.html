@@ -1139,6 +1139,27 @@ Form.LabelBold().OnSubmit(register)(
 
         </div>
 
+        <div class="feature-card">
+          <div class="feature-info">
+            <div class="feature-title">Live motion</div>
+            <div class="feature-desc">
+              Oscillators are periodic values derived from the frame clock.
+              Bind one to any dynamic property — no state, no ticker,
+              and it only runs while visible.
+            </div>
+          </div>
+          <div class="code code-raw">VBox.Gap(1)(
+	HBox(wave...), // Osc(0.5).Sine().Phase(i/36).Lerp(dim, cyan)
+	HBox.Width(Osc(0.5).Sine().Range(1, 44)).Fill(green)(),
+	HBox.Width(Osc(0.5).Saw().Range(1, 44)).Fill(amber)(),
+	Text("●").FG(Osc(1).Square(0.5).Lerp(dim, red)),
+)</div>
+          <div class="feature-preview">
+            <canvas data-termsrc="img/osc-live.json"></canvas>
+          </div>
+
+        </div>
+
       </div>
     </div>
   </div>

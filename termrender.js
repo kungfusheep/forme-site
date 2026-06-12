@@ -348,6 +348,35 @@
       loaded.set(canvas, data)
       render(canvas, data)
     }
+    for (const canvas of document.querySelectorAll('canvas[data-termsrc]')) {
+      animate(canvas, canvas.getAttribute('data-termsrc'))
+    }
+  }
+
+  // multi-frame terminal capture: fetch {w,h,fps,frames:[[lines],...]} and cycle
+  // frames while the canvas is on screen — like the framework it documents,
+  // it only ticks while visible
+  async function animate(canvas, src) {
+    const data = await (await fetch(src)).json()
+    let idx = 0
+    const frame = i => ({ w: data.w, h: data.h, lines: data.frames[i] })
+    loaded.set(canvas, frame(0))
+    render(canvas, frame(0))
+
+    let timer = null
+    const start = () => {
+      if (timer || data.frames.length < 2) return
+      timer = setInterval(() => {
+        idx = (idx + 1) % data.frames.length
+        loaded.set(canvas, frame(idx))
+        render(canvas, frame(idx))
+      }, 1000 / (data.fps || 15))
+    }
+    const stop = () => { clearInterval(timer); timer = null }
+
+    new IntersectionObserver(entries => {
+      entries[0].isIntersecting ? start() : stop()
+    }, { threshold: 0.1 }).observe(canvas)
   }
 
   // re-render all canvases when pixel density changes (pinch zoom, moving between displays)
