@@ -1148,11 +1148,20 @@ Form.LabelBold().OnSubmit(register)(
               each frame and ticks only while visible.
             </div>
           </div>
-          <div class="code code-raw">VBox.Gap(1)(
-	HBox(wave...), // Osc(0.5).Sine().Phase(i/36).Lerp(dim, cyan)
-	HBox.Width(Osc(0.5).Sine().Range(1, 44)).Fill(green)(),
-	HBox.Width(Osc(0.5).Saw().Range(1, 44)).Fill(amber)(),
-	Text("●").FG(Osc(1).Square(0.5).Lerp(dim, red)),
+          <div class="code code-raw">wave := make([]Component, 0, 58)
+for i := 0; i &lt; 58; i++ {
+	wave = append(wave, Text("█").FG(
+		Osc(0.5).Sine().Phase(float64(i)/58).Lerp(dim, cyan)))
+}
+
+VBox.Gap(1)(
+	HBox(wave...),
+	HBox.Width(Osc(0.5).Sine().Range(1, 58)).Height(1).Fill(green)(),
+	HBox.Width(Osc(0.5).Saw().Range(1, 58)).Height(1).Fill(amber)(),
+	HBox.Gap(2)(
+		Text("●").FG(Osc(1).Square(0.5).Lerp(dim, red)),
+		Text("●").FG(Osc(0.5).Sine().Lerp(dim, green)),
+	),
 )</div>
           <div class="feature-preview">
             <canvas data-termsrc="img/osc-live.json"></canvas>

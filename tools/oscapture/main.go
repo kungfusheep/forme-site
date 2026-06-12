@@ -29,27 +29,21 @@ type termAnim struct {
 func main() {
 	dim, cyan, green, amber, red := Hex(0x4A4A4A), Hex(0x4DD0E1), Hex(0x66BB6A), Hex(0xD4B87A), Hex(0xD47080)
 
-	wave := make([]Component, 0, 36)
-	for i := 0; i < 36; i++ {
-		wave = append(wave,
-			Text("█").FG(Osc(0.5).Sine().Phase(float64(i)/36).Lerp(dim, cyan)))
-	}
-
-	bar := func(label string, o OscC, c Color) Component {
-		return HBox.Gap(1).Height(1)(
-			Text(label).Width(8).FG(Hex(0x9E9E9E)),
-			HBox.Width(o.Range(1, 44)).Height(1).Fill(c)(),
-		)
+	// the tree below is reproduced verbatim on the homepage Live motion card;
+	// keep the two in lockstep
+	wave := make([]Component, 0, 58)
+	for i := 0; i < 58; i++ {
+		wave = append(wave, Text("█").FG(
+			Osc(0.5).Sine().Phase(float64(i)/58).Lerp(dim, cyan)))
 	}
 
 	tree := VBox.Gap(1).PaddingVH(0, 1)(
 		HBox(wave...),
-		bar("sine", Osc(0.5).Sine(), green),
-		bar("saw", Osc(0.5).Saw(), amber),
-		HBox.Gap(1)(
-			Text("●").FG(Osc(1).Square(0.5).Lerp(dim, red)), Text("alert blink").Dim(),
-			Text("  "),
-			Text("●").FG(Osc(0.5).Sine().Lerp(dim, green)), Text("LED breathe").Dim(),
+		HBox.Width(Osc(0.5).Sine().Range(1, 58)).Height(1).Fill(green)(),
+		HBox.Width(Osc(0.5).Saw().Range(1, 58)).Height(1).Fill(amber)(),
+		HBox.Gap(2)(
+			Text("●").FG(Osc(1).Square(0.5).Lerp(dim, red)),
+			Text("●").FG(Osc(0.5).Sine().Lerp(dim, green)),
 		),
 	)
 
