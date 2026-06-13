@@ -224,6 +224,12 @@
           "recv": "*App"
         },
         {
+          "name": "Apply",
+          "doc": "RequestRender marks that a render is needed.\nSafe to call from any goroutine.\nApply enqueues fn to run on the render thread at the top of the next\nframe, under the render lock, before any reads — the safe place to push a\ngoroutine's result into bound state (ADR 2):\n\n\tgo func() {\n\t    result := fetch()\n\t    app.Apply(func() {\n\t        if key == current { rows = result }\n\t    })\n\t}()\n\nClosures run in apply order, exactly once. A closure applied during the\ndrain runs NEXT frame (anti-livelock: a self-applying chain cannot wedge a\nframe). Closures may spawn goroutines but must never render (RenderNow\nwould deadlock on the render lock) and never block.\n",
+          "signature": "func (a *App) Apply(fn func())",
+          "recv": "*App"
+        },
+        {
           "name": "Back",
           "doc": "Back returns to the previous view.\nCurrently an alias for Pop().\n",
           "signature": "func (a *App) Back()",
@@ -405,7 +411,7 @@
         },
         {
           "name": "RequestRender",
-          "doc": "RequestRender marks that a render is needed.\nSafe to call from any goroutine.\n",
+          "doc": "",
           "signature": "func (a *App) RequestRender()",
           "recv": "*App"
         },
@@ -613,9 +619,10 @@
             "AttrUnderline",
             "AttrBlink",
             "AttrInverse",
-            "AttrStrikethrough"
+            "AttrStrikethrough",
+            "AttrPreserveBG"
           ],
-          "decl": "const (\n\tAttrNone Attribute = 0\n\tAttrBold Attribute = 1 << iota\n\tAttrDim\n\tAttrItalic\n\tAttrUnderline\n\tAttrBlink\n\tAttrInverse\n\tAttrStrikethrough\n)"
+          "decl": "const (\n\tAttrNone Attribute = 0\n\tAttrBold Attribute = 1 << iota\n\tAttrDim\n\tAttrItalic\n\tAttrUnderline\n\tAttrBlink\n\tAttrInverse\n\tAttrStrikethrough\n\n\t// AttrPreserveBG is a write-mode flag, not a visual attribute: a cell\n\t// write carrying it keeps the destination cell's background instead of\n\t// stamping the source's. The write path applies the rule then strips the\n\t// bit, so it never persists on a cell or emits as an SGR escape. Bit 0 of\n\t// the uint8 (the iota block above starts at bit 1). ADR 4.\n\tAttrPreserveBG Attribute = 1 << 0\n)"
         }
       ]
     },
@@ -7655,6 +7662,12 @@
           "name": "OpacityMode",
           "doc": "OpacityMode sets how rune ownership hands off during opacity fades.\n",
           "signature": "func (t TextC) OpacityMode(mode OpacityMode) TextC",
+          "recv": "TextC"
+        },
+        {
+          "name": "PreserveBG",
+          "doc": "PreserveBG keeps the destination cell's background for this text's writes,\nstamping only the rune and foreground over whatever sits beneath — a\ndecoration that carries no background of its own (underlines spanning\npanes, badges over striped lists, glyphs over banners). ADR 4.\n",
+          "signature": "func (t TextC) PreserveBG() TextC",
           "recv": "TextC"
         },
         {
