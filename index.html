@@ -113,6 +113,22 @@
     25% { opacity: 0; }
   }
 
+  /* the wordmark breathes on the variable font's weight axis: a slow swell
+     and settle around the resting weight, no reflow (glyph widths hold) */
+  @keyframes glyph-breathe {
+    0%, 100% { font-variation-settings: 'wght' 300; }
+    42%      { font-variation-settings: 'wght' 336; }
+    72%      { font-variation-settings: 'wght' 291; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+    .hero-title { font-variation-settings: 'wght' 300 !important; }
+  }
+
   /* ============================================================
      NAV
      ============================================================ */
@@ -259,6 +275,8 @@
     letter-spacing: -0.03em;
     margin-bottom: var(--s4);
     position: relative;
+    animation: glyph-breathe 7s ease-in-out infinite;
+    will-change: font-variation-settings;
   }
 
   .hero-headline {
