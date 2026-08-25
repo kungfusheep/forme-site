@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>glyph - 0.8.0 Changes</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#131311">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="preload" href="BerkeleyMonoVariable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="https://use.typekit.net/rgt4idh.css">
+<link rel="stylesheet" href="tokens.css">
+<style>
+  @font-face {
+    font-family: 'Berkeley Mono';
+    src: url('BerkeleyMonoVariable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: swap;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg-dark);
+    color: var(--dk);
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--dk); color: var(--bg-dark); }
+  .page { max-width: 760px; margin: 0 auto; padding: 48px var(--s5) 96px; }
+  .draft-band {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--bg-dark);
+    background: #c9a227;
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-bottom: var(--s4);
+  }
+  h1 {
+    font-family: var(--akz);
+    font-weight: 700;
+    font-size: 34px;
+    color: var(--dk-hi);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: var(--s2);
+  }
+  .intro { color: var(--dk-4); margin-bottom: var(--s6); }
+  h2 {
+    font-family: var(--akz);
+    font-weight: 700;
+    font-size: 21px;
+    color: var(--dk-hi);
+    margin: var(--s6) 0 var(--s3);
+    padding-top: var(--s4);
+    border-top: 1px solid var(--rule-dk);
+  }
+  h3 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--dk-6);
+    margin: var(--s4) 0 var(--s2);
+  }
+  ul { list-style: none; }
+  li { padding-left: 18px; position: relative; margin-bottom: var(--s2); }
+  li::before { content: '-'; position: absolute; left: 0; color: var(--dk-6); }
+  code {
+    color: var(--dk-hi);
+    background: rgba(255,255,255,0.05);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .exp {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #c9a227;
+    margin-left: 6px;
+  }
+  a { color: var(--dk-hi); }
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="draft-band">internal review draft - not linked</div>
+  <h1>glyph 0.8.0</h1>
+  <p class="intro">Everything that changed between v0.7.0 and the 0.8.0 release candidate. 192 commits; 126 exported symbols added, none removed.</p>
+
+  <h2 id="added">Added</h2>
+
+  <h3>Components</h3>
+  <ul>
+    <li><code>Complete</code> - native autocomplete over any field: anchored dropdown, prefix filter, single-router navigation. Esc and arrows fall through to the parent when the dropdown is closed.</li>
+    <li><code>KeyHelp</code> and named bindings - <code>Key(...).Named()</code>, <code>App.ActiveBindings</code>, live what's-bound-now help styled with <code>KeyFG</code>, <code>DescFG</code>, <code>Gap</code> and <code>Raw</code>. <code>App.LoadKeyBindings</code> reads a user rebind config.</li>
+    <li><code>Trigger</code> - focusable form control with <code>Activate</code>, <code>OnActivate</code> and <code>BindFocus</code>.</li>
+    <li><code>term</code><span class="exp">experimental</span> - embeddable pty-backed terminal in its own package. <code>term.New()</code> forks a shell; <code>term.Stream(rw, onResize)</code> drives a byte stream the caller owns. A VT interpreter renders pty output into a cell grid composited as an ordinary Layer-backed component: SGR to truecolor, UTF-8 and DEC special graphics, double-width cells, the alternate screen, cursor-position and device-attribute replies. The API may change.</li>
+  </ul>
+
+  <h3>Animation and rendering</h3>
+  <ul>
+    <li>Oscillators and self-gated animation - <code>Osc(hz)</code> value nodes bindable to widths and parameters, with <code>Sine</code>, <code>Saw</code>, <code>Square</code>, <code>Triangle</code>, <code>Steps</code>, <code>Phase</code>, <code>Range</code>, <code>Speed</code>, <code>Ease</code> and <code>Lerp</code> shaping. Self-animating spinner via <code>SpinnerC.Fps</code>; effects can request animation through <code>PostContext.RequestAnimation</code>.</li>
+    <li>Cache-effects frames - effect-only frames re-run screen effects over the cached render instead of re-executing the template; effect-param oscillators drive those frames.</li>
+    <li>Paint-only animation frames - <code>App.EnablePaintFrames</code> (opt-in): an animation tick that proves nothing geometric moved skips the two geometry passes and repaints from the last layout.</li>
+    <li><code>App.Apply(fn)</code> - render-thread closure queue drained at frame top, so off-thread state changes marshal safely onto the render goroutine.</li>
+    <li>Adaptive render pacing - input renders coalesce when the terminal is behind.</li>
+    <li><code>Template.ExecutePaint</code> and <code>Template.RunEffectEvals</code> - the paint-only and effect-only entry points.</li>
+    <li><code>App.ForceRedraw</code>; <code>App.SetViewDiagnostic</code> silences the view-redefine nudge.</li>
+    <li><code>Buffer.PushClip</code> / <code>PopClip</code> - explicit clip-rect stack.</li>
+  </ul>
+
+  <h3>Layout and text</h3>
+  <ul>
+    <li><code>MaxWidth</code> on VBox and HBox - a pure upper-bound cap: containers wrap at a bound and hug the longest line.</li>
+    <li><code>.Overflow(visible)</code> - opt out of the new fixed-height clip.</li>
+    <li><code>TruncateWidth</code> / <code>TruncateWidthEllipsis</code> - display-width-aware clip that never splits a wide rune.</li>
+    <li><code>Rich(&amp;s).Markdown()</code> - bound inline markdown (bold, italic, code, strike, bullet), parse-on-change cached, ForEach-composable. <code>MarkdownWidth</code> measures for content-hug sizing; <code>MarkdownSpans</code> and the zero-alloc <code>MarkdownSpansInto</code> expose the spans.</li>
+    <li><code>PreserveBG</code> on text and rich text - a write mode that keeps the destination cell background.</li>
+    <li><code>TextViewC.WordWrap</code> and an explicit wrap text mode; char-wrap chainable on rich text.</li>
+    <li>New exported types: <code>RichTextNode</code>, <code>OverflowMode</code>, <code>StyleRange</code>, <code>ForEachFn</code>.</li>
+    <li>ForEach <code>Limit</code> and remaining bindings via the configure-then-call chain.</li>
+  </ul>
+
+  <h3>ScrollView, Layer and List</h3>
+  <ul>
+    <li>Feather - scroll-overflow edge fade, native in the blit, fading toward the actual background behind each cell. <code>Layer.SetFeather</code> for raw layers.</li>
+    <li>Bound scroll offset (<code>ScrollState</code> / <code>ScrollOffset</code>) - Animate can drive scrolling from a single source of truth.</li>
+    <li><code>AnchorBottom</code> - hug underflowing content to the bottom edge.</li>
+    <li>ScrollView scrollbars; <code>ListC.ScrollState</code> plus <code>ScrollbarDyn</code> so a List carries a live scrollbar like a Layer.</li>
+    <li><code>ListC.BindHalfPageNav</code> - half-page up and down.</li>
+    <li>Scrollbar surface: <code>ScrollbarForLayer</code>, and on ScrollView <code>Scrollbar</code>, <code>ScrollbarVisible</code>, <code>ScrollbarOpacity</code>, <code>ScrollbarOpacityMode</code>, <code>ScrollbarThumbStyle</code>, <code>ScrollbarTrackStyle</code>; <code>ScrollbarC.Opacity</code> and <code>OpacityMode</code>.</li>
+    <li><code>ScrollViewC.ScrollTo</code>, <code>ScrollViewFn.Height</code>, <code>LayerViewC.HeightPtr</code>.</li>
+  </ul>
+
+  <h3>Input and focus</h3>
+  <ul>
+    <li><code>InputC.MultiLine</code> - wrap long text across lines instead of horizontal scroll, with alt+enter / ctrl+j newlines wired to <code>AllowNewlines</code>.</li>
+    <li><code>Input.StyleRanges</code> - style sub-ranges of the live editable value (mention or search highlight); zero cost when unset.</li>
+    <li><code>CheckListC.Selection(*int)</code> - external-selection setter, parity with List.</li>
+    <li><code>FilterListC.OnFilterChange</code> / <code>OnSelect</code>.</li>
+  </ul>
+
+  <h3>Jump mode</h3>
+  <ul>
+    <li><code>App.EnterJumpScope</code> - restrict jump targets to NodeRef regions; <code>JumpItem</code> / <code>JumpItemRef</code> per-item constructors; <code>App.JumpScopeKey</code>.</li>
+    <li><code>JumpMode.Activate()</code> / <code>Deactivate()</code>.</li>
+    <li>Incremental label feedback - the typed prefix dims along with non-matching labels; backspace undoes a typed key and restores the previous labels.</li>
+    <li>Per-item jump targets for ForEach templates; off-screen targets culled.</li>
+  </ul>
+
+  <h3>App and diagnostics</h3>
+  <ul>
+    <li><code>App.Suspend</code> / <code>App.Resume</code> - gate rendering while an external program owns the terminal.</li>
+    <li><code>App.LastInputUnixNano()</code> - last-input stamp for idle detection.</li>
+    <li><code>App.CurrentView()</code>; <code>Screen.FrontBuffer()</code>; rich span rendered refs; whole-frame guardrail benches.</li>
+  </ul>
+
+  <h2 id="changed">Changed</h2>
+  <ul>
+    <li>Fixed-height containers now clip their content to the box; <code>.Overflow(visible)</code> opts out, and the blit honours the clip.</li>
+    <li><code>WidthPct</code> fails loud on a wrong type at build; static over/under-percent is accepted for animation headroom, and the [0,1] range clamp is gone.</li>
+    <li><code>MaxWidth</code> is a pure upper-bound cap, decoupled from content-hug; <code>maxwidthpct</code> removed before it ever shipped.</li>
+    <li>Present dynamic width bindings mean explicitly sized - zero stays zero, no implicit flex.</li>
+    <li>Checklist <code>Style</code> / <code>SelectedStyle</code> accept live <code>*Style</code>, restoring theme-reactivity in build-once views.</li>
+    <li>Explicit text widths clip content in both render paths.</li>
+    <li><code>OnFilterChange</code> fires on every query-mutation path with changed-only semantics; a FilterList query change resets selection to the top.</li>
+    <li>Initial terminal size is delivered as a resize event.</li>
+    <li>ForEach per-item caches are bounded - realloc-orphaned per-item state and orphaned markdown span keys are evicted.</li>
+    <li>Redefining a named view emits a one-time stderr nudge toward If/Switch.</li>
+    <li>The animation ticker closes over locals and retires on settle; a view that leaves the render path stops its ticker on every routing path.</li>
+    <li>Render generations replace the frameFlushed skip, so async render requests issued after an input flush are never discarded.</li>
+    <li>The App running flag is atomic, so <code>Stop</code> is callable from any goroutine.</li>
+    <li>ForEach item height is pinned as intrinsic in layout; text measurement is memoised per unchanged string.</li>
+  </ul>
+
+  <h2 id="fixed">Fixed</h2>
+
+  <h3>Races, deadlocks and memory</h3>
+  <ul>
+    <li>Terminal writes serialised - fixes mid-sequence interleave corruption from concurrent writes.</li>
+    <li>Jump-mode data race and deadlock - atomic active flag, build-swap target rebuild, never locking across Execute.</li>
+    <li>Layer scroll-state data race - scroll fields guarded by a mutex never held across the Render callback.</li>
+    <li>ScreenCursor scroll fields guarded against render-vs-input races.</li>
+    <li>Global span strings stored as typed pointers - raw uintptrs tripped checkptr and dodged the GC.</li>
+    <li>Resize serialised against render - a mid-render pool resize tore buffer storage.</li>
+    <li>VRule annotation no longer allocates every frame, so a VBox of any child count renders allocation-free.</li>
+  </ul>
+
+  <h3>Layout and rendering</h3>
+  <ul>
+    <li>Bare ForEach as a control-flow branch or root view failing to lay out.</li>
+    <li>List scroll one-frame-stale blank bottom - the window fills from the final offset in one pass.</li>
+    <li>List viewport scrolling up with unbounded clipped lists; partial rows at the viewport edge render via a buffer clip rect.</li>
+    <li><code>MaxWidth</code> clamped in the intrinsic path too, so content-sizing parents agree.</li>
+    <li>If-branches sized from item data and clamped to parent width; if-branch flex redistributed after stretch.</li>
+    <li>Wrapped text clipped to fixed-height containers; TextBlock wraps by cell width with a wide-rune placeholder.</li>
+    <li>Layer re-renders on viewport height change, not only width; layer viewport height bindable to a pointer.</li>
+    <li>ScrollView grows its render buffer to fit content instead of capping at 500 rows, and caches the fitting height across frames.</li>
+    <li>ScrollView drops a stale deferred pending scroll when the layer moved externally.</li>
+    <li>Rich text intrinsic width measured correctly; jump wrappers sized to their content in rows; dynamic styles primed at compile.</li>
+  </ul>
+
+  <h3>Per-item (ForEach) binding</h3>
+  <ul>
+    <li>Per-item <code>BorderFG</code> pointer silently dropping the border.</li>
+    <li>Item-field int, float and fill pointers resolved per rendered element.</li>
+    <li>Per-item flex pointers (grow, width, height, percent-width) rebound per item.</li>
+    <li>All leaf-compiler pointer bindings offset-treated: spinner, leader, counter, sparkline, tabs, scrollbar.</li>
+    <li>Per-item tween watch and out-targets rebased onto the rendered element; per-item in/out exit pinned inside ForEach.</li>
+    <li>Tween <code>OnComplete</code> deferred to execute end, so callbacks can safely mutate bound state.</li>
+  </ul>
+
+  <h3>Focus, modals and forms</h3>
+  <ul>
+    <li>Modal router orphaned by an overlay's exit animation - released when the overlay is exiting.</li>
+    <li>Focus managers activated on overlay visibility edges, symmetric with the modal router; Escape blur persists and reaches the modal router.</li>
+    <li>Bound input values synced before validation; forms validated before submit callbacks.</li>
+    <li>Input preserved after a jump view push.</li>
+    <li>NodeRef zeroes when its node isn't rendered this frame, so gated or closed nodes report no bounds.</li>
+    <li>Jump feedback never engaging live - input accumulated directly.</li>
+    <li>KeyHelp composites over the underlying fill instead of stamping default-bg chips.</li>
+  </ul>
+</main>
+</body>
+</html>
