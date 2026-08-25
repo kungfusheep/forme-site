@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>glyph - v0.4.0 Changes</title>
+<meta name="description" content="Changelog for glyph v0.4.0.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://useglyph.sh/changelog-0.4.html">
+<meta name="theme-color" content="#131311">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="preload" href="BerkeleyMonoVariable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="https://use.typekit.net/rgt4idh.css">
+<link rel="stylesheet" href="tokens.css">
+<style>
+  @font-face {
+    font-family: 'Berkeley Mono';
+    src: url('BerkeleyMonoVariable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: swap;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg-dark);
+    color: var(--dk);
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--dk); color: var(--bg-dark); }
+  .page { max-width: 760px; margin: 0 auto; padding: 48px var(--s5) 96px; }
+  .verlinks { font-size: 11px; color: var(--dk-6); margin-bottom: var(--s4); }
+  .verlinks a { color: var(--dk-4); text-decoration: none; margin-right: 10px; }
+  .verlinks a:hover { color: var(--dk-hi); }
+  h1 {
+    font-family: var(--akz);
+    font-weight: 700;
+    font-size: 34px;
+    color: var(--dk-hi);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: var(--s4);
+  }
+  h2 {
+    font-family: var(--akz);
+    font-weight: 700;
+    font-size: 21px;
+    color: var(--dk-hi);
+    margin: var(--s6) 0 var(--s3);
+    padding-top: var(--s4);
+    border-top: 1px solid var(--rule-dk);
+  }
+  h3 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--dk-6);
+    margin: var(--s4) 0 var(--s2);
+  }
+  p { margin-bottom: var(--s3); }
+  ul { list-style: none; margin-bottom: var(--s3); }
+  li { padding-left: 18px; position: relative; margin-bottom: var(--s2); }
+  li::before { content: '-'; position: absolute; left: 0; color: var(--dk-6); }
+  code {
+    color: var(--dk-hi);
+    background: rgba(255,255,255,0.05);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  pre {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--rule-dk);
+    border-radius: 8px;
+    padding: var(--s3);
+    overflow-x: auto;
+    margin-bottom: var(--s3);
+  }
+  pre code { background: none; padding: 0; color: var(--dk); }
+  a { color: var(--dk-hi); }
+</style>
+</head>
+<body>
+<main class="page">
+  <nav class="verlinks"><a href="changelog-0.7.html">v0.7.0</a> <a href="changelog-0.6.html">v0.6.0</a> <a href="changelog-0.5.html">v0.5.0</a></nav>
+  <p><strong>Full Changelog</strong>: https://github.com/kungfusheep/glyph/compare/v0.3.0...v0.4.0</p>
+  <ul>
+  <li>ScrollView component. Scrollable container, declared inline, renders through a layer.</li>
+  <li>TextBlock component. Multi-line word-wrapping text, no layer required.</li>
+  <li>Match examples added to API docs with docgen markers.</li>
+  <li>ForEach condition eval fix: tween resolution in branches, per-item eval during render.</li>
+  <li>Display recording enables property-aware fade-out and dynamic fill.</li>
+  <li>Example suite reworked: verified renders, renderAndPrint helper, OnSubmit API change, screen effects.</li>
+  </ul>
+  <p>  Docs site also saw significant upgrades for API docs example images. </p>
+</main>
+</body>
+</html>

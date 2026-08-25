@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>glyph - v0.7.0 Changes</title>
+<meta name="description" content="Changelog for glyph v0.7.0.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://useglyph.sh/changelog-0.7.html">
+<meta name="theme-color" content="#131311">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="preload" href="BerkeleyMonoVariable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="https://use.typekit.net/rgt4idh.css">
+<link rel="stylesheet" href="tokens.css">
+<style>
+  @font-face {
+    font-family: 'Berkeley Mono';
+    src: url('BerkeleyMonoVariable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: swap;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg-dark);
+    color: var(--dk);
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--dk); color: var(--bg-dark); }
+  .page { max-width: 760px; margin: 0 auto; padding: 48px var(--s5) 96px; }
+  .verlinks { font-size: 11px; color: var(--dk-6); margin-bottom: var(--s4); }
+  .verlinks a { color: var(--dk-4); text-decoration: none; margin-right: 10px; }
+  .verlinks a:hover { color: var(--dk-hi); }
+  h1 {
+    font-family: var(--akz);
+    font-weight: 700;
+    font-size: 34px;
+    color: var(--dk-hi);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: var(--s4);
+  }
+  h2 {
+    font-family: var(--akz);
+    font-weight: 700;
+    font-size: 21px;
+    color: var(--dk-hi);
+    margin: var(--s6) 0 var(--s3);
+    padding-top: var(--s4);
+    border-top: 1px solid var(--rule-dk);
+  }
+  h3 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--dk-6);
+    margin: var(--s4) 0 var(--s2);
+  }
+  p { margin-bottom: var(--s3); }
+  ul { list-style: none; margin-bottom: var(--s3); }
+  li { padding-left: 18px; position: relative; margin-bottom: var(--s2); }
+  li::before { content: '-'; position: absolute; left: 0; color: var(--dk-6); }
+  code {
+    color: var(--dk-hi);
+    background: rgba(255,255,255,0.05);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  pre {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--rule-dk);
+    border-radius: 8px;
+    padding: var(--s3);
+    overflow-x: auto;
+    margin-bottom: var(--s3);
+  }
+  pre code { background: none; padding: 0; color: var(--dk); }
+  a { color: var(--dk-hi); }
+</style>
+</head>
+<body>
+<main class="page">
+  <nav class="verlinks"><a href="changelog-0.6.html">v0.6.0</a> <a href="changelog-0.5.html">v0.5.0</a> <a href="changelog-0.4.html">v0.4.0</a></nav>
+  <h1>glyph v0.7.0</h1>
+  <p>v0.7.0 is a cleanup and capability release. It removes a lot of old public surface area, tightens the main component API, and adds several pieces that make larger Glyph apps easier to build: declarative routing, modal route scopes, stronger nested dynamic templates, interactive rich text, better forms, and more reliable screen effects.</p>
+  <h2>Highlights</h2>
+  <ul>
+  <li>Declarative event routing with <code>On</code> and <code>Key</code>.</li>
+  <li>Modal route scopes for overlays, dialogs, and temporary input layers.</li>
+  <li>Much stronger nested dynamic UI support, especially around <code>ForEach</code>.</li>
+  <li>Rich text can now wrap, update live, and expose jump targets from spans.</li>
+  <li>Screen effects now compose better with live UI state such as focus refs and opacity.</li>
+  <li>Forms and inputs gained more styling and state-control options.</li>
+  <li>The public API has been tidied up, with legacy struct-literal node APIs removed.</li>
+  </ul>
+  <h2>Added</h2>
+  <h3>Declarative event routing</h3>
+  <p>Added <code>On</code> and <code>Key</code> so key handlers can live in the component tree and follow the same branch/scope lifecycle as the UI they belong to.</p>
+  <pre><code>VBox(
+	On(
+		Key(&quot;&lt;C-s&gt;&quot;, save),
+		Key(&quot;&lt;Esc&gt;&quot;, close),
+	),
+	Text(&quot;settings&quot;),
+)</code></pre>
+  <h3>Conditional route scopes</h3>
+  <p>Handlers declared inside conditional UI now activate and deactivate with that branch.</p>
+  <pre><code>If(&amp;editing).Then(
+	VBox(
+		On(
+			Key(&quot;&lt;Enter&gt;&quot;, saveEdit),
+			Key(&quot;&lt;Esc&gt;&quot;, cancelEdit),
+		),
+		Text(&quot;editing&quot;),
+	),
+)</code></pre>
+  <h3>Modal route scopes</h3>
+  <p>Added <code>On.Modal</code> for handlers that should push a modal input scope while their UI is active.</p>
+  <pre><code>If(&amp;showConfirm).Then(
+	Overlay(
+		VBox(
+			On.Modal(
+				Key(&quot;&lt;Enter&gt;&quot;, confirm),
+				Key(&quot;&lt;Esc&gt;&quot;, func() { showConfirm = false }),
+			),
+			Text(&quot;confirm deploy?&quot;),
+		),
+	),
+)</code></pre>
+  <h3>Rich span jump targets</h3>
+  <p>Rich text spans can now register jump targets directly, including inside scroll views and repeated content.</p>
+  <pre><code>spans := []Span{
+	{Text: &quot;open docs&quot;, OnSelect: openDocs},
+}
+
+Rich(&amp;spans)</code></pre>
+  <h3>Live rich spans</h3>
+  <p><code>Rich</code> now accepts live span slices directly, so updating the backing slice updates the rendered rich text.</p>
+  <pre><code>status := []Span{
+	{Text: &quot;idle&quot;, Style: Style{FG: Ansi16(8)}},
+}
+
+view := Rich(&amp;status)
+
+status = []Span{
+	{Text: &quot;running&quot;, Style: Style{FG: Ansi16(10)}},
+}</code></pre>
+  <h3>Custom effect compilation</h3>
+  <p>Added <code>EffectCompiler</code>, <code>EffectFloat64</code>, and <code>EffectCompilable</code> so custom effects can compile dynamic values, animated values, and conditional values through the template system.</p>
+  <pre><code>type shadeEffect struct {
+	strengthArg any
+	strength    EffectFloat64
+}
+
+func (e shadeEffect) CompileEffect(c EffectCompiler) Effect {
+	e.strength = c.Float64(e.strengthArg)
+	return e
+}
+
+func (e shadeEffect) Apply(buf *Buffer, ctx PostContext) {
+	strength := e.strength.Float64()
+	for y := 0; y &lt; ctx.Height; y++ {
+		for x := 0; x &lt; ctx.Width; x++ {
+			cell := buf.Get(x, y)
+			if cell.Rune == 0 || cell.Style.FG.Mode == ColorDefault {
+				continue
+			}
+			cell.Style.FG = Lerp(cell.Style.FG, RGB(0, 0, 0), strength)
+			buf.Set(x, y, cell)
+		}
+	}
+}
+
+ScreenEffect(
+	shadeEffect{
+		strengthArg: In(Animate.Duration(time.Second)(0.5)).
+			Out(Animate.Duration(time.Second)(0.0)),
+	},
+)</code></pre>
+  <h3>Readable colour helpers</h3>
+  <p>Added helpers for contrast-aware colour work.</p>
+  <pre><code>bg := RGB(18, 18, 22)
+fg := RGB(120, 130, 145)
+accent := RGB(60, 130, 255)
+
+readable := ReadableTint(bg, accent, fg, 4.5, 0.65)
+ratio := ContrastRatio(readable, bg)</code></pre>
+  <h2>Improved</h2>
+  <h3>Nested <code>ForEach</code></h3>
+  <p>Nested repeated UI can now bind to slice fields on the current item and preserve the correct outer and inner item contexts.</p>
+  <pre><code>type Project struct {
+	Name  string
+	Tasks []Task
+}
+
+type Task struct {
+	Title string
+}
+
+ForEach(&amp;projects, func(project *Project) Component {
+	return VBox(
+		Text(project.Name),
+		ForEach(&amp;project.Tasks, func(task *Task) Component {
+			return Text(task.Title)
+		}),
+	)
+})</code></pre>
+  <h3>Scoped route lifecycle</h3>
+  <p>Route handlers declared inside conditional and switched UI now attach only while that branch is active.</p>
+  <pre><code>Switch(&amp;mode).
+	Case(&quot;list&quot;, VBox(
+		On(Key(&quot;&lt;Enter&gt;&quot;, openSelected)),
+		List(&amp;items, renderItem),
+	)).
+	Case(&quot;search&quot;, VBox(
+		On(Key(&quot;&lt;Esc&gt;&quot;, exitSearch)),
+		Input(&amp;query).Bind(),
+	))</code></pre>
+  <h3>Modal input precedence</h3>
+  <p>Modal route scopes now take input precedence while active, so modal handlers can shadow root handlers without leaking after the modal closes.</p>
+  <pre><code>VBox(
+	On(Key(&quot;&lt;Esc&gt;&quot;, quit)),
+	If(&amp;confirming).Then(
+		Overlay(
+			VBox(
+				On.Modal(Key(&quot;&lt;Esc&gt;&quot;, func() { confirming = false })),
+				Text(&quot;cancel deploy?&quot;),
+			),
+		),
+	),
+)</code></pre>
+  <h3>Screen effect opacity and dynamic values</h3>
+  <p>Screen effects now compose better with live UI state: focus-based effects track node opacity, drop shadows and SpinGlow have clearer opacity controls, and effect strength values can be compiled from dynamic inputs.</p>
+  <pre><code>var cardRef NodeRef
+
+VBox.Ref(&amp;cardRef).Opacity(cardOpacity)(
+	Text(&quot;syncing&quot;),
+)
+
+ScreenEffect(
+	SEGlow().
+		Focus(&amp;cardRef).
+		Strength(&amp;glowStrength).
+		Radius(5),
+	SEDropShadow().
+		Focus(&amp;cardRef).
+		Opacity(&amp;shadowOpacity).
+		OpacityMode(OpacitySmooth).
+		Radius(6),
+	SESpinGlow(&amp;cardRef).
+		Opacity(&amp;glowOpacity).
+		OpacityMode(OpacityPaint).
+		Radius(4).
+		Speed(1.2),
+)</code></pre>
+  <h3>Selection list layout</h3>
+  <p>Selection list rendering and row layout are more robust for complex rows, shrinking lists, and constrained viewports.</p>
+  <pre><code>List(&amp;items, func(item *Item) Component {
+	return HBox(
+		Text(item.Name),
+		Text(item.Status),
+	)
+})</code></pre>
+  <h3>Text view navigation naming</h3>
+  <p>Text view navigation now uses the same naming pattern as other navigable components.</p>
+  <pre><code>TextView(content).
+	BindNav(&quot;j&quot;, &quot;k&quot;).
+	BindPageNav(&quot;&lt;C-d&gt;&quot;, &quot;&lt;C-u&gt;&quot;)</code></pre>
+  <h3>Radio navigation naming</h3>
+  <p>Radio navigation parameter names now match down/up navigation order.</p>
+  <pre><code>Radio(&amp;selected, &quot;small&quot;, &quot;medium&quot;, &quot;large&quot;).
+	BindNav(&quot;j&quot;, &quot;k&quot;)</code></pre>
+  <h2>Changed</h2>
+  <ul>
+  <li>The public API has been renamed in several places for consistency.</li>
+  <li>Default animation easing is now <code>EaseOutQuart</code>.</li>
+  <li>Default animation duration is now <code>280ms</code>.</li>
+  <li>Concrete screen effect types are exported, making configured effects easier to pass around.</li>
+  <li><code>ScreenEffect</code> now returns a component rather than exposing the old node struct type.</li>
+  <li><code>Textf</code> and <code>Rich</code> now return component values rather than public compile-form node structs.</li>
+  <li><code>Checkbox</code> accepts either <code>string</code> or <code>*string</code> for static and dynamic labels.</li>
+  <li>App router methods have been renamed to <code>PushRouter</code> and <code>PopRouter</code>.</li>
+  <li>Layer view sizing methods have been renamed to <code>Width</code> and <code>Height</code>.</li>
+  <li>Text view scrolling bindings have been renamed to <code>BindNav</code> and <code>BindPageNav</code>.</li>
+  <li>Colour helpers have been renamed to shorter names such as <code>Ansi16</code>, <code>Ansi256</code>, <code>Blend</code>, and <code>Lerp</code>.</li>
+  <li>Blend mode names now use <code>BlendDodge</code> and <code>BlendBurn</code>.</li>
+  <li><code>SEDimAll</code> has been renamed to <code>SEDim</code>.</li>
+  <li><code>MatchNode</code> and <code>SwitchNode</code> have been renamed to <code>MatchC</code> and <code>SwitchC</code>.</li>
+  </ul>
+  <h2>Fixed</h2>
+  <ul>
+  <li>Fixed rich text wrapping across lines.</li>
+  <li>Corrected nested repeated-template bindings, including item field captures and nested slice fields.</li>
+  <li>Corrected <code>ForEach</code> row layout inside <code>HBox</code>, including parent-width constraints.</li>
+  <li>Reworked repeated-template rendering to reduce direct-vs-repeated inconsistencies for layers, overlays, screen effects, and autotables.</li>
+  <li>Corrected dynamic match, switch, and container style values inside repeated templates.</li>
+  <li>Improved screen effect fade behaviour for glow, bloom, shadow, SpinGlow, and vignette-style effects.</li>
+  <li>Propagated detected terminal backgrounds into compositing and effect rendering.</li>
+  <li>Fixed selection list clamping when source data shrinks or becomes empty.</li>
+  <li>Fixed rich span jump target registration after wrapping.</li>
+  <li>Fixed rich span jump targets inside scroll views.</li>
+  <li>Fixed dynamic checkbox labels through the main <code>Checkbox</code> constructor.</li>
+  <li>Improved jump label rendering across rich spans, scroll views, and composed layouts.</li>
+  <li>Fixed jump mode behaviour when no jump mode state has been initialised yet.</li>
+  </ul>
+  <h2>Removed</h2>
+  <ul>
+  <li>Removed legacy struct-literal compile paths for tabs, overlays, tables, custom nodes, rich text nodes, text inputs, and screen effect nodes.</li>
+  <li>Removed old public struct-literal node APIs from the preferred component-building path.</li>
+  <li>Removed the legacy table renderer in favour of the newer table/autotable paths.</li>
+  <li>Removed direct animation <code>Out</code> chaining from tweens. Use the <code>In(...).Out(...)</code> presence pattern instead.</li>
+  <li>Removed redundant examples that no longer matched the preferred API shape.</li>
+  </ul>
+  <h2>Migration notes</h2>
+  <p>If you're running any migrations from v0.6.0 or previous you should first run <code>go fix ./...</code> which should automate the vast majority of the API cleanup for you. </p>
+  <p>Most migration work in this release is mechanical API cleanup.</p>
+  <pre><code>// before
+Widget(measure, render)
+
+// after
+Custom(measure, render)</code></pre>
+  <pre><code>// before
+Scroll(contentSize, viewSize, &amp;position)
+
+// after
+Scrollbar(contentSize, viewSize, &amp;position)</code></pre>
+  <pre><code>// before
+BasicColor(2)
+PaletteColor(42)
+
+// after
+Ansi16(2)
+Ansi256(42)</code></pre>
+  <pre><code>// before
+BlendColor(base, top, BlendColorDodge)
+LerpColor(a, b, 0.5)
+
+// after
+Blend(base, top, BlendDodge)
+Lerp(a, b, 0.5)</code></pre>
+  <pre><code>// before
+SEDimAll()
+
+// after
+SEDim()</code></pre>
+  <pre><code>// before
+LayerView(layer).ViewWidth(40).ViewHeight(8)
+
+// after
+LayerView(layer).Width(40).Height(8)</code></pre>
+  <pre><code>// before
+app.Push(router)
+app.Pop()
+
+// after
+app.PushRouter(router)
+app.PopRouter()</code></pre>
+  <pre><code>// before
+TextView(content).BindScroll(&quot;j&quot;, &quot;k&quot;)
+TextView(content).BindPageScroll(&quot;&lt;C-d&gt;&quot;, &quot;&lt;C-u&gt;&quot;)
+
+// after
+TextView(content).BindNav(&quot;j&quot;, &quot;k&quot;)
+TextView(content).BindPageNav(&quot;&lt;C-d&gt;&quot;, &quot;&lt;C-u&gt;&quot;)</code></pre>
+  <pre><code>// before
+CheckboxPtr(&amp;enabled, &amp;label)
+
+// after
+Checkbox(&amp;enabled, &amp;label)</code></pre>
+  <p>Some deprecated shims remain for renamed helpers, but this release intentionally removes a lot of older public API surface as part of the cleanup.</p>
+  <h2>Updated demos and examples</h2>
+  <ul>
+  <li>Updated remaining demos away from legacy struct-literal node APIs.</li>
+  <li>Updated showcase, table, widget, selection, postprocess, nesting, avionics, minivim, todo, and stream demos for the current API.</li>
+  <li>Added <code>cmd/ondemo</code> for declarative route handling.</li>
+  <li>Added <code>cmd/easeharness</code> for easing behaviour.</li>
+  <li>Updated examples for renamed helpers and preferred component constructors.</li>
+  </ul>
+  <p>Full changelog: https://github.com/kungfusheep/glyph/compare/v0.6.0...v0.7.0</p>
+</main>
+</body>
+</html>

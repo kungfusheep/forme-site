@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>glyph - v0.5.0 Changes</title>
+<meta name="description" content="Changelog for glyph v0.5.0.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://useglyph.sh/changelog-0.5.html">
+<meta name="theme-color" content="#131311">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="preload" href="BerkeleyMonoVariable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="https://use.typekit.net/rgt4idh.css">
+<link rel="stylesheet" href="tokens.css">
+<style>
+  @font-face {
+    font-family: 'Berkeley Mono';
+    src: url('BerkeleyMonoVariable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: swap;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg-dark);
+    color: var(--dk);
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--dk); color: var(--bg-dark); }
+  .page { max-width: 760px; margin: 0 auto; padding: 48px var(--s5) 96px; }
+  .verlinks { font-size: 11px; color: var(--dk-6); margin-bottom: var(--s4); }
+  .verlinks a { color: var(--dk-4); text-decoration: none; margin-right: 10px; }
+  .verlinks a:hover { color: var(--dk-hi); }
+  h1 {
+    font-family: var(--akz);
+    font-weight: 700;
+    font-size: 34px;
+    color: var(--dk-hi);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: var(--s4);
+  }
+  h2 {
+    font-family: var(--akz);
+    font-weight: 700;
+    font-size: 21px;
+    color: var(--dk-hi);
+    margin: var(--s6) 0 var(--s3);
+    padding-top: var(--s4);
+    border-top: 1px solid var(--rule-dk);
+  }
+  h3 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--dk-6);
+    margin: var(--s4) 0 var(--s2);
+  }
+  p { margin-bottom: var(--s3); }
+  ul { list-style: none; margin-bottom: var(--s3); }
+  li { padding-left: 18px; position: relative; margin-bottom: var(--s2); }
+  li::before { content: '-'; position: absolute; left: 0; color: var(--dk-6); }
+  code {
+    color: var(--dk-hi);
+    background: rgba(255,255,255,0.05);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  pre {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--rule-dk);
+    border-radius: 8px;
+    padding: var(--s3);
+    overflow-x: auto;
+    margin-bottom: var(--s3);
+  }
+  pre code { background: none; padding: 0; color: var(--dk); }
+  a { color: var(--dk-hi); }
+</style>
+</head>
+<body>
+<main class="page">
+  <nav class="verlinks"><a href="changelog-0.7.html">v0.7.0</a> <a href="changelog-0.6.html">v0.6.0</a> <a href="changelog-0.4.html">v0.4.0</a></nav>
+  <p><strong>Full Changelog</strong>: https://github.com/kungfusheep/glyph/compare/v0.4.0...v0.5.0</p>
+  <h2>Breaking</h2>
+  <ul>
+  <li><code>TextView</code> word-wraps by default. <code>TextBlock.CharWrap()</code> for character-wrap.</li>
+  <li><code>BorderSoft</code> verticals and corners now use full block <code>█</code> (was <code>▌▐▛▜▙▟</code>). Visual thickness now matches top/bottom under typical 2:1 cell aspect.</li>
+  </ul>
+  <h2>Correctness</h2>
+  <ul>
+  <li>Wide-rune layout: <code>StringWidth</code> replaces rune count for text measurement across template, selection list, and alignment. Emoji and CJK reserve correct display-cell</li>
+  <p>  width.</p>
+  <li>Wide-rune rendering: <code>WriteStringFast</code> places a <code>Rune=0</code> placeholder in the trailing cell; <code>FlushFull</code> skips placeholders to prevent row misalignment.</li>
+  <li>Flush cursor drift: non-ASCII writes invalidate the tracked cursor so the next write emits an absolute CUP. Stops width-mismatch cascade into bottom-right wraps.</li>
+  <li><code>FlushFull</code> / <code>FlushBuffer</code> now write frame and cursor ops in a single syscall under the sync guard. Removes blank flash.</li>
+  </ul>
+  <h2>New</h2>
+  <ul>
+  <li><code>TextBlock</code> — multi-line word-wrapping text, no layer overhead. <code>.CharWrap()</code> switches mode.</li>
+  <li><code>RowWriter</code> — zero-alloc primitive. <code>buf.Row(y, style).Put(x, r)</code> hoists dirty tracking and default-style merge once per row.</li>
+  <li><code>width.go</code> — single control point for text measurement: <code>StringWidth</code>, <code>RuneWidth</code>, <code>RuneCount</code>.</li>
+  <li><code>SetTerminalBG</code> / <code>ResetTerminalBG</code> via OSC 11 / 111, tmux DCS passthrough. <code>App</code> sets it automatically when the default BG is RGB.</li>
+  <li><code>GLYPH_TEE</code> env var — tees raw screen output to a file for debugging corruption.</li>
+  </ul>
+  <h2>Fixes</h2>
+  <ul>
+  <li>View switch no longer forces full flush (uses diff). Removes Ghostty microflash.</li>
+  <li>Resize now forces full flush. Fixes #9 </li>
+  <li><code>Buffer.CopyFrom</code> handles size mismatch during in-flight resize.</li>
+  </ul>
+</main>
+</body>
+</html>
