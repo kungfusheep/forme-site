@@ -170,7 +170,7 @@ def normalise(md, ver):
     for line in lines:
         if re.match(r'^#\s+', line):
             continue  # the page supplies the h1
-        m = re.match(r'^\*\*Full Changelog\*\*:\s*(\S+)', line)
+        m = re.match(r'^\s*(?:\*\*)?full changelog(?:\*\*)?:\s*(\S+)', line, re.I)
         if m:
             compare = m.group(1)
             continue
