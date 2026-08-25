@@ -161,6 +161,29 @@ def md_to_html(md):
     return '\n'.join('  ' + l for l in out)
 
 
+def normalise(md, ver):
+    """uniform hierarchy across releases: one h1 (added by us), the compare
+    link at the foot, and an h2 above any body that has none of its own."""
+    lines = md.splitlines()
+    compare = None
+    kept = []
+    for line in lines:
+        if re.match(r'^#\s+', line):
+            continue  # the page supplies the h1
+        m = re.match(r'^\*\*Full Changelog\*\*:\s*(\S+)', line)
+        if m:
+            compare = m.group(1)
+            continue
+        kept.append(line)
+    body = '\n'.join(kept).strip('\n')
+    if not re.search(r'^##\s+', body, re.M):
+        body = '## Changes\n\n' + body
+    body = '# glyph %s\n\n%s' % (ver.lstrip('v'), body)
+    if compare:
+        body += '\n\n[Full changelog on GitHub](%s)' % compare
+    return body
+
+
 def main(versions):
     slugs = [v.lstrip('v').rsplit('.0', 1)[0] if v.endswith('.0') else v.lstrip('v') for v in versions]
     for ver, slug in zip(versions, slugs):
@@ -169,7 +192,7 @@ def main(versions):
             check=True, capture_output=True, text=True).stdout
         links = ' '.join(
             '<a href="changelog-%s.html">%s</a>' % (s, v) for v, s in zip(versions, slugs) if s != slug)
-        page = PAGE.format(ver=ver, slug=slug, verlinks=links, body=md_to_html(body))
+        page = PAGE.format(ver=ver, slug=slug, verlinks=links, body=md_to_html(normalise(body, ver)))
         out = ROOT / ('changelog-%s.html' % slug)
         out.write_text(page)
         print('wrote', out.name)
