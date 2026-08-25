@@ -91,7 +91,7 @@
 <main class="page">
   <div class="draft-band">internal review draft - not linked</div>
   <h1>glyph 0.8.0</h1>
-  <p class="intro">Everything that changed between v0.7.0 and the 0.8.0 release candidate. 192 commits; 126 exported symbols added, none removed.</p>
+  <p class="intro">Everything that changed between v0.7.0 and the 0.8.0 release candidate. 221 non-merge commits; 115 documented symbols added, none removed, measured with docgen against both trees. Numbers to be re-measured at the tagged commit.</p>
 
   <h2 id="added">Added</h2>
 
@@ -134,6 +134,7 @@
     <li><code>AnchorBottom</code> - hug underflowing content to the bottom edge.</li>
     <li>ScrollView scrollbars; <code>ListC.ScrollState</code> plus <code>ScrollbarDyn</code> so a List carries a live scrollbar like a Layer.</li>
     <li><code>ListC.BindHalfPageNav</code> - half-page up and down.</li>
+    <li><code>ListC.ScrollEase</code> - a list paints through an eased row offset instead of snapping to its window; <code>Layer.DisplayedScrollY</code> exposes the displayed offset.</li>
     <li>Scrollbar surface: <code>ScrollbarForLayer</code>, and on ScrollView <code>Scrollbar</code>, <code>ScrollbarVisible</code>, <code>ScrollbarOpacity</code>, <code>ScrollbarOpacityMode</code>, <code>ScrollbarThumbStyle</code>, <code>ScrollbarTrackStyle</code>; <code>ScrollbarC.Opacity</code> and <code>OpacityMode</code>.</li>
     <li><code>ScrollViewC.ScrollTo</code>, <code>ScrollViewFn.Height</code>, <code>LayerViewC.HeightPtr</code>.</li>
   </ul>
@@ -203,6 +204,9 @@
     <li>Layer re-renders on viewport height change, not only width; layer viewport height bindable to a pointer.</li>
     <li>ScrollView grows its render buffer to fit content instead of capping at 500 rows, and caches the fitting height across frames.</li>
     <li>ScrollView drops a stale deferred pending scroll when the layer moved externally.</li>
+    <li>Leaving the alternate screen after a resize lands on the row it left.</li>
+    <li><code>LogC</code> preserves scroll position across appends when it is not following.</li>
+    <li>A shrinking pane keeps its bottom rows through the component, not only the grid.</li>
     <li>Rich text intrinsic width measured correctly; jump wrappers sized to their content in rows; dynamic styles primed at compile.</li>
   </ul>
 
@@ -224,6 +228,7 @@
     <li>Input preserved after a jump view push.</li>
     <li>NodeRef zeroes when its node isn't rendered this frame, so gated or closed nodes report no bounds.</li>
     <li>Jump feedback never engaging live - input accumulated directly.</li>
+    <li><code>JumpItem</code> over a pointer slice resolves the slice slot rather than the pointed-to struct.</li>
     <li>KeyHelp composites over the underlying fill instead of stamping default-bg chips.</li>
   </ul>
 </main>
