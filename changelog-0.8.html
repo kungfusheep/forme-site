@@ -85,13 +85,55 @@
     margin-left: 6px;
   }
   a { color: var(--dk-hi); }
+  pre {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--rule-dk);
+    border-radius: 8px;
+    padding: var(--s3);
+    overflow-x: auto;
+    margin-bottom: var(--s3);
+  }
+  pre code { background: none; padding: 0; color: var(--dk); }
 </style>
 </head>
 <body>
 <main class="page">
   <div class="draft-band">internal review draft - not linked</div>
   <h1>glyph 0.8.0</h1>
-  <p class="intro">Everything that changed between v0.7.0 and the 0.8.0 release candidate. 221 non-merge commits; 115 documented symbols added, none removed, measured with docgen against both trees. Numbers to be re-measured at the tagged commit.</p>
+  <p class="intro">Everything that changed between v0.7.0 and the 0.8.0 release candidate. 221 non-merge commits; 115 documented symbols added, none removed, measured with docgen against both trees. Nothing was taken away from a 0.7.0 user in this release. Numbers to be re-measured at the tagged commit.</p>
+
+  <h2 id="upgrading">Upgrading from 0.7.0</h2>
+  <p>Three behaviour changes can break working code with no compile error. <code>go fix</code> cannot help with these.</p>
+  <ul>
+    <li><strong>Fixed-height containers now clip.</strong> <code>OverflowHidden</code> is the zero value, so a container with an explicit <code>Height</code> whose content overflowed silently loses the overflow. <code>.Overflow(visible)</code> restores the old behaviour. Most likely of the three to bite.</li>
+    <li><strong>A present dynamic width binding means explicitly sized.</strong> A binding evaluating to 0 now reads as "explicitly sized, currently zero" rather than unset, so it no longer falls through to implicit flex.</li>
+    <li><strong>Explicit text widths clip in both render paths</strong>, where one path previously let content through.</li>
+  </ul>
+
+  <h2 id="deprecated">Deprecated, removed in 0.9.0</h2>
+  <p>22 renamed identifiers, all still working in 0.8.0. Each carries a <code>//go:fix inline</code> directive, so <code>go fix ./...</code> or a gopls quick-fix migrates call sites automatically - the whole list is a one-command job.</p>
+  <pre><code>NewFilter            -&gt; Filter
+Scroll               -&gt; Scrollbar
+Widget               -&gt; Custom
+BasicColor           -&gt; Ansi16
+PaletteColor         -&gt; Ansi256
+BlendColor           -&gt; Blend
+LerpColor            -&gt; Lerp
+BlendColorDodge      -&gt; BlendDodge
+BlendColorBurn       -&gt; BlendBurn
+SEDimAll             -&gt; SEDim
+Bool                 -&gt; FormatBool
+Bytes                -&gt; FormatBytes
+Currency             -&gt; FormatCurrency
+Number               -&gt; FormatNumber
+Percent              -&gt; FormatPercent
+PercentChange        -&gt; FormatPercentChange
+LayerViewC.ViewWidth -&gt; Width
+LayerViewC.ViewHeight -&gt; Height
+App.Push             -&gt; PushRouter
+App.Pop              -&gt; PopRouter
+MatchNode            -&gt; MatchC
+SwitchNode           -&gt; SwitchC</code></pre>
 
   <h2 id="added">Added</h2>
 
