@@ -206,6 +206,7 @@ SwitchNode           -&gt; SwitchC</code></pre>
 
   <h2 id="changed">Changed</h2>
   <ul>
+    <li>The example apps moved from <code>cmd/</code> to <code>examples/</code>, all 60 in one place; <code>go run ./cmd/x</code> becomes <code>go run ./examples/x</code>.</li>
     <li>Fixed-height containers now clip their content to the box; <code>.Overflow(visible)</code> opts out, and the blit honours the clip.</li>
     <li><code>WidthPct</code> fails loud on a wrong type at build; static over/under-percent is accepted for animation headroom, and the [0,1] range clamp is gone.</li>
     <li><code>MaxWidth</code> is a pure upper-bound cap, decoupled from content-hug; <code>maxwidthpct</code> removed before it ever shipped.</li>
