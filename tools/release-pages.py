@@ -22,7 +22,7 @@ PAGE = '''<!DOCTYPE html>
 <title>glyph - {ver} Changes</title>
 <meta name="description" content="Changelog for glyph {ver}.">
 <meta name="robots" content="index, follow">
-<link rel="canonical" href="https://useglyph.sh/changelog-{slug}.html">
+<link rel="canonical" href="https://useglyph.sh/changelog-{slug}">
 <meta name="theme-color" content="#131311">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
