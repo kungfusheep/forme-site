@@ -21,6 +21,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://useglyph.sh/changelog-0.8.html</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
     <loc>https://useglyph.sh/changelog-0.7.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
