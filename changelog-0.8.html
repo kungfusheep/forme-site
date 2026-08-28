@@ -206,8 +206,8 @@ SwitchNode           -&gt; SwitchC</code></pre>
     <li>Initial terminal size is delivered as a resize event.</li>
     <li>ForEach per-item caches are bounded - realloc-orphaned per-item state and orphaned markdown span keys are evicted.</li>
     <li>Redefining a named view emits a one-time stderr nudge toward If/Switch.</li>
-    <li>The animation ticker closes over locals and retires on settle; a view that leaves the render path stops its ticker on every routing path.</li>
-    <li>Render generations replace the frameFlushed skip, so async render requests issued after an input flush are never discarded.</li>
+    <li>An animation ticker could keep running after its view left the screen. Tickers stop on every routing path and retire when the animation settles.</li>
+    <li>An async render requested right after an input flush was silently dropped. Requests carry a generation now, so none are discarded.</li>
     <li>The App running flag is atomic, so <code>Stop</code> is callable from any goroutine.</li>
     <li>ForEach item height is pinned as intrinsic in layout; text measurement is memoised per unchanged string.</li>
   </ul>
@@ -216,52 +216,54 @@ SwitchNode           -&gt; SwitchC</code></pre>
 
   <h3>Races, deadlocks and memory</h3>
   <ul>
-    <li>Terminal writes serialised - fixes mid-sequence interleave corruption from concurrent writes.</li>
-    <li>Jump-mode data race and deadlock - atomic active flag, build-swap target rebuild, never locking across Execute.</li>
-    <li>Layer scroll-state data race - scroll fields guarded by a mutex never held across the Render callback.</li>
-    <li>ScreenCursor scroll fields guarded against render-vs-input races.</li>
-    <li>Global span strings stored as typed pointers - raw uintptrs tripped checkptr and dodged the GC.</li>
-    <li>Resize serialised against render - a mid-render pool resize tore buffer storage.</li>
-    <li>VRule annotation no longer allocates every frame, so a VBox of any child count renders allocation-free.</li>
+    <li>Two goroutines writing to the terminal at once could interleave mid-escape-sequence and corrupt the display. Writes now go through a single lock.</li>
+    <li>Toggling jump mode while a frame rendered could race, or deadlock the app outright. The active flag is atomic, targets rebuild by swap, and no lock is held across a render.</li>
+    <li>Scrolling a layer while it rendered raced on the scroll position. The scroll fields sit behind a mutex that is never held across the render callback.</li>
+    <li>The render goroutine could read the cursor's scroll position while the input goroutine wrote it. Reads are guarded now.</li>
+    <li>Rich-text span strings were stored as raw pointers the garbage collector could not see, so the strings could be freed while still on screen. They are typed pointers now.</li>
+    <li>Resizing the terminal mid-render could tear the frame buffer's storage. Resize waits for the frame to finish.</li>
+    <li>Drawing vertical rules allocated on every frame. A VBox of any child count renders allocation-free.</li>
   </ul>
 
   <h3>Layout and rendering</h3>
   <ul>
-    <li>Bare ForEach as a control-flow branch or root view failing to lay out.</li>
-    <li>List scroll one-frame-stale blank bottom - the window fills from the final offset in one pass.</li>
-    <li>List viewport scrolling up with unbounded clipped lists; partial rows at the viewport edge render via a buffer clip rect.</li>
-    <li><code>MaxWidth</code> clamped in the intrinsic path too, so content-sizing parents agree.</li>
-    <li>If-branches sized from item data and clamped to parent width; if-branch flex redistributed after stretch.</li>
-    <li>Wrapped text clipped to fixed-height containers; TextBlock wraps by cell width with a wide-rune placeholder.</li>
-    <li>Layer re-renders on viewport height change, not only width; layer viewport height bindable to a pointer.</li>
-    <li>ScrollView grows its render buffer to fit content instead of capping at 500 rows, and caches the fitting height across frames.</li>
-    <li>ScrollView drops a stale deferred pending scroll when the layer moved externally.</li>
-    <li>Leaving the alternate screen after a resize lands on the row it left.</li>
-    <li><code>LogC</code> preserves scroll position across appends when it is not following.</li>
-    <li>A shrinking pane keeps its bottom rows through the component, not only the grid.</li>
-    <li>Rich text intrinsic width measured correctly; jump wrappers sized to their content in rows; dynamic styles primed at compile.</li>
+    <li>A ForEach used directly as a branch or as the root view failed to lay out. It lays out like any other component.</li>
+    <li>Scrolling a list could leave a blank row at the bottom for one frame. The window fills in a single pass from the final offset.</li>
+    <li>A list with no <code>MaxVisible</code> could not scroll back up once clipped. It scrolls both ways.</li>
+    <li>Rows partially visible at the list edge were dropped instead of clipped. They render, clipped to the viewport.</li>
+    <li>A <code>MaxWidth</code> cap was ignored when the parent sized itself from content, so parent and child disagreed on width. Both sizing paths clamp.</li>
+    <li>Content inside an If branch could overflow the parent's width, and flex children in a branch could land in the wrong place. Branches size from their data, clamp to the parent, and redistribute flex after stretch.</li>
+    <li>Wrapped text could spill below a fixed-height container. It clips.</li>
+    <li>TextBlock wrapped by rune count, so wide characters (CJK, emoji) overflowed their line. It wraps by display width with a placeholder for the cut rune.</li>
+    <li>A layer re-rendered when its viewport width changed but not when only the height did, leaving a stale frame on screen. Height changes re-render too, and the viewport height can bind to a pointer.</li>
+    <li>ScrollView capped its render buffer at 500 rows, truncating tall content such as a long chat. The buffer grows to fit and the fitting height is cached across frames.</li>
+    <li>A queued scroll could fire late and yank the view away from where a manual scroll had put it. Stale pending scrolls are dropped.</li>
+    <li>Rich text reported the wrong natural width; jump wrappers claimed more rows than their content; dynamic styles applied one frame late. All three measure and prime correctly.</li>
   </ul>
 
   <h3>Per-item (ForEach) binding</h3>
   <ul>
-    <li>Per-item <code>BorderFG</code> pointer silently dropping the border.</li>
-    <li>Item-field int, float and fill pointers resolved per rendered element.</li>
-    <li>Per-item flex pointers (grow, width, height, percent-width) rebound per item.</li>
-    <li>All leaf-compiler pointer bindings offset-treated: spinner, leader, counter, sparkline, tabs, scrollbar.</li>
-    <li>Per-item tween watch and out-targets rebased onto the rendered element; per-item in/out exit pinned inside ForEach.</li>
-    <li>Tween <code>OnComplete</code> deferred to execute end, so callbacks can safely mutate bound state.</li>
+    <li>A per-item border colour pointer silently dropped the border. It binds to each rendered element.</li>
+    <li>Numeric text, fill and flex values bound to an item field could show the first item's value on every row. Each row resolves its own field.</li>
+    <li>Spinner, leader, counter, sparkline, tabs and scrollbar bindings inside a ForEach read from the wrong item. Every leaf binding is offset to the rendered element.</li>
+    <li>Tweens inside a ForEach could animate the wrong row, and per-item exit animations detached from their item. Both pin to the rendered element.</li>
+    <li>A tween's <code>OnComplete</code> could fire mid-frame, so mutating bound state from the callback raced the render. It fires at the end of the frame.</li>
   </ul>
 
   <h3>Focus, modals and forms</h3>
   <ul>
-    <li>Modal router orphaned by an overlay's exit animation - released when the overlay is exiting.</li>
-    <li>Focus managers activated on overlay visibility edges, symmetric with the modal router; Escape blur persists and reaches the modal router.</li>
-    <li>Bound input values synced before validation; forms validated before submit callbacks.</li>
-    <li>Input preserved after a jump view push.</li>
-    <li>NodeRef zeroes when its node isn't rendered this frame, so gated or closed nodes report no bounds.</li>
-    <li>Jump feedback never engaging live - input accumulated directly.</li>
-    <li><code>JumpItem</code> over a pointer slice resolves the slice slot rather than the pointed-to struct.</li>
-    <li>KeyHelp composites over the underlying fill instead of stamping default-bg chips.</li>
+    <li>Closing an overlay with an exit animation left its key handling active behind it. The modal router releases while the overlay exits.</li>
+    <li>Swapping route branches under a modal dropped the modal's handlers. They survive the swap.</li>
+    <li>Escape could blur a field and have the focus snap back the next frame. Focus managers push on the show edge only, so the blur persists and reaches the modal router.</li>
+    <li>A form could validate stale values because bound inputs synced after validation ran. Values sync first, then validation, then the submit callback.</li>
+    <li>Text typed into an input was lost when a jump pushed a new view. The input carries over.</li>
+    <li>A closed or hidden node kept reporting its last on-screen position. Its ref reads zero when the node is not rendered this frame.</li>
+    <li>Jump-label feedback could fail to engage while typing. Typed keys accumulate directly.</li>
+    <li>KeyHelp stamped solid default-background chips over styled fills. It composites over the underlying fill.</li>
+    <li>Leaving the alternate screen after a resize could land the cursor on the wrong row. It lands on the row it left.</li>
+    <li>A log scrolled away from the tail jumped when new lines arrived. The position holds unless the log is following.</li>
+    <li>Shrinking a pane could drop its bottom rows. The component keeps them, not only the grid.</li>
+    <li>Jump targets over a slice of pointers resolved the slice slot rather than the struct it points at, so a jump could land on stale data. They resolve the pointed-to struct.</li>
   </ul>
 </main>
 </body>
